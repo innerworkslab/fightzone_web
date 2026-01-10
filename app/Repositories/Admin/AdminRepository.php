@@ -18,13 +18,22 @@ class AdminRepository implements AdminRepositoryInterface
         $query = $this->model::with(['permissionType.group','permissions'])
         ->orderBy('id', 'desc');
 
-        $arrayKeys = array_keys($filters);
-        $index = 0;
-        foreach($filters as $filter){
-            if($arrayKeys[$index] == 'gem_id')
-                continue;
-            $query->where($arrayKeys[$index], $filter);
-            $index++;
+        // Normalize filters to key => value pairs. Accept either:
+        // - associative array ['username' => 'foo']
+        // - array of single-pair arrays [ ['username' => 'foo'], ['name'=>'bar'] ]
+        $normalized = [];
+        foreach ($filters ?? [] as $k => $v) {
+            if (is_int($k) && is_array($v)) {
+                foreach ($v as $fk => $fv) {
+                    $normalized[$fk] = $fv;
+                }
+            } elseif (is_string($k)) {
+                $normalized[$k] = $v;
+            }
+        }
+
+        foreach ($normalized as $key => $value) {
+            $query->where($key,'like', "%{$value}%");
         }
 
         if ($limit) {
