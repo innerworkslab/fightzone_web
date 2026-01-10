@@ -14,7 +14,8 @@ class Admin extends Authenticatable
     protected $fillable = [
         'name',
         'username',
-        'password'
+        'password',
+        'is_active',
     ];
 
     protected $hidden = [
@@ -25,6 +26,7 @@ class Admin extends Authenticatable
     {
         return [
             'password' => 'hashed',
+            'is_active' => 'boolean'
         ];
     }
 
