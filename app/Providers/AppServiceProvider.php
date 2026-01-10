@@ -4,8 +4,6 @@ namespace App\Providers;
 
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Support\ServiceProvider;
-use App\Repositories\Admin\AdminRepository;
-use App\Repositories\Admin\AdminRepositoryInterface;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -14,7 +12,7 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        $this->app->bind(AdminRepositoryInterface::class, AdminRepository::class);
+
     }
 
     /**

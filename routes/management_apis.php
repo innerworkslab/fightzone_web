@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\Route;
 
 use App\Http\Controllers\API\v1\Management\LoginController;
 use App\Http\Controllers\API\v1\Management\AdminController;
+use App\Http\Controllers\API\v1\Management\UserController;
 
 Route::prefix('/v1/management')->group(function () {
     Route::post('/login', [LoginController::class, 'login']);
@@ -14,6 +15,16 @@ Route::prefix('/v1/management')->group(function () {
 
         Route::prefix('/admins')->group(function(){
             Route::controller(AdminController::class)->group(function () {
+                Route::get('/', 'index');
+                Route::post('/', 'store');
+                Route::post('/{id}', 'update');
+                Route::post('/{id}/toggle', 'toggle');
+                Route::delete('/{id}', 'destroy');
+            });
+        });
+
+        Route::prefix('/users')->group(function(){
+            Route::controller(UserController::class)->group(function () {
                 Route::get('/', 'index');
                 Route::post('/', 'store');
                 Route::post('/{id}', 'update');

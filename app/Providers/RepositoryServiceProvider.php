@@ -6,6 +6,8 @@ use Illuminate\Support\ServiceProvider;
 
 use App\Repositories\Admin\AdminRepositoryInterface;
 use App\Repositories\Admin\AdminRepository;
+use App\Repositories\User\UserRepository;
+use App\Repositories\User\UserRepositoryInterface;
 
 class RepositoryServiceProvider extends ServiceProvider
 {
@@ -16,6 +18,7 @@ class RepositoryServiceProvider extends ServiceProvider
     {
         //
         $this->app->bind(AdminRepositoryInterface::class, AdminRepository::class);
+        $this->app->bind(UserRepositoryInterface::class, UserRepository::class);
     }
 
     /**
