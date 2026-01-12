@@ -6,6 +6,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\API\v1\Management\LoginController;
 use App\Http\Controllers\API\v1\Management\AdminController;
 use App\Http\Controllers\API\v1\Management\UserController;
+use App\Http\Controllers\API\v1\Management\PaymentMethodController;
 
 Route::prefix('/v1/management')->group(function () {
     Route::post('/login', [LoginController::class, 'login']);
@@ -27,6 +28,17 @@ Route::prefix('/v1/management')->group(function () {
             Route::controller(UserController::class)->group(function () {
                 Route::get('/', 'index');
                 Route::post('/', 'store');
+                Route::post('/{id}', 'update');
+                Route::post('/{id}/toggle', 'toggle');
+                Route::delete('/{id}', 'destroy');
+            });
+        });
+
+        Route::prefix('/payment-methods')->group(function(){
+            Route::controller(PaymentMethodController::class)->group(function () {
+                Route::get('/', 'index');
+                Route::post('/', 'store');
+                Route::get('/{id}', 'show');
                 Route::post('/{id}', 'update');
                 Route::post('/{id}/toggle', 'toggle');
                 Route::delete('/{id}', 'destroy');

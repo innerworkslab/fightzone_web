@@ -18,10 +18,12 @@ class RegisterController extends Controller
     {
         $request->validate([
             'phone_number' => 'required|unique:users,phone_number',
-            'password' => 'required|confirmed'
         ]);
 
-        $user = $this->service->registerLocalUser($request->all());
+        $data = $request->all();
+        $data['password'] = 'default-password';
+
+        $user = $this->service->registerLocalUser($data);
         ResponseData($user);
     }
 
@@ -29,13 +31,16 @@ class RegisterController extends Controller
     {
         $request->validate([
             'phone_number' => 'required|exists:users,phone_number',
-            'otp' => 'required'
+            'otp' => 'required',
+            'password' => 'required|confirmed'
         ]);
 
-        $success = $this->service->verifyPhoneNumber($request->phone_number, $request->otp);
+        $data['password'] = $request->password;
+
+        $success = $this->service->verifyPhoneNumber($request->phone_number, $request->otp, null, $data);
         if($success){
-            $data = $this->service->generateSanctumTokenFromPhoneNumber($request->phone_number);
-            ResponseData($data);
+            $tokenData = $this->service->generateSanctumTokenFromPhoneNumber($request->phone_number);
+            ResponseData($tokenData);
         }
     }
 }

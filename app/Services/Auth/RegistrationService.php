@@ -32,7 +32,7 @@ class RegistrationService
         return $user;
     }
 
-    public function verifyPhoneNumber($phone_number, $otp, ?string $token=null)
+    public function verifyPhoneNumber($phone_number, $otp, ?string $token=null, ?array $data=[])
     {
         $user = User::where('phone_number', $phone_number)->first();
 
@@ -53,6 +53,9 @@ class RegistrationService
             ResponseMessage($result, 400);
         }
 
+        if(!empty($data)){
+            $user->update($data);
+        }
         return true;
     }
 

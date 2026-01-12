@@ -6,6 +6,8 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\API\v1\User\Auth\LoginController;
 use App\Http\Controllers\API\v1\User\Auth\RegisterController;
 
+use App\Http\Controllers\API\v1\User\Shop\PaymentMethodController;
+
 Route::prefix('/v1')->group(function () {
     Route::controller(RegisterController::class)->group(function () {
         Route::post('/register',  'register');
@@ -16,5 +18,7 @@ Route::prefix('/v1')->group(function () {
 
     Route::middleware('auth:api')->group(function () {
         Route::post('/logout', [LoginController::class, 'logout']);
+
+        Route::get('/payment-methods', [PaymentMethodController::class, 'index']);
     });
 });
