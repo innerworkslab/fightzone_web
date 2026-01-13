@@ -42,7 +42,7 @@ class DepositController extends Controller
         ResponseData($data);
     }
 
-    public function detail($id)
+    public function show($id)
     {
         $deposit = $this->service->detail($id);
 
