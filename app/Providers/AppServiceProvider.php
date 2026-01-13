@@ -24,6 +24,7 @@ class AppServiceProvider extends ServiceProvider
         Relation::enforceMorphMap([
             'admin' => 'App\Models\Admin',
             'user' => 'App\Models\User',
+            'deposit' => 'App\Models\Deposit',
         ]);
     }
 }

@@ -7,6 +7,7 @@ use App\Http\Controllers\API\v1\Management\LoginController;
 use App\Http\Controllers\API\v1\Management\AdminController;
 use App\Http\Controllers\API\v1\Management\UserController;
 use App\Http\Controllers\API\v1\Management\PaymentMethodController;
+use App\Http\Controllers\API\v1\Management\DepositController;
 
 Route::prefix('/v1/management')->group(function () {
     Route::post('/login', [LoginController::class, 'login']);
@@ -43,6 +44,13 @@ Route::prefix('/v1/management')->group(function () {
                 Route::post('/{id}/toggle', 'toggle');
                 Route::delete('/{id}', 'destroy');
             });
+        });
+
+        Route::prefix('/deposits')->group(function(){
+            Route::get('/', [DepositController::class, 'index']);
+            Route::get('/{id}', [DepositController::class, 'detail']);
+            Route::post('/{id}/confirm', [DepositController::class, 'confirm']);
+            Route::post('/{id}/reject', [DepositController::class, 'reject']);
         });
     });
 });

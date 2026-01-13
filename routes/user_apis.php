@@ -7,6 +7,7 @@ use App\Http\Controllers\API\v1\User\Auth\LoginController;
 use App\Http\Controllers\API\v1\User\Auth\RegisterController;
 
 use App\Http\Controllers\API\v1\User\Shop\PaymentMethodController;
+use App\Http\Controllers\API\v1\User\Shop\DepositController;
 
 Route::prefix('/v1')->group(function () {
     Route::controller(RegisterController::class)->group(function () {
@@ -20,5 +21,10 @@ Route::prefix('/v1')->group(function () {
         Route::post('/logout', [LoginController::class, 'logout']);
 
         Route::get('/payment-methods', [PaymentMethodController::class, 'index']);
+
+        Route::prefix('/deposits')->group(function () {
+            Route::get('/', [DepositController::class, 'index']);
+            Route::post('/', [DepositController::class, 'store']);
+        });
     });
 });

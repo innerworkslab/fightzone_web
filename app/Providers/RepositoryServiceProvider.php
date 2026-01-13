@@ -10,6 +10,8 @@ use App\Repositories\User\UserRepository;
 use App\Repositories\User\UserRepositoryInterface;
 use App\Repositories\PaymentMethod\PaymentMethodRepositoryInterface;
 use App\Repositories\PaymentMethod\PaymentMethodRepository;
+use App\Repositories\Deposit\DepositRepositoryInterface;
+use App\Repositories\Deposit\DepositRepository;
 
 class RepositoryServiceProvider extends ServiceProvider
 {
@@ -22,6 +24,7 @@ class RepositoryServiceProvider extends ServiceProvider
         $this->app->bind(AdminRepositoryInterface::class, AdminRepository::class);
         $this->app->bind(UserRepositoryInterface::class, UserRepository::class);
         $this->app->bind(PaymentMethodRepositoryInterface::class, PaymentMethodRepository::class);
+        $this->app->bind(DepositRepositoryInterface::class, DepositRepository::class);
     }
 
     /**
