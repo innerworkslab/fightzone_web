@@ -1,6 +1,7 @@
 <script lang="ts" setup>
 import { RouterView } from "vue-router";
 import Sidebar from "./Sidebar.vue";
+import ConfirmModal from "../common/modal/ConfirmModal.vue";
 </script>
 
 <template>
@@ -25,6 +26,8 @@ import Sidebar from "./Sidebar.vue";
                 </div>
             </main>
         </div>
+
+        <ConfirmModal />
     </div>
 </template>
 

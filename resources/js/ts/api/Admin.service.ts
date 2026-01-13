@@ -1,4 +1,4 @@
-import { useFetch, useMutation } from "@/composable/useAPI";
+import { APIResult, useFetch, useMutation } from "@/composable/useAPI";
 import { API_URLS, METHODS } from "@/constant/constant.global";
 import type { Filters } from "@/type.global";
 
@@ -17,18 +17,19 @@ export interface AdminData {
 export interface AdminPayload {
     username: string;
     name: string;
-    password: string;
+    password?: string;
+    confirm_password?: string;
     is_active: number;
 }
 
 const baseURL = `${API_URLS.VERSION}/${API_URLS.MANAGEMENT}/${API_URLS.ADMIN}`;
 
 const useAdmins = (filter: AdminFilter = {}) => {
-    return useFetch<AdminData[]>(baseURL, filter);
+    return useFetch<APIResult<AdminData[]>>(baseURL, filter);
 };
 
 const useAdminDetail = (id: number | string) => {
-    return useFetch<AdminPayload>(`/${baseURL}/${id}`);
+    return useFetch<APIResult<AdminPayload>>(`/${baseURL}/${id}`);
 };
 
 const useAdminActions = () => {
@@ -38,7 +39,7 @@ const useAdminActions = () => {
         mutate(METHODS.POST, baseURL, data);
 
     const updateAdmin = (id: number, data: Partial<AdminPayload>) =>
-        mutate(METHODS.PATCH, `/${baseURL}/${id}`, data);
+        mutate(METHODS.POST, `/${baseURL}/${id}`, data);
 
     const toggleStatus = (id: number) =>
         mutate(METHODS.POST, `/${baseURL}/${id}/${API_URLS.TOGGLE}`);

@@ -15,17 +15,13 @@ const { filters } = storeToRefs(dataStore);
 
 const { data, loading, refresh } = AdminServices.useAdmins(filters.value);
 
-// Extract the actual data array from the paginated response
 const adminData = computed(() => {
     return (data.value as any)?.data?.data || [];
 });
 
-// Extract pagination info
 const paginationInfo = computed(() => {
     return (data.value as any)?.data || {};
 });
-
-provide('adminListRefresh', refresh);
 
 const startIndex = computed(() => {
     const page = filters.value.page || 1;

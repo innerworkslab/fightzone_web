@@ -1,4 +1,4 @@
-import { useFetch, useMutation } from "@/composable/useAPI";
+import { APIResult, useFetch, useMutation } from "@/composable/useAPI";
 import { API_URLS, METHODS } from "@/constant/constant.global";
 import type { Filters } from "@/type.global";
 
@@ -14,7 +14,6 @@ export interface PaymentMethodData {
     account_number?: string;
     logo?: string;
     logo_url?: string;
-    status?: string;
     created_at?: string;
     updated_at?: string;
 }
@@ -24,17 +23,16 @@ export interface PaymentMethodPayload {
     holder: string;
     account_number: string;
     logo?: (File | string)[];
-    status?: string;
 }
 
 const baseURL = `${API_URLS.VERSION}/${API_URLS.MANAGEMENT}/${API_URLS.PAYMENT}`;
 
 const usePaymentMethods = (filter: PaymentMethodFilter = {}) => {
-    return useFetch<PaymentMethodData[]>(baseURL, filter);
+    return useFetch<APIResult<PaymentMethodData[]>>(baseURL, filter);
 };
 
 const usePaymentMethodDetail = (id: number | string) => {
-    return useFetch<PaymentMethodData>(`/${baseURL}/${id}`);
+    return useFetch<APIResult<PaymentMethodData>>(`/${baseURL}/${id}`);
 };
 
 const usePaymentMethodActions = () => {
@@ -50,9 +48,6 @@ const usePaymentMethodActions = () => {
             if (logoFile instanceof File) {
                 formData.append("logo", logoFile);
             }
-        }
-        if (data.status) {
-            formData.append("status", data.status);
         }
 
         return mutate(METHODS.POST, baseURL, formData, {
@@ -77,7 +72,6 @@ const usePaymentMethodActions = () => {
                 formData.append("logo", logoFile);
             }
         }
-        if (data.status) formData.append("status", data.status);
 
         return mutate(METHODS.POST, `/${baseURL}/${id}`, formData, {
             headers: {

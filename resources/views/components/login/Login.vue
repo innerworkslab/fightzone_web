@@ -10,12 +10,13 @@ import { setEncryptedLocalStorage } from "@/lib/utils.localStorage";
 import { COOKIES, LOCALSTORAGE } from "@/constant/constant.global";
 import { Button } from "@/components/ui/button";
 import { Swords, ArrowRight } from "lucide-vue-next";
+import { RouteNames } from "@/config/route.config";
 
 const router = useRouter();
 
 const schema = yup.object({
     username: yup.string().required("Username is required"),
-    password: yup.string().required("Password is required").min(6, "Password must be at least 6 characters"),
+    password: yup.string().required("Password is required"),
 });
 
 const { handleSubmit } = useForm<LoginPayload>({
@@ -32,18 +33,14 @@ const { value: password } = useField<string>("password");
 const { login, loading } = AuthServices.useAuthActions();
 
 const submitLogin = handleSubmit(async (values) => {
-    try {
-        const response = await login(values);
-        const data = response?.data;
+    const response = await login(values);
+    const data = response?.data;
 
-        if (response?.success) {
-            setEncryptedCookie(COOKIES.ACCESS_TOKEN, data.token);
-            setEncryptedLocalStorage(LOCALSTORAGE.AUTH_USER, data.user);
-            setEncryptedLocalStorage(LOCALSTORAGE.PERMISSIONS, data.permissions || []);
-            router.push("/auth/admin");
-        }
-    } catch (e) {
-        console.error("Login failed", e);
+    if (response?.success) {
+        setEncryptedCookie(COOKIES.ACCESS_TOKEN, data.token);
+        setEncryptedLocalStorage(LOCALSTORAGE.AUTH_USER, data.user);
+        setEncryptedLocalStorage(LOCALSTORAGE.PERMISSIONS, data.permissions || [{ permission_type_name: "all" }]);
+        router.push({ name: RouteNames.AdminList });
     }
 });
 
