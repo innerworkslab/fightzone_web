@@ -53,14 +53,14 @@ class AdminController extends Controller
 
     public function update(Request $request, $id)
     {
-        $validated = $request->validate([
+        $request->validate([
             'name' => 'sometimes|string|max:255',
             'username' => 'sometimes|string|unique:admins,username,' . $id,
             'password' => 'sometimes|string|min:6',
             'is_active' => 'sometimes|boolean'
         ]);
-
-        $admin = $this->service->update($id, $validated);
+        $data = $request->all();
+        $admin = $this->service->update($id, $data);
         if (! $admin) ResponseMessage('Admin not found', 404);
         ResponseData($admin);
     }
