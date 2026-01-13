@@ -1,0 +1,21 @@
+{
+    "compilerOptions": {
+      "target": "ESNext",
+      "module": "ESNext",
+      "strict": true,
+      "moduleResolution": "Node",
+      "esModuleInterop": true,
+      "skipLibCheck": true,
+      "forceConsistentCasingInFileNames": true,
+      "outDir": "./public/build",
+      "baseUrl": ".",
+      "paths": {
+        "@/*": ["resources/js/ts/*", "./*"]
+      },
+      "types": [
+        "vite/client",
+        "vue3-toastify/global"
+      ]
+    },
+    "include": ["resources/js/**/*", "resources/views/**/*"]
+}
