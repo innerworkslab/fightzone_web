@@ -52,7 +52,7 @@ class UserController extends Controller
 
     public function update(Request $request, $id)
     {
-        $validated = $request->validate([
+        $request->validate([
             'name' => 'sometimes|string|max:255',
             'phone_number' => 'sometimes|string|unique:users,phone_number,' . $id,
             'password' => 'sometimes|string|min:6',
@@ -60,7 +60,8 @@ class UserController extends Controller
             'is_verified' => 'sometimes|boolean'
         ]);
 
-        $user = $this->service->update($id, $validated);
+        $data = $request->all();
+        $user = $this->service->update($id, $data);
         if (! $user) ResponseMessage('User not found', 404);
         ResponseData($user);
     }

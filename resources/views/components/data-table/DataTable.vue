@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import ScrollArea from "@/components/ui/scroll-area/ScrollArea.vue";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "../../../js/ts/components/ui/table";
 import { Props } from "./type";
 import { useRouter } from "vue-router";
@@ -129,7 +130,6 @@ tr:last-child {
     border-bottom: none;
 }
 
-/* Red indicator strip on hover now uses variable */
 .group:hover td:first-child {
     box-shadow: inset 4px 0 0 0 var(--primary);
 }

@@ -3,6 +3,11 @@ import { ref } from "vue";
 import type { AxiosRequestConfig, AxiosResponse } from "axios";
 import api from "@/lib/utils.axios";
 
+export interface APIResult<T> {
+    success: boolean;
+    data: T;
+}
+
 export function useApi<T = any>() {
     const data = ref<T | null>(null);
     const error = ref<any>(null);

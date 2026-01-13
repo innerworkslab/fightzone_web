@@ -23,8 +23,6 @@ const paginationInfo = computed(() => {
     return (data.value as any)?.data || {};
 });
 
-provide('paymentListRefresh', refresh);
-
 const startIndex = computed(() => {
     const page = filters.value.page || 1;
     const limit = filters.value.limit || 20;
@@ -62,5 +60,6 @@ watch(
         <p class="absolute top-[20px] left-[15px]">
             Total: {{ dataStore.totalItems }}
         </p>
+        <Pagination />
     </div>
 </template>

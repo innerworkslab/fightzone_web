@@ -103,62 +103,62 @@ const router = createRouter({
     routes,
 });
 
-// router.beforeEach((to, from, next) => {
-//     const requiresAuth = to.meta.requiresAuth;
-//     const accessToken = getDecryptedCookie(COOKIES.ACCESS_TOKEN);
-//     const isAuthenticated = !!accessToken;
-//     const userPermissions =
-//         getDecryptedLocalStorage(LOCALSTORAGE.PERMISSIONS) || [];
+router.beforeEach((to, from, next) => {
+    const requiresAuth = to.meta.requiresAuth;
+    const accessToken = getDecryptedCookie(COOKIES.ACCESS_TOKEN);
+    const isAuthenticated = !!accessToken;
+    const userPermissions =
+        getDecryptedLocalStorage(LOCALSTORAGE.PERMISSIONS) || [];
 
-//     const hasRequiredPermission = (requiredPermissions: string[]): boolean => {
-//         console.log("User Permissions:", userPermissions);
-//         console.log("Required Permissions:", requiredPermissions);
+    const hasRequiredPermission = (requiredPermissions: string[]): boolean => {
+        // console.log("User Permissions:", userPermissions);
+        // console.log("Required Permissions:", requiredPermissions);
 
-//         const hasFullAccess = userPermissions.some(
-//             (p: any) => p.permission_type && p.permission_type.name === "all"
-//         );
+        const hasFullAccess = userPermissions.some(
+            (p: any) => p.permission_type && p.permission_type.name === "all"
+        );
 
-//         if (hasFullAccess) {
-//             return true;
-//         }
+        if (hasFullAccess) {
+            return true;
+        }
 
-//         if (!requiredPermissions || requiredPermissions.length === 0) {
-//             return true;
-//         }
+        if (!requiredPermissions || requiredPermissions.length === 0) {
+            return true;
+        }
 
-//         return requiredPermissions.some((requiredPerm) =>
-//             userPermissions.some(
-//                 (userPerm: any) =>
-//                     userPerm.permission_type_name &&
-//                     userPerm.permission_type_name === requiredPerm
-//             )
-//         );
-//     };
+        return requiredPermissions.some((requiredPerm) =>
+            userPermissions.some(
+                (userPerm: any) =>
+                    userPerm.permission_type_name &&
+                    userPerm.permission_type_name === requiredPerm
+            )
+        );
+    };
 
-//     if (requiresAuth) {
-//         if (!isAuthenticated) {
-//             next({ name: RouteNames.Login });
-//         } else {
-//             const requiredPermissions = to.meta.permissions as
-//                 | string[]
-//                 | undefined;
+    if (requiresAuth) {
+        if (!isAuthenticated) {
+            next({ name: RouteNames.Login });
+        } else {
+            const requiredPermissions = to.meta.permissions as
+                | string[]
+                | undefined;
 
-//             if (
-//                 requiredPermissions &&
-//                 !hasRequiredPermission(requiredPermissions)
-//             ) {
-//                 next({ name: RouteNames.Unauthorized });
-//             } else {
-//                 next();
-//             }
-//         }
-//     } else {
-//         if (to.name === RouteNames.Login && isAuthenticated) {
-//             next({ name: RouteNames.AdminList });
-//         } else {
-//             next();
-//         }
-//     }
-// });
+            if (
+                requiredPermissions &&
+                !hasRequiredPermission(requiredPermissions)
+            ) {
+                next({ name: RouteNames.Unauthorized });
+            } else {
+                next();
+            }
+        }
+    } else {
+        if (to.name === RouteNames.Login && isAuthenticated) {
+            next({ name: RouteNames.AdminList });
+        } else {
+            next();
+        }
+    }
+});
 
 export default router;

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, ref, watch, inject } from "vue";
+import { computed, watch, inject, ref } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import * as yup from "yup";
 import { useForm, useField, ErrorMessage } from "vee-validate";
@@ -8,8 +8,6 @@ import { toast } from "vue3-toastify";
 import { RouteNames } from "@/config/route.config";
 import { UserPayload, UserServices } from "@/api/User.service";
 import { Button } from "@/components/ui/button";
-
-const userListRefresh = inject<() => void>('userListRefresh');
 
 const route = useRoute();
 const router = useRouter();
@@ -28,19 +26,26 @@ const schema = yup.object({
     phone_number: yup.string().required("Phone number is required"),
     name: yup.string().required("Name is required"),
     password: isUpdateMode.value
-        ? yup.string().nullable()
+        ? yup.string().nullable().transform(v => v === "" ? null : v)
         : yup.string().required("Password is required").min(6, "Min 6 characters"),
     confirm_password: yup.string()
         .oneOf([yup.ref('password')], 'Passwords must match')
         .when('password', {
             is: (val: string) => val && val.length > 0,
-            then: (schema) => schema.required("Confirm password is required"),
-            otherwise: (schema) => schema.nullable()
+            then: (s) => s.required("Confirm password is required"),
+            otherwise: (s) => s.strip()
         }),
 });
 
 const { handleSubmit, setValues } = useForm<UserPayload>({
     validationSchema: schema,
+    initialValues: {
+        phone_number: "",
+        name: "",
+        password: "",
+        is_active: 1,
+        is_verified: 0
+    }
 });
 
 const { value: phone_number } = useField<string>("phone_number");
@@ -49,88 +54,89 @@ const { value: password } = useField<string>("password");
 const { value: confirm_password } = useField<string>("confirm_password");
 
 watch(fetchedUser, (newVal) => {
+
     if (newVal) {
         setValues({
-            phone_number: newVal.phone_number,
-            name: newVal.name,
+            phone_number: newVal.data.phone_number,
+            name: newVal.data.name,
+            password: "",
         });
     }
-}, { immediate: true });
+}, { immediate: true, deep: true });
 
 const submitForm = handleSubmit(async (values) => {
     if (isReadMode.value) return;
 
     try {
         let response;
+
         if (isUpdateMode.value) {
-            response = await updateUser(userId, values);
-            if (response?.success) {
-                toast.success("User updated successfully");
-                // Trigger list refresh using injected function
-                userListRefresh?.();
-                router.push({ name: RouteNames.UserList });
+            if (!password.value) {
+                delete values.password
             }
+            response = await updateUser(userId, values);
         } else {
             response = await createUser(values);
-            if (response?.success) {
-                toast.success("User created successfully");
-                // Trigger list refresh using injected function
-                userListRefresh?.();
-                router.push({ name: RouteNames.UserList });
-            }
+        }
+
+        if (response) {
+            toast.success(isUpdateMode.value ? "User updated successfully" : "User created successfully");
+            router.push({ name: RouteNames.UserList });
         }
     } catch (error) { }
 });
 </script>
 
 <template>
-    <div v-if="isFetching" class="py-10 text-center">Loading data...</div>
+    <div v-if="(isUpdateMode || isReadMode) && isFetching" class="py-10 text-center text-primary font-medium">
+        Loading user details...
+    </div>
 
     <form v-else @submit.prevent="submitForm" class="space-y-4">
-        <div class="grid grid-cols-2 gap-3">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
                 <FormInput label="Full Name" id="name" v-model="name" type="text" placeholder="Enter full name"
                     :disabled="isReadMode" />
-                <ErrorMessage name="name" class="block text-start text-red-500 text-sm" />
+                <ErrorMessage name="name" class="block text-start text-red-500 text-sm mt-1" />
             </div>
 
             <div>
                 <FormInput label="Phone Number" id="phone_number" v-model="phone_number" type="tel"
                     placeholder="Enter phone number" :disabled="isReadMode" />
-                <ErrorMessage name="phone_number" class="block text-start text-red-500 text-sm" />
+                <ErrorMessage name="phone_number" class="block text-start text-red-500 text-sm mt-1" />
             </div>
 
-            <div v-if="!isReadMode">
-                <FormInput label="Password" id="password" v-model="password" type="password"
-                    :placeholder="isUpdateMode ? 'Leave blank to keep current' : 'Enter password'" />
-                <ErrorMessage name="password" class="block text-start text-red-500 text-sm" />
-            </div>
+            <template v-if="!isReadMode">
+                <div>
+                    <FormInput label="Password" id="password" v-model="password" type="password"
+                        :placeholder="isUpdateMode ? 'Leave blank to keep current' : 'Enter password'" />
+                    <ErrorMessage name="password" class="block text-start text-red-500 text-sm mt-1" />
+                </div>
 
-            <div v-if="!isReadMode">
-                <FormInput label="Confirm Password" id="confirm_password" v-model="confirm_password" type="password"
-                    placeholder="Confirm your password" />
-                <ErrorMessage name="confirm_password" class="block text-start text-red-500 text-sm" />
-            </div>
+                <div>
+                    <FormInput label="Confirm Password" id="confirm_password" v-model="confirm_password" type="password"
+                        :placeholder="isUpdateMode && !password ? 'No need to fill' : 'Confirm your password'"
+                        :disabled="isUpdateMode && !password" />
+                    <ErrorMessage name="confirm_password" class="block text-start text-red-500 text-sm mt-1" />
+                </div>
+            </template>
         </div>
 
         <div v-if="!isReadMode" class="w-full flex justify-end pt-6">
-            <Button variant="default" type="submit" :disabled="isSubmitting" class="btn-primary"
-                :class="{ 'btn-processing': isSubmitting }">
-                <span class="relative z-10 flex items-center justify-center gap-2">
-                    <template v-if="isSubmitting">
-                        <svg class="animate-spin h-4 w-4 text-current" viewBox="0 0 24 24">
-                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"
-                                fill="none"></circle>
-                            <path class="opacity-75" fill="currentColor"
-                                d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z">
-                            </path>
-                        </svg>
-                        PROCESSING...
-                    </template>
-                    <template v-else>
-                        {{ isUpdateMode ? "Update User" : "Create User" }}
-                    </template>
-                </span>
+            <Button variant="default" type="submit" :disabled="isSubmitting" class="min-w-[140px]">
+                <template v-if="isSubmitting">
+                    <svg class="animate-spin -ml-1 mr-3 h-4 w-4 text-white" fill="none" viewBox="0 0 24 24">
+                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4">
+                        </circle>
+                        <path class="opacity-75" fill="currentColor"
+                            d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z">
+                        </path>
+                    </svg>
+                    Processing...
+                </template>
+                <template v-else>
+                    {{ isUpdateMode ? "Update User" : "Create User" }}
+                </template>
             </Button>
         </div>
     </form>

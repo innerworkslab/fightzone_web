@@ -17,7 +17,7 @@ export const PaymentColumns: ColumnDef<any>[] = [
         render: (row) => {
             const logoUrl = row.logo_url;
             if (logoUrl) {
-                return `<img src="${logoUrl}" alt="Logo" class="w-10 h-10 rounded-full object-cover mx-auto" />`;
+                return `<img src="${logoUrl}" alt="Logo" class="max-w-18 h-10 rounded-sm object-cover mx-auto" />`;
             }
             return `<div class="w-10 h-10 rounded-full bg-gray-200 flex items-center justify-center mx-auto">
                 <CreditCard class="h-5 w-5 text-gray-500" />
@@ -45,50 +45,12 @@ export const PaymentColumns: ColumnDef<any>[] = [
         render: (row) => {
             const accountNumber = row.account_number;
             if (!accountNumber) return "N/A";
-
-            // Mask the account number for security (show last 4 digits)
             const masked =
                 accountNumber.length > 4
                     ? `****${accountNumber.slice(-4)}`
                     : accountNumber;
 
             return `<span class="font-mono">${masked}</span>`;
-        },
-    },
-    {
-        label: "Status",
-        key: "status",
-        render: (row) => {
-            const status = row.status;
-            const statusConfig: Record<
-                string,
-                { color: string; bg: string; label: string }
-            > = {
-                active: {
-                    color: "text-green-600",
-                    bg: "bg-green-100",
-                    label: "Active",
-                },
-                inactive: {
-                    color: "text-red-600",
-                    bg: "bg-red-100",
-                    label: "Inactive",
-                },
-            };
-
-            const config = statusConfig[status] || {
-                color: "text-gray-600",
-                bg: "bg-gray-100",
-                label: "Unknown",
-            };
-
-            return `
-            <div class="flex items-center gap-2 w-fit px-2.5 py-1 rounded-full border ${config.bg}">
-                <span class="text-[10px] font-black uppercase tracking-widest ${config.color}">
-                    ${config.label}
-                </span>
-            </div>
-        `;
         },
     },
     {

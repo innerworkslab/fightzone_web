@@ -7,14 +7,16 @@ import { deleteCookie } from '@/lib/utils.cookies';
 import { COOKIES, LOCALSTORAGE } from '@/constant/constant.global';
 import { deleteLocalStorage, getDecryptedLocalStorage } from "@/lib/utils.localStorage";
 import { useDataStore } from "@/store/data";
+import { useModalStore } from "@/store/modal";
 import {
-    Swords, Users, Dumbbell, Trophy, ChevronRight,
-    LogOut, User, Sun, Moon, Monitor
+    ChevronRight,
+    LogOut, User, Sun, Moon
 } from "lucide-vue-next";
 
 const route = useRoute();
 const router = useRouter();
 const dataStore = useDataStore();
+const modalStore = useModalStore();
 
 const authUser = ref(getDecryptedLocalStorage(LOCALSTORAGE.AUTH_USER));
 const isDark = ref(true);
@@ -65,9 +67,15 @@ onUnmounted(() => {
 });
 
 const handleLogout = () => {
-    deleteCookie(COOKIES.ACCESS_TOKEN)
-    deleteLocalStorage(LOCALSTORAGE.PERMISSIONS)
-    router.push('/');
+    modalStore.openConfirmModal({
+        message: "Are you sure you want to logout?",
+        onApprove: () => {
+            deleteCookie(COOKIES.ACCESS_TOKEN);
+            deleteLocalStorage(LOCALSTORAGE.PERMISSIONS);
+            router.push('/');
+        },
+        approveBtnText: "Logout",
+    });
 }
 
 const sidebarItems = computed<SidebarItem[]>(() => {

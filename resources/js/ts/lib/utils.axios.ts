@@ -3,7 +3,7 @@ import axios from "axios";
 import { toast } from "vue3-toastify";
 import { deleteLocalStorage } from "./utils.localStorage";
 import { deleteCookie, getDecryptedCookie } from "./utils.cookies";
-import { COOKIES, LOCALSTORAGE } from "@/constant/constant.global";
+import { API_URLS, COOKIES, LOCALSTORAGE } from "@/constant/constant.global";
 
 const apiUrl = import.meta.env.VITE_APP_URL || "";
 
@@ -47,15 +47,18 @@ api.interceptors.response.use(
         const { response, config } = error;
         console.log("response", response);
 
-        if (response?.data?.response?.message) {
-            toast.error(response.data.response.message);
+        const loginURL = `/${API_URLS.VERSION}/${API_URLS.MANAGEMENT}/${API_URLS.LOGIN}`;
+
+        if (response?.data?.message) {
+            toast.error(response.data.message);
         } else {
             toast.error("An unexpected error occurred.");
         }
-        if (response?.status === 403) {
+
+        if (response?.status === 403 && config?.url !== loginURL) {
             window.location.href = "/unauthorized";
         }
-        if (response?.status === 401 && config?.url !== "/management/login") {
+        if (response?.status === 401) {
             deleteCookie(COOKIES.ACCESS_TOKEN);
             deleteLocalStorage(LOCALSTORAGE.PERMISSIONS);
             window.location.href = "/";
