@@ -17,4 +17,6 @@ yarn-error.log
 /.fleet
 /.idea
 /.vscode
+/.cursor
 *.code-workspace
+@resources/js/ts/components.d.ts
