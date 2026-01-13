@@ -20,11 +20,13 @@ Route::prefix('/v1')->group(function () {
     Route::middleware('auth:api')->group(function () {
         Route::post('/logout', [LoginController::class, 'logout']);
 
-        Route::get('/payment-methods', [PaymentMethodController::class, 'index']);
+        Route::middleware(['is.verified', 'is.active'])->group(function () {
+            Route::get('/payment-methods', [PaymentMethodController::class, 'index']);
 
-        Route::prefix('/deposits')->group(function () {
-            Route::get('/', [DepositController::class, 'index']);
-            Route::post('/', [DepositController::class, 'store']);
+            Route::prefix('/deposits')->group(function () {
+                Route::get('/', [DepositController::class, 'index']);
+                Route::post('/', [DepositController::class, 'store']);
+            });
         });
     });
 });
