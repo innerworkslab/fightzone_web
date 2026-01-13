@@ -8,7 +8,7 @@ class DepositRepository implements DepositRepositoryInterface
 {
     public function all(?array $filters=[], ?string $status = null, ?int $limit = null)
     {
-        $query = Deposit::query();
+        $query = Deposit::query()->with('user')->orderBy('id','desc');
 
         $normalized = [];
         foreach ($filters ?? [] as $k => $v) {
