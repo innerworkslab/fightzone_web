@@ -10,6 +10,7 @@ use App\Http\Controllers\API\v1\User\Shop\PaymentMethodController;
 use App\Http\Controllers\API\v1\User\Shop\PackageController;
 use App\Http\Controllers\API\v1\User\Shop\DepositController;
 use App\Http\Controllers\API\v1\User\Shop\PurchaseController;
+use App\Http\Controllers\API\v1\User\ProfileController;
 
 Route::prefix('/v1')->group(function () {
     Route::controller(RegisterController::class)->group(function () {
@@ -23,6 +24,14 @@ Route::prefix('/v1')->group(function () {
         Route::post('/logout', [LoginController::class, 'logout']);
 
         Route::middleware(['is.verified', 'is.active'])->group(function () {
+            Route::prefix('/profile')->group(function () {
+                Route::get('/', [ProfileController::class, 'index']);
+                Route::get('/details', [ProfileController::class, 'show']);
+                Route::get('/balance', [ProfileController::class, 'balance']);
+                Route::get('/deposits', [ProfileController::class, 'deposits']);
+                Route::get('/purchases', [ProfileController::class, 'purchases']);
+            });
+
             Route::get('/payment-methods', [PaymentMethodController::class, 'index']);
             Route::get('/packages', [PackageController::class, 'index']);
 

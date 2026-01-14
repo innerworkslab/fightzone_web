@@ -165,4 +165,9 @@ class User extends Authenticatable implements MustVerifyEmail
         }
         return null;
     }
+
+    public function pointBalance()
+    {
+        return $this->hasOne(PointBalance::class);
+    }
 }
