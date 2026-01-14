@@ -9,6 +9,7 @@ use App\Http\Controllers\API\v1\User\Auth\RegisterController;
 use App\Http\Controllers\API\v1\User\Shop\PaymentMethodController;
 use App\Http\Controllers\API\v1\User\Shop\PackageController;
 use App\Http\Controllers\API\v1\User\Shop\DepositController;
+use App\Http\Controllers\API\v1\User\Shop\PurchaseController;
 
 Route::prefix('/v1')->group(function () {
     Route::controller(RegisterController::class)->group(function () {
@@ -28,6 +29,12 @@ Route::prefix('/v1')->group(function () {
             Route::prefix('/deposits')->group(function () {
                 Route::get('/', [DepositController::class, 'index']);
                 Route::post('/', [DepositController::class, 'store']);
+            });
+
+            Route::prefix('/purchases')->group(function () {
+                Route::get('/', [PurchaseController::class, 'index']);
+                Route::post('/', [PurchaseController::class, 'store']);
+                Route::get('/{id}', [PurchaseController::class, 'show']);
             });
         });
     });

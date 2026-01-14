@@ -21,18 +21,24 @@ class PointBalance extends Model
     }
 
     /**
-     * Atomically add points for a user and record a point transaction.
+     * Atomically adjust points for a user and record a point transaction.
+     * Points can be positive (add) or negative (deduct).
+     * For deductions, validates sufficient balance.
      *
      * @param int $userId
-     * @param int $points
-     * @param int|null $referenceId
-     * @param string $type
+     * @param int $points Positive for adding, negative for deducting
+     * @param mixed $referenceable Model instance, [type,id] array, or int ID
+     * @param string $type Transaction type (deposit, purchase, etc.)
      * @param string|null $note
      * @return self
+     * @throws \RuntimeException If insufficient balance for deduction
      */
-    public static function addPointsForUser(int $userId, int $points, $referenceable = null, string $type = 'deposit', ?string $note = null): self
+    public static function adjustPointsForUser(int $userId, int $points, $referenceable = null, ?int $referenceableId=null, string $type = 'adjustment', ?string $note = null): self
     {
-        return DB::transaction(function () use ($userId, $points, $referenceable, $type, $note) {
+        if(gettype($referenceable) === 'string' && !$referenceableId){
+            throw new \RuntimeException('Referenceable type id must be present when specifying morph-mapped referenceable type');
+        }
+        return DB::transaction(function () use ($userId, $points, $referenceable, $referenceableId, $type, $note) {
             $balance = self::where('user_id', $userId)->lockForUpdate()->first();
 
             if (! $balance) {
@@ -40,7 +46,14 @@ class PointBalance extends Model
             }
 
             $before = (int) $balance->points;
-            $balance->points = $before + $points;
+            $newBalance = $before + $points;
+
+            // Validate sufficient balance for deductions
+            if ($points < 0 && $newBalance < 0) {
+                throw new \RuntimeException("User doesn't have sufficient point balance for this transaction");
+            }
+
+            $balance->points = $newBalance;
             $balance->save();
 
             $txData = [
@@ -61,6 +74,9 @@ class PointBalance extends Model
                     [$refType, $refId] = $referenceable;
                     $txData['referenceable_type'] = $refType;
                     $txData['referenceable_id'] = $refId;
+                }elseif (gettype($referenceable) === 'string') {
+                    $txData['referenceable_type'] = $referenceable;
+                    $txData['referenceable_id'] = $referenceableId;
                 } elseif (is_int($referenceable)) {
                     // Leave referenceable_type null; caller should provide type when needed.
                     $txData['referenceable_id'] = $referenceable;
@@ -71,5 +87,14 @@ class PointBalance extends Model
 
             return $balance;
         });
+    }
+
+    /**
+     * Legacy method for backward compatibility.
+     * @deprecated Use adjustPointsForUser instead
+     */
+    public static function addPointsForUser(int $userId, int $points, $referenceable = null, string $type = 'deposit', ?string $note = null): self
+    {
+        return self::adjustPointsForUser($userId, $points, $referenceable, $type, $note);
     }
 }

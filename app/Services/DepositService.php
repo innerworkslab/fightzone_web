@@ -102,7 +102,14 @@ class DepositService
             $points = (int) floor(($deposit->amount / $minor) * $rate);
 
             if ($points > 0) {
-                PointBalance::addPointsForUser($deposit->user_id, $points, $deposit, 'deposit', "Deposit confirmed: {$deposit->transaction_id}");
+                PointBalance::adjustPointsForUser(
+                    $deposit->user_id,
+                    $points,
+                    'deposit',
+                    $deposit->id,
+                    'deposit',
+                    "Deposit confirmed: {$deposit->transaction_id}"
+                );
             }
 
             return $deposit;

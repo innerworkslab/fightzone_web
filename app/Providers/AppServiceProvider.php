@@ -25,6 +25,7 @@ class AppServiceProvider extends ServiceProvider
             'admin' => 'App\Models\Admin',
             'user' => 'App\Models\User',
             'deposit' => 'App\Models\Deposit',
+            'package' => 'App\Models\Package'
         ]);
     }
 }

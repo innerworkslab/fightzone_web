@@ -9,6 +9,7 @@ use App\Http\Controllers\API\v1\Management\UserController;
 use App\Http\Controllers\API\v1\Management\PaymentMethodController;
 use App\Http\Controllers\API\v1\Management\PackageController;
 use App\Http\Controllers\API\v1\Management\DepositController;
+use App\Http\Controllers\API\v1\Management\PurchaseController;
 
 Route::prefix('/v1/management')->group(function () {
     Route::post('/login', [LoginController::class, 'login']);
@@ -66,6 +67,13 @@ Route::prefix('/v1/management')->group(function () {
                 Route::get('/{id}', [DepositController::class, 'show']);
                 Route::post('/{id}/confirm', [DepositController::class, 'confirm']);
                 Route::post('/{id}/reject', [DepositController::class, 'reject']);
+            });
+
+            Route::prefix('/purchases')->group(function () {
+                Route::get('/', [PurchaseController::class, 'index']);
+                Route::get('/{id}', [PurchaseController::class, 'show']);
+                Route::post('/{id}/confirm', [PurchaseController::class, 'confirm']);
+                Route::post('/{id}/reject', [PurchaseController::class, 'reject']);
             });
         });
     });
