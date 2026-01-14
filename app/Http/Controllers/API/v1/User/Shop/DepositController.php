@@ -3,7 +3,6 @@
 namespace App\Http\Controllers\API\v1\User\Shop;
 
 use Illuminate\Http\Request;
-use Illuminate\Http\JsonResponse;
 
 use App\Http\Controllers\Controller;
 
@@ -34,7 +33,7 @@ class DepositController extends Controller
         $data = $request->validate([
             'amount' => 'required|numeric|min:0.01',
             'payment_method_id' => 'required|exists:payment_methods,id',
-            'transaction_id' => 'required',
+            // 'transaction_id' => 'required',
             'screenshot' => 'required|file|mimes:jpg,jpeg,png,pdf|max:5120',
         ]);
 
@@ -44,7 +43,6 @@ class DepositController extends Controller
             $userId,
             $request->payment_method_id,
             $request->amount,
-            $request->transaction_id
         );
 
         $uploaded = UploadFileToServer($request, "screenshot", "users/{$userId}/deposit_screenshots");

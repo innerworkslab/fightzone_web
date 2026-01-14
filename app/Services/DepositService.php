@@ -48,8 +48,9 @@ class DepositService
             : $query->get();
     }
 
-    public function createDeposit(int $userId, int $paymentMethodId, float $amount, string $trId)
+    public function createDeposit(int $userId, int $paymentMethodId, float $amount)
     {
+        $trId = Str::random(8);
         return $this->repo->create([
             'user_id' => $userId,
             'payment_method_id' => $paymentMethodId,
