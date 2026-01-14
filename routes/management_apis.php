@@ -7,6 +7,7 @@ use App\Http\Controllers\API\v1\Management\LoginController;
 use App\Http\Controllers\API\v1\Management\AdminController;
 use App\Http\Controllers\API\v1\Management\UserController;
 use App\Http\Controllers\API\v1\Management\PaymentMethodController;
+use App\Http\Controllers\API\v1\Management\PackageController;
 use App\Http\Controllers\API\v1\Management\DepositController;
 
 Route::prefix('/v1/management')->group(function () {
@@ -40,6 +41,17 @@ Route::prefix('/v1/management')->group(function () {
 
             Route::prefix('/payment-methods')->group(function () {
                 Route::controller(PaymentMethodController::class)->group(function () {
+                    Route::get('/', 'index');
+                    Route::get('/{id}', 'show');
+                    Route::post('/', 'store');
+                    Route::post('/{id}', 'update');
+                    Route::post('/{id}/toggle', 'toggle');
+                    Route::delete('/{id}', 'destroy');
+                });
+            });
+
+            Route::prefix('/packages')->group(function () {
+                Route::controller(PackageController::class)->group(function () {
                     Route::get('/', 'index');
                     Route::get('/{id}', 'show');
                     Route::post('/', 'store');

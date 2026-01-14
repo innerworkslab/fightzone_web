@@ -7,6 +7,7 @@ use App\Http\Controllers\API\v1\User\Auth\LoginController;
 use App\Http\Controllers\API\v1\User\Auth\RegisterController;
 
 use App\Http\Controllers\API\v1\User\Shop\PaymentMethodController;
+use App\Http\Controllers\API\v1\User\Shop\PackageController;
 use App\Http\Controllers\API\v1\User\Shop\DepositController;
 
 Route::prefix('/v1')->group(function () {
@@ -22,6 +23,7 @@ Route::prefix('/v1')->group(function () {
 
         Route::middleware(['is.verified', 'is.active'])->group(function () {
             Route::get('/payment-methods', [PaymentMethodController::class, 'index']);
+            Route::get('/packages', [PackageController::class, 'index']);
 
             Route::prefix('/deposits')->group(function () {
                 Route::get('/', [DepositController::class, 'index']);
