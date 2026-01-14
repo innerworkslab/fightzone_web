@@ -1,6 +1,7 @@
 import { RouteNames } from "../config/route.config";
 import { createRouter, createWebHistory } from "vue-router";
 import Login from "../../../views/components/login/Login.vue";
+import Unauthorized from "../../../views/components/unauthorized/Unauthorized.vue";
 import AdminList from "../../../views/components/admin/AdminList.vue";
 import AdminForm from "../../../views/components/admin/AdminForm.vue";
 import UserList from "../../../views/components/user/UserList.vue";
@@ -16,6 +17,11 @@ const routes = [
         path: "/",
         name: RouteNames.Login,
         component: Login,
+    },
+    {
+        path: "/unauthorized",
+        name: RouteNames.Unauthorized,
+        component: Unauthorized,
     },
     {
         path: "/auth",

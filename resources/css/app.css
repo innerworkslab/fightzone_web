@@ -216,3 +216,65 @@
         }
     }
 }
+
+/* Toast Style */
+/* Container padding */
+.Toastify__toast-container {
+    width: 380px !important;
+}
+
+/* HUD Style Toast */
+.Toastify__toast {
+    background: rgba(10, 10, 10, 0.9) !important;
+    backdrop-filter: blur(16px) !important;
+    border-radius: 0 !important;
+    /* Sharp corners for industrial look */
+    border: 1px solid var(--border) !important;
+    clip-path: polygon(0% 0%, 100% 0%, 100% 85%, 95% 100%, 0% 100%);
+    /* Tactical clipped corner */
+    padding: 16px !important;
+}
+
+/* Dark/Light contrast fixes */
+.dark .Toastify__toast {
+    border: 1px solid rgba(var(--primary), 0.3) !important;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.8), inset 0 0 10px rgba(var(--primary), 0.05) !important;
+}
+
+/* Success Glow */
+.Toastify__toast--success {
+    border-top: 2px solid var(--primary) !important;
+}
+
+/* Success Icon & Text */
+.Toastify__toast--success .Toastify__toast-body {
+    color: var(--foreground) !important;
+    font-family: "Inter", sans-serif;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    font-size: 11px;
+}
+
+/* Progress Bar as a "Loading Bar" */
+.Toastify__progress-bar {
+    height: 3px !important;
+    background: var(--primary) !important;
+    box-shadow: 0 0 12px var(--primary);
+}
+
+/* Close button shift */
+.Toastify__close-button {
+    align-self: flex-start;
+    color: var(--primary) !important;
+}
+
+:root:not(.dark) .Toastify__toast {
+    background: #ffffff !important;
+    border: 1px solid #e2e8f0 !important;
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1) !important;
+}
+
+:root:not(.dark) .Toastify__toast--success {
+    border-top: 2px solid var(--primary) !important;
+}

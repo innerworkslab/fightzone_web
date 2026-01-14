@@ -1,9 +1,9 @@
-/// <reference types="vite/client" />
 import axios from "axios";
 import { toast } from "vue3-toastify";
 import { deleteLocalStorage } from "./utils.localStorage";
 import { deleteCookie, getDecryptedCookie } from "./utils.cookies";
 import { API_URLS, COOKIES, LOCALSTORAGE } from "@/constant/constant.global";
+import { RouteNames } from "@/config/route.config";
 
 const apiUrl = import.meta.env.VITE_APP_URL || "";
 
@@ -15,7 +15,7 @@ const api = axios.create({
 function cleanParams(params: Record<string, any>) {
     if (!params || typeof params !== "object") return params;
     return Object.fromEntries(
-        Object.entries(params).filter(
+    Object.entries(params).filter(
             ([, value]) => value !== null && value !== undefined && value !== ""
         )
     );
@@ -55,9 +55,15 @@ api.interceptors.response.use(
             toast.error("An unexpected error occurred.");
         }
 
-        if (response?.status === 403 && config?.url !== loginURL) {
-            window.location.href = "/unauthorized";
+        if (response?.status === 403) {
+            if (config?.url !== loginURL) {
+                window.location.href = RouteNames.Unauthorized;
+            }
+            deleteCookie(COOKIES.ACCESS_TOKEN);
+            deleteLocalStorage(LOCALSTORAGE.PERMISSIONS);
+            window.location.href = "/";
         }
+
         if (response?.status === 401) {
             deleteCookie(COOKIES.ACCESS_TOKEN);
             deleteLocalStorage(LOCALSTORAGE.PERMISSIONS);
