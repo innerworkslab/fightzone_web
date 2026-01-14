@@ -34,3 +34,9 @@ export const STATUS = {
 export const Keys = {
     AUTH: "auth",
 };
+
+export const SUCCESS_MESSAGE = {
+    VERIFIED: "Verified successful.",
+    ACTIVATED: "Activated successful.",
+    INACTIVATED: "Inactivated successful.",
+};

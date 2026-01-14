@@ -1,7 +1,11 @@
-import { formatPriceOrNumber } from "../../../js/ts/utils/helper";
 import { ActionDef, ColumnDef } from "../data-table/type";
 import { Edit2, Folder, Minus, Plus } from "lucide-vue-next";
 import { RouteNames } from "../../../js/ts/config/route.config";
+import { SUCCESS_MESSAGE } from "@/constant/constant.global";
+import { AdminServices } from "@/api/Admin.service";
+import { toast } from "vue3-toastify";
+
+const { toggleStatus } = AdminServices.useAdminActions();
 
 export const AdminColumns: ColumnDef<any>[] = [
     {
@@ -50,6 +54,26 @@ export const AdminColumns: ColumnDef<any>[] = [
                 </span>
             </div>
         `;
+        },
+        onClick: (row, extraArgs) => {
+            extraArgs.modalStore.openConfirmModal({
+                message: row.is_active
+                    ? "Are you sure you want to inactivate?"
+                    : "Are you sure you want to activate?",
+                onApprove: async () => {
+                    const response = await toggleStatus(row.id);
+                    if (response?.success) {
+                        toast.success(
+                            response.message ??
+                                (row.is_active
+                                    ? SUCCESS_MESSAGE.INACTIVATED
+                                    : SUCCESS_MESSAGE.ACTIVATED)
+                        );
+                        extraArgs.refresh();
+                    }
+                },
+                approveBtnText: "Verify",
+            });
         },
     },
 ];

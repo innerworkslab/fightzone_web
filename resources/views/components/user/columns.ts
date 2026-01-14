@@ -1,7 +1,11 @@
-import { formatPriceOrNumber } from "../../../js/ts/utils/helper";
 import { ActionDef, ColumnDef } from "../data-table/type";
 import { Edit2, Folder, Minus, Plus } from "lucide-vue-next";
 import { RouteNames } from "../../../js/ts/config/route.config";
+import { UserServices } from "@/api/User.service";
+import { SUCCESS_MESSAGE } from "@/constant/constant.global";
+import { toast } from "vue3-toastify";
+
+const { updateUser, toggleStatus } = UserServices.useUserActions();
 
 export const UserColumns: ColumnDef<any>[] = [
     {
@@ -40,6 +44,23 @@ export const UserColumns: ColumnDef<any>[] = [
             </div>
         `;
         },
+        onClick: (row, extraArgs) => {
+            extraArgs.modalStore.openConfirmModal({
+                message: "Are you sure you want to verify?",
+                onApprove: async () => {
+                    const response = await updateUser(row.id, {
+                        is_verified: 1,
+                    });
+                    if (response?.success) {
+                        toast.success(
+                            response.message ?? SUCCESS_MESSAGE.VERIFIED
+                        );
+                    }
+                    extraArgs.refresh();
+                },
+                approveBtnText: "Verify",
+            });
+        },
     },
     {
         label: "Status",
@@ -70,6 +91,26 @@ export const UserColumns: ColumnDef<any>[] = [
                 </span>
             </div>
         `;
+        },
+        onClick: (row, extraArgs) => {
+            extraArgs.modalStore.openConfirmModal({
+                message: row.is_active
+                    ? "Are you sure you want to inactivate?"
+                    : "Are you sure you want to activate?",
+                onApprove: async () => {
+                    const response = await toggleStatus(row.id);
+                    if (response?.success) {
+                        toast.success(
+                            response.message ??
+                                (row.is_active
+                                    ? SUCCESS_MESSAGE.INACTIVATED
+                                    : SUCCESS_MESSAGE.ACTIVATED)
+                        );
+                        extraArgs.refresh();
+                    }
+                },
+                approveBtnText: "Verify",
+            });
         },
     },
 ];

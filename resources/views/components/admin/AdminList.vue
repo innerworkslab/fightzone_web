@@ -54,6 +54,7 @@ watch(
         router,
         dataStore,
         modalStore,
+        refresh,
     }" />
 
     <div class="relative flex justify-center items-center">
