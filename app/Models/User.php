@@ -45,7 +45,7 @@ class User extends Authenticatable implements MustVerifyEmail
         'remember_token',
         'otp_code',
         'otp_expires_at',
-        'is_verified',
+        // 'is_verified',
         'email_verification_token',
         'profile_image_path'
     ];
