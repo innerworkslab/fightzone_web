@@ -6,7 +6,7 @@ import { useForm, useField, ErrorMessage } from "vee-validate";
 import { toast } from "vue3-toastify";
 
 import { RouteNames } from "@/config/route.config";
-import { AdminPayload, AdminServices } from "@/api/Admin.service";
+import { AdminsPayload, AdminsServices } from "@/api/Admins.service";
 import { Button } from "@/components/ui/button";
 
 const route = useRoute();
@@ -17,10 +17,10 @@ const isUpdateMode = computed(() => !!route.params.id);
 const isReadMode = computed(() => route.name === RouteNames.ViewAdmin);
 
 const { data: fetchedAdmin, loading: isFetching } = isUpdateMode.value
-    ? AdminServices.useAdminDetail(adminId)
+    ? AdminsServices.useAdminDetail(adminId)
     : { data: ref(null), loading: ref(false) };
 
-const { createAdmin, updateAdmin, loading: isSubmitting } = AdminServices.useAdminActions();
+const { createAdmin, updateAdmin, loading: isSubmitting } = AdminsServices.useAdminActions();
 
 const schema = yup.object({
     username: yup.string().required("Username is required"),
@@ -37,7 +37,7 @@ const schema = yup.object({
         })
 });
 
-const { handleSubmit, setValues } = useForm<AdminPayload>({
+const { handleSubmit, setValues } = useForm<AdminsPayload>({
     validationSchema: schema,
     initialValues: {
         username: "",
@@ -75,12 +75,12 @@ const submitForm = handleSubmit(async (values) => {
             if (!password.value) {
                 delete payload.password
             }
-            response = await updateAdmin(adminId, payload as AdminPayload);
+            response = await updateAdmin(adminId, payload as AdminsPayload);
         } else {
-            response = await createAdmin(payload as AdminPayload);
+            response = await createAdmin(payload as AdminsPayload);
         }
 
-        if (response) {
+        if (response?.success) {
             toast.success(isUpdateMode.value ? "Admin updated successfully" : "Admin created successfully");
             router.push({ name: RouteNames.AdminsList });
         }

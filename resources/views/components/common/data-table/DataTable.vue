@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import ScrollArea from "@/components/ui/scroll-area/ScrollArea.vue";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "../../../js/ts/components/ui/table";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "../../../../js/ts/components/ui/table";
 import { Props } from "./type";
 import { useRouter } from "vue-router";
 const props = defineProps<Props<any>>();
@@ -52,8 +52,11 @@ function goToRoute(col: any, row: any) {
                                 @click="col.onClick ? col.onClick(row, props.extraArgs) : null">
 
                                 <template v-if="col.render">
-                                    <div v-html="col.render(row, rowIndex, props.extraArgs)"
-                                        class="text-xs font-bold tracking-tight"></div>
+                                    <div class="text-xs font-bold tracking-tight">
+                                        <component v-if="typeof col.render(row, rowIndex, props.extraArgs) === 'object'"
+                                            :is="col.render(row, rowIndex, props.extraArgs)" />
+                                        <div v-else v-html="col.render(row, rowIndex, props.extraArgs)"></div>
+                                    </div>
                                 </template>
 
                                 <template v-else-if="col.type === 'link'">

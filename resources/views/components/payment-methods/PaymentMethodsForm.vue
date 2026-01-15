@@ -6,7 +6,7 @@ import { useForm, useField, ErrorMessage } from "vee-validate";
 import { toast } from "vue3-toastify";
 
 import { RouteNames } from "@/config/route.config";
-import { PaymentMethodPayload, PaymentServices } from "@/api/Payment.service";
+import { PaymentMethodsPayload, PaymentMethodsServices } from "@/api/Payments.service";
 import { Button } from "@/components/ui/button";
 
 const route = useRoute();
@@ -17,10 +17,10 @@ const isUpdateMode = computed(() => !!route.params.id);
 const isReadMode = computed(() => route.name === RouteNames.ViewPayment);
 
 const { data: fetchedPaymentMethod, loading: isFetching } = isUpdateMode.value
-    ? PaymentServices.usePaymentMethodDetail(paymentId)
+    ? PaymentMethodsServices.usePaymentMethodDetail(paymentId)
     : { data: ref(null), loading: ref(false) };
 
-const { createPaymentMethod, updatePaymentMethod, loading: isSubmitting } = PaymentServices.usePaymentMethodActions();
+const { createPaymentMethod, updatePaymentMethod, loading: isSubmitting } = PaymentMethodsServices.usePaymentMethodActions();
 
 
 const schema = yup.object({
@@ -30,7 +30,7 @@ const schema = yup.object({
     logo: yup.array().nullable().max(1, "Please choose one image only."),
 });
 
-const { handleSubmit, setValues } = useForm<PaymentMethodPayload>({
+const { handleSubmit, setValues } = useForm<PaymentMethodsPayload>({
     validationSchema: schema,
     initialValues: {
         name: "",
@@ -69,7 +69,7 @@ const submitForm = handleSubmit(async (values) => {
             response = await createPaymentMethod(values);
         }
 
-        if (response) {
+        if (response?.success) {
             toast.success(isUpdateMode.value ? "Payment method updated successfully" : "Payment method created successfully");
             router.push({ name: RouteNames.PaymentMethodsList });
         }

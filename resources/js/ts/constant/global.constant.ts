@@ -16,6 +16,9 @@ export const API_URLS = {
     ADMIN: "admins",
     USER: "users",
     PAYMENT: "payment-methods",
+    PACKAGE: "packages",
+    PURCHASE: "purchases",
+    DEPOSIT: "deposits",
 };
 
 export const COOKIES = {

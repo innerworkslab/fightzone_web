@@ -1,13 +1,13 @@
 import { ActionDef, ColumnDef } from "../common/data-table/type";
-import { Edit2, Folder, Minus, Plus } from "lucide-vue-next";
+import { Edit2, Folder } from "lucide-vue-next";
 import { RouteNames } from "../../../js/ts/config/route.config";
-import { UsersServices } from "@/api/Users.service";
+import { PackagesServices } from "@/api/Packages.service";
 import { SUCCESS_MESSAGE } from "@/constant/global.constant";
 import { toast } from "vue3-toastify";
 
-const { updateUser, toggleStatus } = UsersServices.useUserActions();
+const { toggleStatus } = PackagesServices.usePackagesActions();
 
-export const UserColumns: ColumnDef<any>[] = [
+export const PackageColumns: ColumnDef<any>[] = [
     {
         label: "#",
         key: "index",
@@ -21,60 +21,18 @@ export const UserColumns: ColumnDef<any>[] = [
         render: (row) => row.name,
     },
     {
-        label: "Phone Number",
-        key: "phone_number",
-        render: (row) => row.phone_number,
+        label: "Price",
+        key: "price",
+        render: (row) => `$${row.price}`,
     },
     {
-        label: "Verification",
-        key: "is_verified",
-        render: (row) => {
-            let theme = {
-                color: "text-emerald-500",
-                bg: "bg-emerald-500/10",
-                border: "border-emerald-500/20",
-                label: "Active",
-            };
-
-            if (!row.is_verified) {
-                theme = {
-                    color: "text-red-500",
-                    bg: "bg-red-500/10",
-                    border: "border-red-500/20",
-                    label: "Inactive",
-                };
-            }
-
-            return `
-            <div class="inline-flex items-center px-2 py-0.5 rounded border ${theme.bg} ${theme.border}">
-                <span class="text-[9px] font-black uppercase tracking-[0.1em] ${theme.color}">
-                    ${theme.label}
-                </span>
-            </div>
-            `;
-        },
-        onClick: (row, extraArgs) => {
-            if (row.is_verified) return;
-            extraArgs.modalStore.openConfirmModal({
-                message: "Are you sure you want to verify?",
-                onApprove: async () => {
-                    const response = await updateUser(row.id, {
-                        is_verified: 1,
-                    });
-                    if (response?.success) {
-                        toast.success(
-                            response.message ?? SUCCESS_MESSAGE.VERIFIED
-                        );
-                    }
-                    extraArgs.refresh();
-                },
-                approveBtnText: "Verify",
-            });
-        },
+        label: "Days",
+        key: "days",
+        render: (row) => `${row.days} days`,
     },
     {
         label: "Status",
-        key: "is_active",
+        key: "is_ative",
         render: (row) => {
             let theme = {
                 color: "text-emerald-500",
@@ -117,30 +75,34 @@ export const UserColumns: ColumnDef<any>[] = [
                         extraArgs.refresh();
                     }
                 },
-                approveBtnText: "Verify",
+                approveBtnText: "Confirm",
             });
         },
     },
 ];
 
-export const UserActions: ActionDef<any>[] = [
+export const PackageActions: ActionDef<any>[] = [
     {
         icon: Edit2,
-        tooltip: "Addition",
+        tooltip: "Edit",
         onClick: (row, extraArgs) => {
-            extraArgs.router.push({
-                name: RouteNames.EditUser,
-                params: { id: row.id },
+            extraArgs.modalStore.openModal({
+                formIndex: "package",
+                initialValues: row,
+                isReadMode: false,
+                refreshCallback: extraArgs.refresh,
             });
         },
     },
     {
         icon: Folder,
-        tooltip: "Settlement",
+        tooltip: "View",
         onClick: (row, extraArgs) =>
-            extraArgs.router.push({
-                name: RouteNames.ViewUser,
-                params: { id: row.id },
+            extraArgs.modalStore.openModal({
+                formIndex: "package",
+                initialValues: row,
+                isReadMode: true,
+                refreshCallback: extraArgs.refresh,
             }),
     },
 ];

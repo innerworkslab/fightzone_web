@@ -1,11 +1,11 @@
-import { ActionDef, ColumnDef } from "../data-table/type";
+import { ActionDef, ColumnDef } from "../common/data-table/type";
 import { Edit2, Folder, Minus, Plus } from "lucide-vue-next";
 import { RouteNames } from "../../../js/ts/config/route.config";
 import { SUCCESS_MESSAGE } from "@/constant/global.constant";
-import { AdminServices } from "@/api/Admin.service";
+import { AdminsServices } from "@/api/Admins.service";
 import { toast } from "vue3-toastify";
 
-const { toggleStatus } = AdminServices.useAdminActions();
+const { toggleStatus } = AdminsServices.useAdminActions();
 
 export const AdminColumns: ColumnDef<any>[] = [
     {
@@ -29,31 +29,29 @@ export const AdminColumns: ColumnDef<any>[] = [
         label: "Status",
         key: "is_active",
         render: (row) => {
-            const isActive = row.is_active;
-            const colorClass = isActive
-                ? "text-primary"
-                : "text-muted-foreground";
-            const bgClass = isActive ? "bg-primary/20" : "bg-muted";
-            const dotClass = isActive
-                ? "bg-primary shadow-[0_0_8px_var(--primary)]"
-                : "bg-muted-foreground";
-            const label = isActive ? "Active" : "Inactive";
+            let theme = {
+                color: "text-emerald-500",
+                bg: "bg-emerald-500/10",
+                border: "border-emerald-500/20",
+                label: "Active",
+            };
+
+            if (!row.is_active) {
+                theme = {
+                    color: "text-red-500",
+                    bg: "bg-red-500/10",
+                    border: "border-red-500/20",
+                    label: "Inactive",
+                };
+            }
 
             return `
-            <div class="flex items-center gap-2 w-fit px-2.5 py-1 rounded-full border border-border ${bgClass}">
-                <span class="relative flex h-2 w-2">
-                    ${
-                        isActive
-                            ? `<span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-75"></span>`
-                            : ""
-                    }
-                    <span class="relative inline-flex rounded-full h-2 w-2 ${dotClass}"></span>
-                </span>
-                <span class="text-[10px] font-black uppercase tracking-widest ${colorClass}">
-                    ${label}
+            <div class="inline-flex items-center px-2 py-0.5 rounded border ${theme.bg} ${theme.border}">
+                <span class="text-[9px] font-black uppercase tracking-[0.1em] ${theme.color}">
+                    ${theme.label}
                 </span>
             </div>
-        `;
+            `;
         },
         onClick: (row, extraArgs) => {
             extraArgs.modalStore.openConfirmModal({

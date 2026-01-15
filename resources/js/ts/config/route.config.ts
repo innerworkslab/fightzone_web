@@ -1,5 +1,13 @@
 import Login from "../../../views/components/login/Login.vue";
-import { UserSquare, CreditCard } from "lucide-vue-next";
+import PackagesList from "../../../views/components/packages/PackagesList.vue";
+import PackagesForm from "../../../views/components/packages/PackagesForm.vue";
+import {
+    UserSquare,
+    CreditCard,
+    Package,
+    ShoppingCart,
+    Banknote,
+} from "lucide-vue-next";
 
 export const RouteNames = {
     Login: "login",
@@ -15,6 +23,9 @@ export const RouteNames = {
     AddPayment: "add-payment",
     ViewPayment: "view-payment",
     EditPayment: "edit-payment",
+    PackagesList: "packages-list",
+    PurchasesList: "purchases-list",
+    DepositsList: "deposits-list",
     Unauthorized: "unauthorized",
 };
 
@@ -117,6 +128,48 @@ export const routes = [
                 name: RouteNames.ViewPayment,
                 header: "View Payment Method",
                 route: "",
+            },
+        ],
+    },
+    {
+        label: "Package",
+        name: "package_group",
+        icon: Package,
+        route: "/auth/packages",
+        children: [
+            {
+                label: "Package List",
+                name: RouteNames.PackagesList,
+                header: "Package Management",
+                route: "/auth/packages",
+            },
+        ],
+    },
+    {
+        label: "Purchase",
+        name: "purchase_group",
+        icon: ShoppingCart,
+        route: "/auth/purchases",
+        children: [
+            {
+                label: "Purchase List",
+                name: RouteNames.PurchasesList,
+                header: "Purchase Management",
+                route: "/auth/purchases",
+            },
+        ],
+    },
+    {
+        label: "Deposit Transaction",
+        name: "deposit_group",
+        icon: Banknote,
+        route: "/auth/deposits",
+        children: [
+            {
+                label: "Deposit Transaction List",
+                name: RouteNames.DepositsList,
+                header: "Deposit Transaction Management",
+                route: "/auth/deposits",
             },
         ],
     },

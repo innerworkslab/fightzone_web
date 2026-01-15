@@ -4,19 +4,19 @@ import { useRouter } from "vue-router";
 import { storeToRefs } from "pinia";
 import { useDataStore } from "@/store/data";
 import { useModalStore } from "@/store/modal";
-import { AdminsServices } from "@/api/Admins.service";
-import { AdminActions, AdminColumns } from "./columns";
+import { PackagesServices } from "@/api/Packages.service";
+import { PackageActions, PackageColumns } from "./columns";
 import { DEFAULT_PAGE_LIMIT } from "@/constant/global.constant";
 
 const dataStore = useDataStore();
 const modalStore = useModalStore();
 const router = useRouter();
 
-const { filters } = storeToRefs(dataStore);
+const { filters, refreshTrigger } = storeToRefs(dataStore);
 
-const { data, loading, refresh } = AdminsServices.useAdmins(filters.value);
+const { data, loading, refresh } = PackagesServices.usePackagess(filters.value);
 
-const adminData = computed(() => {
+const packageData = computed(() => {
     return (data.value as any)?.data?.data || [];
 });
 
@@ -41,25 +41,39 @@ watch(
         const apiFilter = { ...filters.value };
 
         if (filters.value.search) {
-            apiFilter.username = filters.value.search;
             apiFilter.name = filters.value.search;
             delete (apiFilter as any).search;
         }
 
-        if (apiFilter.is_active === "all") {
-            delete apiFilter.is_active;
+        if (apiFilter.status === "all") {
+            delete apiFilter.status;
         }
 
         refresh(apiFilter);
     },
     { deep: true }
 );
+
+watch(refreshTrigger, () => {
+    const apiFilter = { ...filters.value };
+
+    if (filters.value.search) {
+        apiFilter.name = filters.value.search;
+        delete (apiFilter as any).search;
+    }
+
+    if (apiFilter.status === "all") {
+        delete apiFilter.status;
+    }
+
+    refresh(apiFilter);
+});
 </script>
 
 <template>
-    <AdminsFilter />
+    <PackagesFilter />
 
-    <DataTable :data="adminData" :columns="AdminColumns" :actions="AdminActions" :loading="loading" :extraArgs="{
+    <DataTable :data="packageData" :columns="PackageColumns" :actions="PackageActions" :loading="loading" :extraArgs="{
         startIndex: startIndex,
         router,
         dataStore,

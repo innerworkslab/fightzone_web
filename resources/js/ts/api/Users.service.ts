@@ -2,14 +2,14 @@ import { APIResult, useFetch, useMutation } from "@/composable/useAPI";
 import { API_URLS, METHODS } from "@/constant/global.constant";
 import type { Filters } from "@/type.global";
 
-export type UserFilter = Filters & {
+export type UsersFilter = Filters & {
     search?: string;
     name?: string;
     phone_number?: string;
     is_active?: string;
 };
 
-export interface UserData {
+export interface UsersData {
     phone_number?: string;
     name?: string;
     password?: string;
@@ -17,7 +17,7 @@ export interface UserData {
     is_verified?: number;
 }
 
-export interface UserPayload {
+export interface UsersPayload {
     phone_number: string;
     name: string;
     password?: string;
@@ -27,21 +27,21 @@ export interface UserPayload {
 
 const baseURL = `${API_URLS.VERSION}/${API_URLS.MANAGEMENT}/${API_URLS.USER}`;
 
-const useUsers = (filter: UserFilter = {}) => {
-    return useFetch<APIResult<UserData[]>>(baseURL, filter);
+const useUsers = (filter: UsersFilter = {}) => {
+    return useFetch<APIResult<UsersData[]>>(baseURL, filter);
 };
 
 const useUserDetail = (id: number | string) => {
-    return useFetch<APIResult<UserPayload>>(`/${baseURL}/${id}`);
+    return useFetch<APIResult<UsersPayload>>(`/${baseURL}/${id}`);
 };
 
 const useUserActions = () => {
     const { mutate, loading, error, data } = useMutation();
 
-    const createUser = (data: UserPayload) =>
+    const createUser = (data: UsersPayload) =>
         mutate(METHODS.POST, baseURL, data);
 
-    const updateUser = (id: number, data: Partial<UserPayload>) =>
+    const updateUser = (id: number, data: Partial<UsersPayload>) =>
         mutate(METHODS.POST, `/${baseURL}/${id}`, data);
 
     const toggleStatus = (id: number) =>
@@ -57,7 +57,7 @@ const useUserActions = () => {
     };
 };
 
-export const UserServices = {
+export const UsersServices = {
     useUsers,
     useUserDetail,
     useUserActions,
