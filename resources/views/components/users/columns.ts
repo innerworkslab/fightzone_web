@@ -30,18 +30,18 @@ export const UserColumns: ColumnDef<any>[] = [
         key: "is_verified",
         render: (row) => {
             let theme = {
-                color: "text-emerald-500",
-                bg: "bg-emerald-500/10",
-                border: "border-emerald-500/20",
-                label: "Active",
+                color: "text-sky-500",
+                bg: "bg-sky-500/10",
+                border: "border-sky-500/20",
+                label: "Verified",
             };
 
             if (!row.is_verified) {
                 theme = {
-                    color: "text-red-500",
-                    bg: "bg-red-500/10",
-                    border: "border-red-500/20",
-                    label: "Inactive",
+                    color: "text-orange-500",
+                    bg: "bg-orange-500/10",
+                    border: "border-orange-500/20",
+                    label: "Unverified",
                 };
             }
 
