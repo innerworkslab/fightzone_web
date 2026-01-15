@@ -24,7 +24,7 @@ const { createUser, updateUser, loading: isSubmitting } = UsersServices.useUserA
 
 const schema = yup.object({
     phone_number: yup.string().required("Phone number is required"),
-    name: yup.string().required("Name is required"),
+    name: yup.string().nullable().transform(v => v === "" ? null : v),
     password: isUpdateMode.value
         ? yup.string().nullable().transform(v => v === "" ? null : v)
         : yup.string().required("Password is required").min(6, "Min 6 characters"),
