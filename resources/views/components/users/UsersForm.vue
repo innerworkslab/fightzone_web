@@ -81,7 +81,7 @@ const submitForm = handleSubmit(async (values) => {
 
         if (response) {
             toast.success(isUpdateMode.value ? "User updated successfully" : "User created successfully");
-            router.push({ name: RouteNames.UserList });
+            router.push({ name: RouteNames.UsersList });
         }
     } catch (error) { }
 });

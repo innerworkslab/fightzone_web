@@ -3,15 +3,15 @@ import { UserSquare, CreditCard } from "lucide-vue-next";
 
 export const RouteNames = {
     Login: "login",
-    AdminList: "admin-list",
+    AdminsList: "admin-list",
     AddAdmin: "add-admin",
     ViewAdmin: "view-admin",
     EditAdmin: "edit-admin",
-    UserList: "user-list",
+    UsersList: "user-list",
     AddUser: "add-user",
     ViewUser: "view-user",
     EditUser: "edit-user",
-    PaymentList: "payment-list",
+    PaymentMethodsList: "payment-methods-list",
     AddPayment: "add-payment",
     ViewPayment: "view-payment",
     EditPayment: "edit-payment",
@@ -28,19 +28,19 @@ export const routes = [
         label: "Admin",
         name: "admin_group",
         icon: UserSquare,
-        route: "/auth/admin",
+        route: "/auth/admins",
         children: [
             {
                 label: "Admin List",
-                name: RouteNames.ViewAdmin,
+                name: RouteNames.AdminsList,
                 header: "Admin Management",
-                route: "/auth/admin",
+                route: "/auth/admins",
             },
             {
                 label: "",
                 name: RouteNames.AddAdmin,
                 header: "Add Admin",
-                route: "/auth/admin/add",
+                route: "/auth/admins/add",
             },
             {
                 label: "",
@@ -60,19 +60,19 @@ export const routes = [
         label: "User",
         name: "user_group",
         icon: UserSquare,
-        route: "/auth/user",
+        route: "/auth/users",
         children: [
             {
                 label: "User List",
-                name: RouteNames.UserList,
+                name: RouteNames.UsersList,
                 header: "User Management",
-                route: "/auth/user",
+                route: "/auth/users",
             },
             {
                 label: "",
                 name: RouteNames.AddUser,
                 header: "Add User",
-                route: "/auth/user/add",
+                route: "/auth/users/add",
             },
             {
                 label: "",
@@ -92,19 +92,19 @@ export const routes = [
         label: "Payment Method",
         name: "payment_method_group",
         icon: CreditCard,
-        route: "/auth/payment",
+        route: "/auth/payment-methods",
         children: [
             {
                 label: "Payment Methods",
-                name: RouteNames.PaymentList,
+                name: RouteNames.PaymentMethodsList,
                 header: "Payment Method Management",
-                route: "/auth/payment",
+                route: "/auth/payment-methods",
             },
             {
                 label: "",
                 name: RouteNames.AddPayment,
                 header: "Add Payment Method",
-                route: "/auth/payment/add",
+                route: "/auth/payment-methods/add",
             },
             {
                 label: "",

@@ -19,7 +19,7 @@ import ConfirmModal from "../common/modal/ConfirmModal.vue";
                 </div>
             </div>
 
-            <main class="relative z-10 flex-1 overflow-y-auto pt-5 px-8 pb-8 custom-scrollbar">
+            <main class="relative z-10 flex-1 overflow-y-hidden pt-5 px-8 pb-8 custom-scrollbar">
                 <Header />
                 <div class="max-w-7xl h-full pt-3">
                     <RouterView />

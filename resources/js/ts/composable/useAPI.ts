@@ -1,5 +1,5 @@
 // src/composables/useApi.ts
-import { ref } from "vue";
+import { ref, watch } from "vue";
 import type { AxiosRequestConfig, AxiosResponse } from "axios";
 import api from "@/lib/utils.axios";
 
@@ -35,8 +35,10 @@ export function useApi<T = any>() {
 export function useFetch<T>(url: string, params?: Record<string, any>) {
     const { data, error, loading, execute } = useApi<T>();
 
-    const fetchLocal = () => execute({ method: "GET", url, params });
-    fetchLocal();
+    const fetchLocal = (params?: Record<string, any>) =>
+        execute({ method: "GET", url, params });
+
+    fetchLocal(params);
 
     return { data, error, loading, refresh: fetchLocal };
 }

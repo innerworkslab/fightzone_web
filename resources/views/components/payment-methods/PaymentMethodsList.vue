@@ -4,8 +4,9 @@ import { useRouter } from "vue-router";
 import { storeToRefs } from "pinia";
 import { useDataStore } from "@/store/data";
 import { useModalStore } from "@/store/modal";
-import { UserServices } from "@/api/User.service";
-import { UserActions, UserColumns } from "./columns";
+import { PaymentServices } from "@/api/Payment.service";
+import { PaymentActions, PaymentColumns } from "./columns";
+import { DEFAULT_PAGE_LIMIT } from "@/constant/global.constant";
 
 const dataStore = useDataStore();
 const modalStore = useModalStore();
@@ -13,9 +14,9 @@ const router = useRouter();
 
 const { filters } = storeToRefs(dataStore);
 
-const { data, loading, refresh } = UserServices.useUsers(filters.value);
+const { data, loading, refresh } = PaymentServices.usePaymentMethods(filters.value);
 
-const userData = computed(() => {
+const paymentData = computed(() => {
     return (data.value as any)?.data?.data || [];
 });
 
@@ -25,8 +26,7 @@ const paginationInfo = computed(() => {
 
 const startIndex = computed(() => {
     const page = filters.value.page || 1;
-    const limit = filters.value.limit || 20;
-    return (page - 1) * limit;
+    return (page - 1) * DEFAULT_PAGE_LIMIT;
 });
 
 watch(paginationInfo, (newInfo) => {
@@ -38,24 +38,30 @@ watch(paginationInfo, (newInfo) => {
 watch(
     filters,
     () => {
-        refresh();
+        const apiFilter = { ...filters.value };
+
+        if (filters.value.search) {
+            apiFilter.name = filters.value.search;
+            delete (apiFilter as any).search;
+        }
+
+        delete apiFilter.is_active;
+
+        refresh(apiFilter);
     },
     { deep: true }
 );
-
 </script>
 
 <template>
-    <div class="mb-5">
-        <UserFilter />
-    </div>
+    <PaymentMethodsFilter />
 
-    <DataTable :data="userData" :columns="UserColumns" :actions="UserActions" :loading="loading" :extraArgs="{
+    <DataTable :data="paymentData" :columns="PaymentColumns" :actions="PaymentActions" :loading="loading" :extraArgs="{
         startIndex: startIndex,
         router,
         dataStore,
         modalStore,
-        refresh,
+        refresh: () => refresh(filters),
     }" />
 
     <div class="relative flex justify-center items-center">

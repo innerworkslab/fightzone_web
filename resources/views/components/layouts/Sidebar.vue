@@ -4,7 +4,7 @@ import { useRoute, RouterLink, useRouter } from "vue-router";
 import { routes } from "@/config/route.config";
 import { SidebarItem } from "@/router/type";
 import { deleteCookie } from '@/lib/utils.cookies';
-import { COOKIES, LOCALSTORAGE } from '@/constant/constant.global';
+import { COOKIES, LOCALSTORAGE } from '@/constant/global.constant';
 import { deleteLocalStorage, getDecryptedLocalStorage } from "@/lib/utils.localStorage";
 import { useDataStore } from "@/store/data";
 import { useModalStore } from "@/store/modal";

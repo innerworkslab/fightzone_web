@@ -1,13 +1,13 @@
 import { ActionDef, ColumnDef } from "../data-table/type";
 import { Edit2, Folder, Minus, Plus } from "lucide-vue-next";
 import { RouteNames } from "../../../js/ts/config/route.config";
-import { UserServices } from "@/api/User.service";
-import { SUCCESS_MESSAGE } from "@/constant/constant.global";
+import { SUCCESS_MESSAGE } from "@/constant/global.constant";
+import { AdminServices } from "@/api/Admin.service";
 import { toast } from "vue3-toastify";
 
-const { updateUser, toggleStatus } = UserServices.useUserActions();
+const { toggleStatus } = AdminServices.useAdminActions();
 
-export const UserColumns: ColumnDef<any>[] = [
+export const AdminColumns: ColumnDef<any>[] = [
     {
         label: "#",
         key: "index",
@@ -21,46 +21,9 @@ export const UserColumns: ColumnDef<any>[] = [
         render: (row) => row.name,
     },
     {
-        label: "Phone Number",
-        key: "phone_number",
-        render: (row) => row.phone_number,
-    },
-    {
-        label: "Verification",
-        key: "is_verified",
-        render: (row) => {
-            const isVerified = row.is_verified;
-            const colorClass = isVerified
-                ? "text-green-600"
-                : "text-orange-500";
-            const bgClass = isVerified ? "bg-green-100" : "bg-orange-100";
-            const label = isVerified ? "Verified" : "Unverified";
-
-            return `
-            <div class="flex items-center gap-2 w-fit px-2.5 py-1 rounded-full border ${bgClass}">
-                <span class="text-[10px] font-black uppercase tracking-widest ${colorClass}">
-                    ${label}
-                </span>
-            </div>
-        `;
-        },
-        onClick: (row, extraArgs) => {
-            extraArgs.modalStore.openConfirmModal({
-                message: "Are you sure you want to verify?",
-                onApprove: async () => {
-                    const response = await updateUser(row.id, {
-                        is_verified: 1,
-                    });
-                    if (response?.success) {
-                        toast.success(
-                            response.message ?? SUCCESS_MESSAGE.VERIFIED
-                        );
-                    }
-                    extraArgs.refresh();
-                },
-                approveBtnText: "Verify",
-            });
-        },
+        label: "Username",
+        key: "username",
+        render: (row) => row.username,
     },
     {
         label: "Status",
@@ -115,23 +78,22 @@ export const UserColumns: ColumnDef<any>[] = [
     },
 ];
 
-export const UserActions: ActionDef<any>[] = [
+export const AdminActions: ActionDef<any>[] = [
     {
         icon: Edit2,
         tooltip: "Addition",
-        onClick: (row, extraArgs) => {
+        onClick: (row, extraArgs) =>
             extraArgs.router.push({
-                name: RouteNames.EditUser,
+                name: RouteNames.EditAdmin,
                 params: { id: row.id },
-            });
-        },
+            }),
     },
     {
         icon: Folder,
         tooltip: "Settlement",
         onClick: (row, extraArgs) =>
             extraArgs.router.push({
-                name: RouteNames.ViewUser,
+                name: RouteNames.ViewAdmin,
                 params: { id: row.id },
             }),
     },

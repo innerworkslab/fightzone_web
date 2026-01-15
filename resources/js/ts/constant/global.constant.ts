@@ -40,3 +40,5 @@ export const SUCCESS_MESSAGE = {
     ACTIVATED: "Activated successful.",
     INACTIVATED: "Inactivated successful.",
 };
+
+export const DEFAULT_PAGE_LIMIT = 20;

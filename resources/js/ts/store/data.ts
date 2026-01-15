@@ -3,8 +3,7 @@ import { defineStore } from "pinia";
 export interface Filters {
     search: string;
     page: number;
-    limit: number;
-    month: string;
+    [key: string]: string | number;
 }
 
 export interface State {
@@ -15,15 +14,13 @@ export interface State {
     initialDate: string;
 }
 
-const defaultPerPage = 20;
-
 export const useDataStore = defineStore("data", {
     state: (): State => ({
         filters: {
             search: "",
             page: 1,
-            limit: defaultPerPage,
             month: "",
+            is_active: "all",
         },
         temp: [],
         totalItems: 0,
@@ -44,8 +41,8 @@ export const useDataStore = defineStore("data", {
             this.filters = {
                 search: "",
                 page: 1,
-                limit: defaultPerPage,
                 month: "",
+                is_active: "all",
             };
             this.totalItems = 0;
         },

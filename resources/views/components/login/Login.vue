@@ -7,7 +7,7 @@ import { onMounted } from "vue";
 import { AuthServices, type LoginPayload } from "@/api/Auth.service";
 import { setEncryptedCookie } from "@/lib/utils.cookies";
 import { setEncryptedLocalStorage } from "@/lib/utils.localStorage";
-import { COOKIES, LOCALSTORAGE } from "@/constant/constant.global";
+import { COOKIES, LOCALSTORAGE } from "@/constant/global.constant";
 import { Button } from "@/components/ui/button";
 import { Swords, ArrowRight } from "lucide-vue-next";
 import { RouteNames } from "@/config/route.config";
