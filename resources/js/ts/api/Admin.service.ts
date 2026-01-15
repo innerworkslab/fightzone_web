@@ -1,10 +1,12 @@
 import { APIResult, useFetch, useMutation } from "@/composable/useAPI";
-import { API_URLS, METHODS } from "@/constant/constant.global";
+import { API_URLS, METHODS } from "@/constant/global.constant";
 import type { Filters } from "@/type.global";
 
 export type AdminFilter = Filters & {
     search?: string;
-    status?: "active" | "inactive" | "all";
+    username?: string;
+    name?: string;
+    is_active?: string;
 };
 
 export interface AdminData {

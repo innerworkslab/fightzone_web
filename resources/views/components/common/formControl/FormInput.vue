@@ -4,7 +4,7 @@ import Label from '@/components/ui/label/Label.vue';
 import { Eye, EyeClosed } from 'lucide-vue-next';
 
 const props = defineProps<{
-    label: string;
+    label?: string;
     id: string;
     modelValue?: string | number | null;
     type?: string;
@@ -179,7 +179,7 @@ watch(
 
 <template>
     <div class="form-input-container mb-4 group">
-        <Label :for="id"
+        <Label v-if="label" :for="id"
             class="block text-[10px] font-black uppercase tracking-widest text-muted-foreground mb-1.5 transition-colors group-focus-within:text-primary">
             {{ label }}
             <span v-if="!disabled && required" class="text-primary">*</span>

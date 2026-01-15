@@ -2,14 +2,14 @@ import { RouteNames } from "../config/route.config";
 import { createRouter, createWebHistory } from "vue-router";
 import Login from "../../../views/components/login/Login.vue";
 import Unauthorized from "../../../views/components/unauthorized/Unauthorized.vue";
-import AdminList from "../../../views/components/admin/AdminList.vue";
-import AdminForm from "../../../views/components/admin/AdminForm.vue";
-import UserList from "../../../views/components/user/UserList.vue";
-import UserForm from "../../../views/components/user/UserForm.vue";
-import PaymentList from "../../../views/components/payment/PaymentList.vue";
-import PaymentForm from "../../../views/components/payment/PaymentForm.vue";
+import AdminsList from "../../../views/components/admins/AdminsList.vue";
+import AdminForm from "../../../views/components/admins/AdminsForm.vue";
+import UsersList from "../../../views/components/users/UsersList.vue";
+import UserForm from "../../../views/components/users/UsersForm.vue";
+import PaymentMethodsList from "../../../views/components/payment-methods/PaymentMethodsList.vue";
+import PaymentForm from "../../../views/components/payment-methods/PaymentMethodsForm.vue";
 import { getDecryptedCookie } from "@/lib/utils.cookies";
-import { COOKIES, LOCALSTORAGE } from "@/constant/constant.global";
+import { COOKIES, LOCALSTORAGE } from "@/constant/global.constant";
 import { getDecryptedLocalStorage } from "@/lib/utils.localStorage";
 
 const routes = [
@@ -30,75 +30,75 @@ const routes = [
         meta: { requiresAuth: true },
         children: [
             {
-                path: "admin",
-                name: RouteNames.AdminList,
-                component: AdminList,
+                path: "admins",
+                name: RouteNames.AdminsList,
+                component: AdminsList,
             },
             {
-                path: "admin/add",
+                path: "admins/add",
                 name: RouteNames.AddAdmin,
                 component: AdminForm,
-                meta: { permissions: ["admin", "all"] },
+                meta: { permissions: ["all"] },
             },
             {
-                path: "admin/edit/:id",
+                path: "admins/edit/:id",
                 name: RouteNames.EditAdmin,
                 component: AdminForm,
-                meta: { permissions: ["admin", "all"] },
+                meta: { permissions: ["all"] },
             },
             {
-                path: "admin/view/:id",
+                path: "admins/view/:id",
                 name: RouteNames.ViewAdmin,
                 component: AdminForm,
-                meta: { permissions: ["admin", "all"] },
+                meta: { permissions: ["all"] },
             },
             {
-                path: "user",
-                name: RouteNames.UserList,
-                component: UserList,
-                meta: { permissions: ["user", "all"] },
+                path: "users",
+                name: RouteNames.UsersList,
+                component: UsersList,
+                meta: { permissions: ["all"] },
             },
             {
-                path: "user/add",
+                path: "users/add",
                 name: RouteNames.AddUser,
                 component: UserForm,
-                meta: { permissions: ["user", "all"] },
+                meta: { permissions: ["all"] },
             },
             {
-                path: "user/edit/:id",
+                path: "users/edit/:id",
                 name: RouteNames.EditUser,
                 component: UserForm,
-                meta: { permissions: ["user", "all"] },
+                meta: { permissions: ["all"] },
             },
             {
-                path: "user/view/:id",
+                path: "users/view/:id",
                 name: RouteNames.ViewUser,
                 component: UserForm,
-                meta: { permissions: ["user", "all"] },
+                meta: { permissions: ["all"] },
             },
             {
-                path: "payment",
-                name: RouteNames.PaymentList,
-                component: PaymentList,
-                meta: { permissions: ["payment", "all"] },
+                path: "payment-methods",
+                name: RouteNames.PaymentMethodsList,
+                component: PaymentMethodsList,
+                meta: { permissions: ["all"] },
             },
             {
-                path: "payment/add",
+                path: "payment-methods/add",
                 name: RouteNames.AddPayment,
                 component: PaymentForm,
-                meta: { permissions: ["payment", "all"] },
+                meta: { permissions: ["all"] },
             },
             {
-                path: "payment/edit/:id",
+                path: "payment-methods/edit/:id",
                 name: RouteNames.EditPayment,
                 component: PaymentForm,
-                meta: { permissions: ["payment", "all"] },
+                meta: { permissions: ["all"] },
             },
             {
-                path: "payment/view/:id",
+                path: "payment-methods/view/:id",
                 name: RouteNames.ViewPayment,
                 component: PaymentForm,
-                meta: { permissions: ["payment", "all"] },
+                meta: { permissions: ["all"] },
             },
         ],
     },
@@ -160,7 +160,7 @@ router.beforeEach((to, from, next) => {
         }
     } else {
         if (to.name === RouteNames.Login && isAuthenticated) {
-            next({ name: RouteNames.AdminList });
+            next({ name: RouteNames.AdminsList });
         } else {
             next();
         }

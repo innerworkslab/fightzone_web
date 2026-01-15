@@ -2,7 +2,7 @@ import axios from "axios";
 import { toast } from "vue3-toastify";
 import { deleteLocalStorage } from "./utils.localStorage";
 import { deleteCookie, getDecryptedCookie } from "./utils.cookies";
-import { API_URLS, COOKIES, LOCALSTORAGE } from "@/constant/constant.global";
+import { API_URLS, COOKIES, LOCALSTORAGE } from "@/constant/global.constant";
 import { RouteNames } from "@/config/route.config";
 
 const apiUrl = import.meta.env.VITE_APP_URL || "";
@@ -15,7 +15,7 @@ const api = axios.create({
 function cleanParams(params: Record<string, any>) {
     if (!params || typeof params !== "object") return params;
     return Object.fromEntries(
-    Object.entries(params).filter(
+        Object.entries(params).filter(
             ([, value]) => value !== null && value !== undefined && value !== ""
         )
     );

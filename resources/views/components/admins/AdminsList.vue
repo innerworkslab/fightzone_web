@@ -6,6 +6,7 @@ import { useDataStore } from "@/store/data";
 import { useModalStore } from "@/store/modal";
 import { AdminServices } from "@/api/Admin.service";
 import { AdminActions, AdminColumns } from "./columns";
+import { DEFAULT_PAGE_LIMIT } from "@/constant/global.constant";
 
 const dataStore = useDataStore();
 const modalStore = useModalStore();
@@ -25,8 +26,7 @@ const paginationInfo = computed(() => {
 
 const startIndex = computed(() => {
     const page = filters.value.page || 1;
-    const limit = filters.value.limit || 20;
-    return (page - 1) * limit;
+    return (page - 1) * DEFAULT_PAGE_LIMIT;
 });
 
 watch(paginationInfo, (newInfo) => {
@@ -38,23 +38,33 @@ watch(paginationInfo, (newInfo) => {
 watch(
     filters,
     () => {
-        refresh();
+        const apiFilter = { ...filters.value };
+
+        if (filters.value.search) {
+            apiFilter.username = filters.value.search;
+            apiFilter.name = filters.value.search;
+            delete (apiFilter as any).search;
+        }
+
+        if (apiFilter.is_active === "all") {
+            delete apiFilter.is_active;
+        }
+
+        refresh(apiFilter);
     },
     { deep: true }
 );
 </script>
 
 <template>
-    <div class="mb-5">
-        <AdminFilter />
-    </div>
+    <AdminsFilter />
 
     <DataTable :data="adminData" :columns="AdminColumns" :actions="AdminActions" :loading="loading" :extraArgs="{
         startIndex: startIndex,
         router,
         dataStore,
         modalStore,
-        refresh,
+        refresh: () => refresh(filters),
     }" />
 
     <div class="relative flex justify-center items-center">

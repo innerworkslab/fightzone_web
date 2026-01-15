@@ -71,7 +71,7 @@ const submitForm = handleSubmit(async (values) => {
 
         if (response) {
             toast.success(isUpdateMode.value ? "Payment method updated successfully" : "Payment method created successfully");
-            router.push({ name: RouteNames.PaymentList });
+            router.push({ name: RouteNames.PaymentMethodsList });
         }
     } catch (error) {
         console.error('Form submission error:', error);

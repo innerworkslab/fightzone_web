@@ -2,10 +2,9 @@
 import { computed } from "vue";
 import { ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight } from "lucide-vue-next";
 import { useDataStore } from "@/store/data";
+import { DEFAULT_PAGE_LIMIT } from "@/constant/global.constant";
 
 const dataStore = useDataStore();
-
-const perPage = computed(() => dataStore.filters.limit);
 const totalItems = computed(() => dataStore.totalItems);
 
 const currentPageNumber = computed(() => {
@@ -13,8 +12,8 @@ const currentPageNumber = computed(() => {
 });
 
 const totalPages = computed(() => {
-    if (totalItems.value === 0 || perPage.value === 0) return 1;
-    return Math.ceil(totalItems.value / perPage.value);
+    if (totalItems.value === 0) return 1;
+    return Math.ceil(totalItems.value / DEFAULT_PAGE_LIMIT);
 });
 
 const pages = computed(() => {

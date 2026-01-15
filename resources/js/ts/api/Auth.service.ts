@@ -1,5 +1,5 @@
 import { useMutation } from "@/composable/useAPI";
-import { API_URLS, METHODS } from "@/constant/constant.global";
+import { API_URLS, METHODS } from "@/constant/global.constant";
 
 export interface LoginPayload {
     username: string;

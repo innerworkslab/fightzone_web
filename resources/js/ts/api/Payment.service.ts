@@ -1,5 +1,5 @@
 import { APIResult, useFetch, useMutation } from "@/composable/useAPI";
-import { API_URLS, METHODS } from "@/constant/constant.global";
+import { API_URLS, METHODS } from "@/constant/global.constant";
 import type { Filters } from "@/type.global";
 
 export type PaymentMethodFilter = Filters & {

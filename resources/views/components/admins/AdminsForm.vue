@@ -82,7 +82,7 @@ const submitForm = handleSubmit(async (values) => {
 
         if (response) {
             toast.success(isUpdateMode.value ? "Admin updated successfully" : "Admin created successfully");
-            router.push({ name: RouteNames.AdminList });
+            router.push({ name: RouteNames.AdminsList });
         }
     } catch (error) { }
 });
