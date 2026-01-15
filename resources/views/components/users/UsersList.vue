@@ -4,7 +4,7 @@ import { useRouter } from "vue-router";
 import { storeToRefs } from "pinia";
 import { useDataStore } from "@/store/data";
 import { useModalStore } from "@/store/modal";
-import { UserServices } from "@/api/User.service";
+import { UsersServices } from "@/api/Users.service";
 import { UserActions, UserColumns } from "./columns";
 import { DEFAULT_PAGE_LIMIT } from "@/constant/global.constant";
 
@@ -14,7 +14,7 @@ const router = useRouter();
 
 const { filters } = storeToRefs(dataStore);
 
-const { data, loading, refresh } = UserServices.useUsers(filters.value);
+const { data, loading, refresh } = UsersServices.useUsers(filters.value);
 
 const userData = computed(() => {
     return (data.value as any)?.data?.data || [];

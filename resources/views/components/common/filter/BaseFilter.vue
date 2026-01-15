@@ -31,8 +31,8 @@ const emit = defineEmits(['reset', 'add']);
 
         <div v-if="showAdd" class="flex items-center gap-2 w-full md:w-auto justify-end shrink-0">
             <Button @click="emit('add')" class="btn-primary h-10 px-6">
-                <Plus class="w-4 h-4 mr-2" />
-                <span class="text-[10px] font-black uppercase tracking-widest">
+                <Plus class="w-4 h-4" />
+                <span class="text-[10px] font-black uppercase tracking-widest pe-3">
                     {{ addLabel }}
                 </span>
             </Button>

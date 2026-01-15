@@ -2,43 +2,46 @@ import { APIResult, useFetch, useMutation } from "@/composable/useAPI";
 import { API_URLS, METHODS } from "@/constant/global.constant";
 import type { Filters } from "@/type.global";
 
-export type PaymentMethodFilter = Filters & {
+export type PaymentMethodsFilter = Filters & {
     search?: string;
     status?: "active" | "inactive";
+    is_active?: "1" | "0";
 };
 
-export interface PaymentMethodData {
+export interface PaymentMethodsData {
     id?: number;
     name?: string;
     holder?: string;
     account_number?: string;
     logo?: string;
     logo_url?: string;
+    is_active?: boolean;
     created_at?: string;
     updated_at?: string;
 }
 
-export interface PaymentMethodPayload {
+export interface PaymentMethodsPayload {
     name: string;
     holder: string;
     account_number: string;
     logo?: (File | string)[];
+    is_active?: boolean;
 }
 
 const baseURL = `${API_URLS.VERSION}/${API_URLS.MANAGEMENT}/${API_URLS.PAYMENT}`;
 
-const usePaymentMethods = (filter: PaymentMethodFilter = {}) => {
-    return useFetch<APIResult<PaymentMethodData[]>>(baseURL, filter);
+const usePaymentMethods = (filter: PaymentMethodsFilter = {}) => {
+    return useFetch<APIResult<PaymentMethodsData[]>>(baseURL, filter);
 };
 
 const usePaymentMethodDetail = (id: number | string) => {
-    return useFetch<APIResult<PaymentMethodData>>(`/${baseURL}/${id}`);
+    return useFetch<APIResult<PaymentMethodsData>>(`/${baseURL}/${id}`);
 };
 
 const usePaymentMethodActions = () => {
     const { mutate, loading, error, data } = useMutation();
 
-    const createPaymentMethod = (data: PaymentMethodPayload) => {
+    const createPaymentMethod = (data: PaymentMethodsPayload) => {
         const formData = new FormData();
         formData.append("name", data.name);
         formData.append("holder", data.holder);
@@ -59,7 +62,7 @@ const usePaymentMethodActions = () => {
 
     const updatePaymentMethod = (
         id: number,
-        data: Partial<PaymentMethodPayload>
+        data: Partial<PaymentMethodsPayload>
     ) => {
         const formData = new FormData();
         if (data.name) formData.append("name", data.name);
@@ -97,7 +100,7 @@ const usePaymentMethodActions = () => {
     };
 };
 
-export const PaymentServices = {
+export const PaymentMethodsServices = {
     usePaymentMethods,
     usePaymentMethodDetail,
     usePaymentMethodActions,

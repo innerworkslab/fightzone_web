@@ -12,6 +12,7 @@ export interface State {
     totalItems: number;
     cashbookDate: string;
     initialDate: string;
+    refreshTrigger: number;
 }
 
 export const useDataStore = defineStore("data", {
@@ -26,6 +27,7 @@ export const useDataStore = defineStore("data", {
         totalItems: 0,
         cashbookDate: new Date().toISOString().split("T")[0],
         initialDate: new Date().toISOString().split("T")[0],
+        refreshTrigger: 0,
     }),
 
     actions: {
@@ -57,6 +59,10 @@ export const useDataStore = defineStore("data", {
 
         setCashbookDate(date: string) {
             this.cashbookDate = date;
+        },
+
+        triggerRefresh() {
+            this.refreshTrigger++;
         },
     },
 });

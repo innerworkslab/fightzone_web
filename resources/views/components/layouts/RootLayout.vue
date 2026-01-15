@@ -1,7 +1,8 @@
 <script lang="ts" setup>
 import { RouterView } from "vue-router";
 import Sidebar from "./Sidebar.vue";
-import ConfirmModal from "../common/modal/ConfirmModal.vue";
+import ConfirmDialog from "../common/dialog/ConfirmDialog.vue";
+import CustomDialog from "../common/dialog/CustomDialog.vue";
 </script>
 
 <template>
@@ -27,7 +28,8 @@ import ConfirmModal from "../common/modal/ConfirmModal.vue";
             </main>
         </div>
 
-        <ConfirmModal />
+        <ConfirmDialog />
+        <CustomDialog />
     </div>
 </template>
 

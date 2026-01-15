@@ -6,7 +6,7 @@ import { useForm, useField, ErrorMessage } from "vee-validate";
 import { toast } from "vue3-toastify";
 
 import { RouteNames } from "@/config/route.config";
-import { UserPayload, UserServices } from "@/api/User.service";
+import { UsersPayload, UsersServices } from "@/api/Users.service";
 import { Button } from "@/components/ui/button";
 
 const route = useRoute();
@@ -17,10 +17,10 @@ const isUpdateMode = computed(() => !!route.params.id);
 const isReadMode = computed(() => route.name === RouteNames.ViewUser);
 
 const { data: fetchedUser, loading: isFetching } = isUpdateMode.value
-    ? UserServices.useUserDetail(userId)
+    ? UsersServices.useUserDetail(userId)
     : { data: ref(null), loading: ref(false) };
 
-const { createUser, updateUser, loading: isSubmitting } = UserServices.useUserActions();
+const { createUser, updateUser, loading: isSubmitting } = UsersServices.useUserActions();
 
 const schema = yup.object({
     phone_number: yup.string().required("Phone number is required"),
@@ -37,7 +37,7 @@ const schema = yup.object({
         }),
 });
 
-const { handleSubmit, setValues } = useForm<UserPayload>({
+const { handleSubmit, setValues } = useForm<UsersPayload>({
     validationSchema: schema,
     initialValues: {
         phone_number: "",
@@ -79,7 +79,7 @@ const submitForm = handleSubmit(async (values) => {
             response = await createUser(values);
         }
 
-        if (response) {
+        if (response?.success) {
             toast.success(isUpdateMode.value ? "User updated successfully" : "User created successfully");
             router.push({ name: RouteNames.UsersList });
         }

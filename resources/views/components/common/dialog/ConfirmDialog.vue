@@ -10,7 +10,7 @@ import {
     DialogClose,
 } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
-import { AlertTriangle, X } from "lucide-vue-next";
+import { X, AlertCircle } from 'lucide-vue-next';
 
 const modalStore = useModalStore();
 
@@ -30,42 +30,43 @@ const handleConfirmReject = () => {
 <template>
     <Dialog v-model:open="modalStore.confirm.isOpen">
         <DialogContent
-            class="sm:max-w-md bg-card/95 backdrop-blur-xl border-border shadow-2xl rounded-2xl ring-1 ring-white/10">
-            <DialogHeader class="relative">
-                <div class="flex items-center gap-3 mb-2">
-                    <div class="p-2 rounded-lg bg-primary/10 border border-primary/20">
-                        <AlertTriangle class="w-5 h-5 text-primary" />
+            class="sm:max-w-md bg-card/90 backdrop-blur-xl border border-border/50 shadow-2xl rounded-xl ring-1 ring-white/10">
+            <DialogHeader class="space-y-3">
+                <div class="flex items-center gap-3">
+                    <div
+                        class="flex items-center justify-center w-10 h-10 rounded-lg bg-primary/10 border border-primary/20">
+                        <AlertCircle class="w-5 h-5 text-primary" />
                     </div>
                     <DialogTitle class="text-xl font-black uppercase tracking-[0.15em] text-foreground">
                         System <span class="text-primary">Confirm</span>
                     </DialogTitle>
                 </div>
 
-                <DialogDescription class="text-sm font-medium text-muted-foreground leading-relaxed pt-2">
+                <DialogDescription class="text-xs font-bold tracking-widest text-muted-foreground/80 leading-relaxed">
                     {{ modalStore.confirm.message }}
                 </DialogDescription>
 
                 <DialogClose
-                    class="absolute -right-2 -top-2 p-2 rounded-full bg-secondary text-muted-foreground hover:text-primary transition-colors outline-none border border-border">
+                    class="absolute right-4 top-4 rounded-lg p-1 text-muted-foreground hover:text-primary hover:bg-primary/10 transition-all outline-none">
                     <X class="w-4 h-4" />
                     <span class="sr-only">Close</span>
                 </DialogClose>
             </DialogHeader>
 
-            <DialogFooter class="mt-6 flex flex-row items-center !justify-between gap-3 pt-4 border-t border-border/50">
+            <DialogFooter class="sm:justify-between gap-4 pt-6 border-t border-border/30 mt-4">
                 <Button variant="ghost" type="button" @click="modalStore.closeConfirmModal"
-                    class="text-[10px] font-black uppercase tracking-widest text-muted-foreground hover:bg-secondary">
+                    class="text-[10px] font-black uppercase tracking-widest text-muted-foreground hover:bg-secondary/50">
                     Cancel
                 </Button>
 
-                <div class="flex items-center gap-2">
+                <div class="flex gap-2">
                     <Button v-if="modalStore.confirm.rejectBtnText" variant="destructive" type="button"
                         @click="handleConfirmReject"
-                        class="text-[10px] font-black uppercase tracking-widest px-6 h-10 shadow-lg shadow-destructive/20">
+                        class="h-10 px-6 text-[10px] font-black uppercase tracking-widest rounded-lg">
                         {{ modalStore.confirm.rejectBtnText }}
                     </Button>
 
-                    <Button type="button" @click="handleConfirmApprove" class="btn-primary min-w-[120px] h-10 !py-0">
+                    <Button type="button" @click="handleConfirmApprove" class="btn-primary h-10 px-8 min-w-[100px]">
                         {{ modalStore.confirm.approveBtnText }}
                     </Button>
                 </div>
@@ -75,8 +76,19 @@ const handleConfirmReject = () => {
 </template>
 
 <style scoped>
-:deep(.fixed) {
-    backdrop-filter: blur(8px);
-    background-color: rgba(0, 0, 0, 0.4);
+:deep([data-state='open']) {
+    animation: modal-in 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes modal-in {
+    from {
+        opacity: 0;
+        transform: translate(-50%, -48%) scale(0.95);
+    }
+
+    to {
+        opacity: 1;
+        transform: translate(-50%, -50%) scale(1);
+    }
 }
 </style>

@@ -8,6 +8,9 @@ import UsersList from "../../../views/components/users/UsersList.vue";
 import UserForm from "../../../views/components/users/UsersForm.vue";
 import PaymentMethodsList from "../../../views/components/payment-methods/PaymentMethodsList.vue";
 import PaymentForm from "../../../views/components/payment-methods/PaymentMethodsForm.vue";
+import PackagesList from "../../../views/components/packages/PackagesList.vue";
+import PurchasesList from "../../../views/components/purchases/PurchasesList.vue";
+import DepositsList from "../../../views/components/deposits/DepositsList.vue";
 import { getDecryptedCookie } from "@/lib/utils.cookies";
 import { COOKIES, LOCALSTORAGE } from "@/constant/global.constant";
 import { getDecryptedLocalStorage } from "@/lib/utils.localStorage";
@@ -98,6 +101,24 @@ const routes = [
                 path: "payment-methods/view/:id",
                 name: RouteNames.ViewPayment,
                 component: PaymentForm,
+                meta: { permissions: ["all"] },
+            },
+            {
+                path: "packages",
+                name: RouteNames.PackagesList,
+                component: PackagesList,
+                meta: { permissions: ["all"] },
+            },
+            {
+                path: "purchases",
+                name: RouteNames.PurchasesList,
+                component: PurchasesList,
+                meta: { permissions: ["all"] },
+            },
+            {
+                path: "deposits",
+                name: RouteNames.DepositsList,
+                component: DepositsList,
                 meta: { permissions: ["all"] },
             },
         ],

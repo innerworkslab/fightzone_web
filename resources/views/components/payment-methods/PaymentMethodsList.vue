@@ -4,7 +4,7 @@ import { useRouter } from "vue-router";
 import { storeToRefs } from "pinia";
 import { useDataStore } from "@/store/data";
 import { useModalStore } from "@/store/modal";
-import { PaymentServices } from "@/api/Payment.service";
+import { PaymentMethodsServices } from "@/api/Payments.service";
 import { PaymentActions, PaymentColumns } from "./columns";
 import { DEFAULT_PAGE_LIMIT } from "@/constant/global.constant";
 
@@ -14,7 +14,7 @@ const router = useRouter();
 
 const { filters } = storeToRefs(dataStore);
 
-const { data, loading, refresh } = PaymentServices.usePaymentMethods(filters.value);
+const { data, loading, refresh } = PaymentMethodsServices.usePaymentMethods(filters.value);
 
 const paymentData = computed(() => {
     return (data.value as any)?.data?.data || [];
@@ -45,7 +45,9 @@ watch(
             delete (apiFilter as any).search;
         }
 
-        delete apiFilter.is_active;
+        if (apiFilter.is_active === "all") {
+            delete apiFilter.is_active;
+        }
 
         refresh(apiFilter);
     },

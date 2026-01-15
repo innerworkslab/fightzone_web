@@ -146,7 +146,7 @@ watch(
             <ul class="space-y-4">
                 <li v-for="item in sidebarItems" :key="item.name">
                     <div v-if="item.children" class="rounded-xl bg-secondary/30 ring-1 ring-sidebar-border">
-                        <button @click="toggleDropdown(item.name)" class="group flex w-full items-center justify-between rounded-xl px-4 py-3 text-xs font-black
+                        <button @click="toggleDropdown(item.name)" class="group flex w-full text-start justify-between rounded-xl px-4 py-3 text-xs font-black
                                        text-muted-foreground transition-all duration-200 uppercase tracking-widest
                                        hover:text-foreground"
                             :class="{ 'bg-primary text-primary-foreground': hasActiveChild(item) || state.showDropdown === item.name }">

@@ -14,6 +14,7 @@ export interface State {
     formIndex: string;
     initialValues?: any | null;
     isReadMode?: boolean;
+    refreshCallback?: () => void;
     confirm: ConfirmState;
 }
 
@@ -22,6 +23,7 @@ export interface Actions {
         formIndex: string;
         initialValues?: any | null;
         isReadMode?: boolean;
+        refreshCallback?: () => void;
     }): void;
     setInitialValues(state: {
         initialValues?: any | null;
@@ -37,6 +39,7 @@ export interface Actions {
         rejectBtnText?: string;
     }): void;
     closeConfirmModal(): void;
+    triggerRefresh(): void;
 }
 
 export const useModalStore = defineStore<"modal", State, {}, Actions>("modal", {
@@ -45,6 +48,7 @@ export const useModalStore = defineStore<"modal", State, {}, Actions>("modal", {
         formIndex: "",
         initialValues: null,
         isReadMode: false,
+        refreshCallback: undefined,
         confirm: {
             isOpen: false,
             message: "",
@@ -59,14 +63,17 @@ export const useModalStore = defineStore<"modal", State, {}, Actions>("modal", {
             formIndex,
             initialValues = null,
             isReadMode = false,
+            refreshCallback,
         }: {
             formIndex: string;
             initialValues?: any | null;
             isReadMode?: boolean;
+            refreshCallback?: () => void;
         }) {
             this.formIndex = formIndex;
             this.initialValues = initialValues;
             this.isReadMode = isReadMode;
+            this.refreshCallback = refreshCallback;
             this.isOpen = true;
         },
         setInitialValues({
@@ -83,6 +90,13 @@ export const useModalStore = defineStore<"modal", State, {}, Actions>("modal", {
             this.formIndex = "";
             this.isOpen = false;
             this.isReadMode = false;
+            this.refreshCallback = undefined;
+        },
+
+        triggerRefresh() {
+            if (this.refreshCallback) {
+                this.refreshCallback();
+            }
         },
         clearInitialValues() {
             this.initialValues = null;

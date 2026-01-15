@@ -1,6 +1,11 @@
-import { ActionDef, ColumnDef } from "../data-table/type";
+import { ActionDef, ColumnDef } from "../common/data-table/type";
 import { Edit2, Folder, CreditCard, User } from "lucide-vue-next";
 import { RouteNames } from "../../../js/ts/config/route.config";
+import { PaymentMethodsServices } from "@/api/Payments.service";
+import { SUCCESS_MESSAGE } from "@/constant/global.constant";
+import { toast } from "vue3-toastify";
+
+const { toggleStatus } = PaymentMethodsServices.usePaymentMethodActions();
 
 export const PaymentColumns: ColumnDef<any>[] = [
     {
@@ -51,6 +56,55 @@ export const PaymentColumns: ColumnDef<any>[] = [
                     : accountNumber;
 
             return `<span class="font-mono">${masked}</span>`;
+        },
+    },
+    {
+        label: "Status",
+        key: "is_active",
+        render: (row) => {
+            let theme = {
+                color: "text-emerald-500",
+                bg: "bg-emerald-500/10",
+                border: "border-emerald-500/20",
+                label: "Active",
+            };
+
+            if (!row.is_active) {
+                theme = {
+                    color: "text-red-500",
+                    bg: "bg-red-500/10",
+                    border: "border-red-500/20",
+                    label: "Inactive",
+                };
+            }
+
+            return `
+            <div class="inline-flex items-center px-2 py-0.5 rounded border ${theme.bg} ${theme.border}">
+                <span class="text-[9px] font-black uppercase tracking-[0.1em] ${theme.color}">
+                    ${theme.label}
+                </span>
+            </div>
+            `;
+        },
+        onClick: (row, extraArgs) => {
+            extraArgs.modalStore.openConfirmModal({
+                message: row.is_active
+                    ? "Are you sure you want to deactivate this payment method?"
+                    : "Are you sure you want to activate this payment method?",
+                onApprove: async () => {
+                    const response = await toggleStatus(row.id);
+                    if (response?.success) {
+                        toast.success(
+                            response.message ??
+                                (row.is_active
+                                    ? SUCCESS_MESSAGE.INACTIVATED
+                                    : SUCCESS_MESSAGE.ACTIVATED)
+                        );
+                        extraArgs.refresh();
+                    }
+                },
+                approveBtnText: row.is_active ? "Deactivate" : "Activate",
+            });
         },
     },
     {

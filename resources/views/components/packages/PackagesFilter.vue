@@ -1,21 +1,21 @@
 <script setup lang="ts">
 import { ref, watch } from "vue";
-import { useRouter } from "vue-router";
+import { useModalStore } from "@/store/modal";
 import { useDataStore } from "@/store/data";
-import { RouteNames } from "@/config/route.config";
 import { StatusOption } from "@/constant/options.constant";
 import BaseFilter from "../common/filter/BaseFilter.vue";
 
-const router = useRouter();
 const dataStore = useDataStore();
+
+const modalStore = useModalStore();
 
 const search = ref("");
 const status = ref("all");
 
 watch([search, status], ([newSearch, newStatus]) => {
-    if (dataStore.filters.search !== newSearch || dataStore.filters.is_active !== newStatus) {
+    if (dataStore.filters.search !== newSearch || dataStore.filters.status !== newStatus) {
         dataStore.filters.search = newSearch;
-        dataStore.filters.is_active = newStatus;
+        dataStore.filters.status = newStatus;
         dataStore.filters.page = 1;
     }
 });
@@ -24,11 +24,18 @@ function handleReset() {
     search.value = "";
     status.value = "all";
     dataStore.filters.search = "";
-    dataStore.filters.is_active = "all";
+    dataStore.filters.status = "all";
 }
 
 function handleAdd() {
-    router.push({ name: RouteNames.AddUser });
+    modalStore.openModal({
+        formIndex: "package",
+        initialValues: null,
+        isReadMode: false,
+        refreshCallback: () => {
+            dataStore.triggerRefresh();
+        },
+    });
 }
 </script>
 
@@ -36,7 +43,7 @@ function handleAdd() {
     <BaseFilter add-label="Add" @reset="handleReset" @add="handleAdd">
         <div class="flex items-center gap-x-3 w-full">
             <div>
-                <FormInput id="search" v-model="search" placeholder="Search users..." />
+                <FormInput id="search" v-model="search" placeholder="Search packages..." />
             </div>
 
             <div class="w-44">
