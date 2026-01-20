@@ -1,5 +1,5 @@
 import { ActionDef, ColumnDef } from "../common/data-table/type";
-import { Edit2, Folder, Minus, Plus } from "lucide-vue-next";
+import { Edit2, Folder, Lock, Minus, Plus } from "lucide-vue-next";
 import { RouteNames } from "../../../js/ts/config/route.config";
 import { UsersServices } from "@/api/Users.service";
 import { SUCCESS_MESSAGE } from "@/constant/global.constant";
@@ -30,18 +30,18 @@ export const UserColumns: ColumnDef<any>[] = [
         key: "is_verified",
         render: (row) => {
             let theme = {
-                color: "text-emerald-500",
-                bg: "bg-emerald-500/10",
-                border: "border-emerald-500/20",
-                label: "Active",
+                color: "text-sky-500",
+                bg: "bg-sky-500/10",
+                border: "border-sky-500/20",
+                label: "Verified",
             };
 
             if (!row.is_verified) {
                 theme = {
-                    color: "text-red-500",
-                    bg: "bg-red-500/10",
-                    border: "border-red-500/20",
-                    label: "Inactive",
+                    color: "text-orange-500",
+                    bg: "bg-orange-500/10",
+                    border: "border-orange-500/20",
+                    label: "Unverified",
                 };
             }
 
@@ -63,7 +63,7 @@ export const UserColumns: ColumnDef<any>[] = [
                     });
                     if (response?.success) {
                         toast.success(
-                            response.message ?? SUCCESS_MESSAGE.VERIFIED
+                            response.message ?? SUCCESS_MESSAGE.VERIFIED,
                         );
                     }
                     extraArgs.refresh();
@@ -112,7 +112,7 @@ export const UserColumns: ColumnDef<any>[] = [
                             response.message ??
                                 (row.is_active
                                     ? SUCCESS_MESSAGE.INACTIVATED
-                                    : SUCCESS_MESSAGE.ACTIVATED)
+                                    : SUCCESS_MESSAGE.ACTIVATED),
                         );
                         extraArgs.refresh();
                     }
@@ -141,6 +141,17 @@ export const UserActions: ActionDef<any>[] = [
             extraArgs.router.push({
                 name: RouteNames.ViewUser,
                 params: { id: row.id },
+            }),
+    },
+    {
+        icon: Lock,
+        tooltip: "Change Password",
+        onClick: (row, extraArgs) =>
+            extraArgs.modalStore.openModal({
+                formIndex: "usersChangePassword",
+                initialValues: row,
+                isReadMode: false,
+                refreshCallback: extraArgs.refresh,
             }),
     },
 ];

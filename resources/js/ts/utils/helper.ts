@@ -55,3 +55,13 @@ export function formatStatus(value: string) {
         .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
         .join(" ");
 }
+
+export const cleanPayload = <T extends object>(obj: T): Partial<T> => {
+    return Object.fromEntries(
+        Object.entries(obj).filter(([_, value]) => {
+            if (typeof value === "number") return true;
+
+            return value !== undefined && value !== null && value !== "";
+        })
+    ) as Partial<T>;
+};

@@ -108,16 +108,15 @@ const submitForm = handleSubmit(async (values) => {
             </div>
 
             <template v-if="!isReadMode">
-                <div>
+                <div v-if="!isUpdateMode">
                     <FormInput label="Password" id="password" v-model="password" type="password"
-                        :placeholder="isUpdateMode ? 'Leave blank to keep current' : 'Enter password'" />
+                        :placeholder="'Enter password'" />
                     <ErrorMessage name="password" class="block text-start text-red-500 text-sm mt-1" />
                 </div>
 
-                <div>
+                <div v-if="!isUpdateMode">
                     <FormInput label="Confirm Password" id="confirm_password" v-model="confirm_password" type="password"
-                        :placeholder="isUpdateMode && !password ? 'No need to fill' : 'Confirm your password'"
-                        :disabled="isUpdateMode && !password" />
+                        :placeholder="'Confirm your password'" />
                     <ErrorMessage name="confirm_password" class="block text-start text-red-500 text-sm mt-1" />
                 </div>
             </template>

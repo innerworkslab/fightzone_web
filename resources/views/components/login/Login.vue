@@ -40,7 +40,7 @@ const submitLogin = handleSubmit(async (values) => {
         setEncryptedCookie(COOKIES.ACCESS_TOKEN, data.token);
         setEncryptedLocalStorage(LOCALSTORAGE.AUTH_USER, data.user);
         setEncryptedLocalStorage(LOCALSTORAGE.PERMISSIONS, data.permissions || [{ permission_type_name: "all" }]);
-        router.push({ name: RouteNames.AdminList });
+        router.push({ name: RouteNames.AdminsList });
     }
 });
 
