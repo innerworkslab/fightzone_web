@@ -1,5 +1,5 @@
 import { ActionDef, ColumnDef } from "../common/data-table/type";
-import { Edit2, Folder, Minus, Plus } from "lucide-vue-next";
+import { Edit2, Folder, Lock, Minus, Plus } from "lucide-vue-next";
 import { RouteNames } from "../../../js/ts/config/route.config";
 import { SUCCESS_MESSAGE } from "@/constant/global.constant";
 import { AdminsServices } from "@/api/Admins.service";
@@ -65,7 +65,7 @@ export const AdminColumns: ColumnDef<any>[] = [
                             response.message ??
                                 (row.is_active
                                     ? SUCCESS_MESSAGE.INACTIVATED
-                                    : SUCCESS_MESSAGE.ACTIVATED)
+                                    : SUCCESS_MESSAGE.ACTIVATED),
                         );
                         extraArgs.refresh();
                     }
@@ -93,6 +93,17 @@ export const AdminActions: ActionDef<any>[] = [
             extraArgs.router.push({
                 name: RouteNames.ViewAdmin,
                 params: { id: row.id },
+            }),
+    },
+    {
+        icon: Lock,
+        tooltip: "Change Password",
+        onClick: (row, extraArgs) =>
+            extraArgs.modalStore.openModal({
+                formIndex: "adminsChangePassword",
+                initialValues: row,
+                isReadMode: false,
+                refreshCallback: extraArgs.refresh,
             }),
     },
 ];

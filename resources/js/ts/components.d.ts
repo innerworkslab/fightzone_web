@@ -8,6 +8,7 @@ export {}
 /* prettier-ignore */
 declare module 'vue' {
   export interface GlobalComponents {
+    AdminsChangePasswordForm: typeof import('./../../views/components/admins/AdminsChangePasswordForm.vue')['default']
     AdminsFilter: typeof import('./../../views/components/admins/AdminsFilter.vue')['default']
     AdminsForm: typeof import('./../../views/components/admins/AdminsForm.vue')['default']
     AdminsList: typeof import('./../../views/components/admins/AdminsList.vue')['default']
@@ -44,5 +45,6 @@ declare module 'vue' {
     UsersFilter: typeof import('./../../views/components/users/UsersFilter.vue')['default']
     UsersForm: typeof import('./../../views/components/users/UsersForm.vue')['default']
     UsersList: typeof import('./../../views/components/users/UsersList.vue')['default']
+    UsersPasswordChangeForm: typeof import('./../../views/components/users/UsersPasswordChangeForm.vue')['default']
   }
 }
