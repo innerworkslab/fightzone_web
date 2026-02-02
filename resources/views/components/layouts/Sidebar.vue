@@ -189,7 +189,7 @@ watch(
         </div>
 
         <div class="p-4 border-t border-sidebar-border">
-            <button @click="handleLogout"
+            <button @click="handleLogout" data-testid="logout-btn"
                 class="flex w-full items-center gap-3 px-4 py-3 rounded-xl text-xs font-black uppercase tracking-widest text-muted-foreground hover:text-destructive hover:bg-destructive/10 transition-all">
                 <LogOut class="w-4 h-4" />
                 <span>log out</span>

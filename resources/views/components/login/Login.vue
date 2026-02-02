@@ -76,7 +76,8 @@ onMounted(() => {
                         class="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-primary/10 border border-primary/20 mb-4">
                         <Swords class="w-8 h-8 text-primary" />
                     </div>
-                    <h2 class="text-2xl font-black uppercase tracking-[0.2em] text-foreground">
+                    <h2 data-testid="login-title"
+                        class="text-2xl font-black uppercase tracking-[0.2em] text-foreground">
                         Fighter <span class="text-primary">Zone</span>
                     </h2>
                 </div>

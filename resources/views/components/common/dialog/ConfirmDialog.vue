@@ -29,7 +29,7 @@ const handleConfirmReject = () => {
 
 <template>
     <Dialog v-model:open="modalStore.confirm.isOpen">
-        <DialogContent
+        <DialogContent data-testid="confirm-modal-content"
             class="sm:max-w-md bg-card/90 backdrop-blur-xl border border-border/50 shadow-2xl rounded-xl ring-1 ring-white/10">
             <DialogHeader class="space-y-3">
                 <div class="flex items-center gap-3">
@@ -66,7 +66,8 @@ const handleConfirmReject = () => {
                         {{ modalStore.confirm.rejectBtnText }}
                     </Button>
 
-                    <Button type="button" @click="handleConfirmApprove" class="btn-primary h-10 px-8 min-w-[100px]">
+                    <Button type="button" @click="handleConfirmApprove" class="btn-primary h-10 px-8 min-w-[100px]"
+                        data-testid="confirm-btn">
                         {{ modalStore.confirm.approveBtnText }}
                     </Button>
                 </div>
