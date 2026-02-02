@@ -18,6 +18,12 @@ use App\Repositories\Purchase\PurchaseRepositoryInterface;
 use App\Repositories\Purchase\PurchaseRepository;
 use App\Repositories\Profile\ProfileRepositoryInterface;
 use App\Repositories\Profile\ProfileRepository;
+use App\Repositories\CourseCategory\CourseCategoryRepositoryInterface;
+use App\Repositories\CourseCategory\CourseCategoryRepository;
+use App\Repositories\Course\CourseRepositoryInterface;
+use App\Repositories\Course\CourseRepository;
+use App\Repositories\CourseDay\CourseDayRepositoryInterface;
+use App\Repositories\CourseDay\CourseDayRepository;
 
 class RepositoryServiceProvider extends ServiceProvider
 {
@@ -34,6 +40,9 @@ class RepositoryServiceProvider extends ServiceProvider
         $this->app->bind(PackageRepositoryInterface::class, PackageRepository::class);
         $this->app->bind(PurchaseRepositoryInterface::class, PurchaseRepository::class);
         $this->app->bind(ProfileRepositoryInterface::class, ProfileRepository::class);
+        $this->app->bind(CourseCategoryRepositoryInterface::class, CourseCategoryRepository::class);
+        $this->app->bind(CourseRepositoryInterface::class, CourseRepository::class);
+        $this->app->bind(CourseDayRepositoryInterface::class, CourseDayRepository::class);
     }
 
     /**

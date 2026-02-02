@@ -1,0 +1,154 @@
+<?php
+
+namespace App\Http\Controllers\API\v1\Management;
+
+use Illuminate\Http\Request;
+
+use App\Http\Controllers\Controller;
+
+use App\Services\CourseService;
+use App\Services\CourseDayService;
+
+class CourseController extends Controller
+{
+    public function __construct(protected CourseService $service, protected CourseDayService $courseDayService)
+    {
+
+    }
+
+    public function index(Request $request)
+    {
+        $filters = [];
+        if ($request->name) {
+            array_push($filters, ['name' => $request->name]);
+        }
+        if ($request->category_name) {
+            array_push($filters, ['category_name' => $request->category_name]);
+        }
+        if ($request->level) {
+            array_push($filters, ['level' => $request->level]);
+        }
+
+        $data = $this->service->all(
+            false, // include inactive
+            $filters,
+            $request->page,
+            $request->limit
+        );
+
+        ResponseData($data);
+    }
+
+    public function store(Request $request)
+    {
+        $validated = $request->validate([
+            'name' => 'required|string|max:255',
+            'description' => 'nullable|string',
+            'course_category_id' => 'required|exists:course_categories,id',
+            'level' => 'required|in:beginner,intermediate,expert',
+            'price' => 'required|numeric|min:0',
+            'is_active' => 'boolean',
+            'course_days' => 'required|json'
+        ]);
+
+        $data = $request->only([
+            'name',
+            'description',
+            'course_category_id',
+            'level',
+            'price',
+            'is_active'
+        ]);
+
+        $item = $this->service->create($data);
+
+        $courseDays = json_decode($validated['course_days'], true);
+        foreach ($courseDays as $courseDay) {
+            $this->courseDayService->create([
+                'course_id' => $item->id,
+                'day_number' => $courseDay['day_number'],
+                'type' => $courseDay['type'],
+                'video_link' => $courseDay['video_link'],
+                'duration' => $courseDay['duration'],
+            ]);
+        }
+
+        ResponseData($item, 201);
+    }
+
+    public function show($id)
+    {
+        $item = $this->service->findWithDetails($id);
+        if (!$item) ResponseMessage('Course not found', 404);
+        ResponseData($item);
+    }
+
+    public function update(Request $request, $id)
+    {
+        $validated = $request->validate([
+            'name' => 'sometimes|string|max:255',
+            'description' => 'nullable|string',
+            'course_category_id' => 'sometimes|exists:course_categories,id',
+            'level' => 'sometimes|in:beginner,intermediate,expert',
+            'price' => 'sometimes|numeric|min:0',
+            'is_active' => 'boolean',
+            'course_days' => 'sometimes|json'
+        ]);
+
+        $item = $this->service->find($id);
+        if (!$item) ResponseMessage('Course not found', 404);
+
+        $data = $request->only([
+            'name',
+            'description',
+            'course_category_id',
+            'level',
+            'price',
+            'is_active'
+        ]);
+
+        $updated = $this->service->update($id, $data);
+        if (!$updated) ResponseMessage('Course not found', 404);
+
+        if($request->has('course_days')) {
+            $courseDays = json_decode($validated['course_days'], true);
+            foreach ($courseDays as $courseDay) {
+                if(isset($courseDay['id'])) {
+                    $this->courseDayService->update($courseDay['id'], [
+                        'day_number' => $courseDay['day_number'],
+                        'type' => $courseDay['type'],
+                        'video_link' => $courseDay['video_link'],
+                        'duration' => $courseDay['duration'],
+                    ]);
+                } else {
+                    $this->courseDayService->create([
+                        'course_id' => $item->id,
+                        'day_number' => $courseDay['day_number'],
+                        'type' => $courseDay['type'],
+                        'video_link' => $courseDay['video_link'],
+                        'duration' => $courseDay['duration'],
+                    ]);
+                }
+            }
+        }
+
+        ResponseData($updated);
+    }
+
+    public function destroy($id)
+    {
+        $item = $this->service->find($id);
+        if (!$item) ResponseMessage('Course not found', 404);
+
+        $deleted = $this->service->delete($id);
+        if (!$deleted) ResponseMessage('Course not found', 404);
+        ResponseMessage('Course deleted');
+    }
+
+    public function toggle($id)
+    {
+        $item = $this->service->toggleActive($id);
+        if (!$item) ResponseMessage('Course not found', 404);
+        ResponseData($item);
+    }
+}

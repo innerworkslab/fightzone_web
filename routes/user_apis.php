@@ -11,6 +11,9 @@ use App\Http\Controllers\API\v1\User\Shop\PackageController;
 use App\Http\Controllers\API\v1\User\Shop\DepositController;
 use App\Http\Controllers\API\v1\User\Shop\PurchaseController;
 use App\Http\Controllers\API\v1\User\ProfileController;
+use App\Http\Controllers\API\v1\User\Shop\CourseCategoryController;
+use App\Http\Controllers\API\v1\User\Shop\CourseController;
+use App\Http\Controllers\API\v1\User\Shop\CourseDayController;
 
 Route::prefix('/v1')->group(function () {
     Route::controller(RegisterController::class)->group(function () {
@@ -34,6 +37,18 @@ Route::prefix('/v1')->group(function () {
 
             Route::get('/payment-methods', [PaymentMethodController::class, 'index']);
             Route::get('/packages', [PackageController::class, 'index']);
+
+            Route::prefix('/course-categories')->group(function () {
+                Route::get('/', [CourseCategoryController::class, 'index']);
+                Route::get('/{id}', [CourseCategoryController::class, 'show']);
+            });
+
+            Route::prefix('/courses')->group(function () {
+                Route::get('/', [CourseController::class, 'index']);
+                Route::get('/category/{categoryId}', [CourseController::class, 'getByCategory']);
+                Route::get('/level/{level}', [CourseController::class, 'getByLevel']);
+                Route::get('/{id}', [CourseController::class, 'show']);
+            });
 
             Route::prefix('/deposits')->group(function () {
                 Route::get('/', [DepositController::class, 'index']);

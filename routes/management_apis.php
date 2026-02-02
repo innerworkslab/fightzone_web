@@ -10,6 +10,8 @@ use App\Http\Controllers\API\v1\Management\PaymentMethodController;
 use App\Http\Controllers\API\v1\Management\PackageController;
 use App\Http\Controllers\API\v1\Management\DepositController;
 use App\Http\Controllers\API\v1\Management\PurchaseController;
+use App\Http\Controllers\API\v1\Management\CourseCategoryController;
+use App\Http\Controllers\API\v1\Management\CourseController;
 
 Route::prefix('/v1/management')->group(function () {
     Route::post('/login', [LoginController::class, 'login']);
@@ -53,6 +55,28 @@ Route::prefix('/v1/management')->group(function () {
 
             Route::prefix('/packages')->group(function () {
                 Route::controller(PackageController::class)->group(function () {
+                    Route::get('/', 'index');
+                    Route::get('/{id}', 'show');
+                    Route::post('/', 'store');
+                    Route::post('/{id}', 'update');
+                    Route::post('/{id}/toggle', 'toggle');
+                    Route::delete('/{id}', 'destroy');
+                });
+            });
+
+            Route::prefix('/course-categories')->group(function () {
+                Route::controller(CourseCategoryController::class)->group(function () {
+                    Route::get('/', 'index');
+                    Route::get('/{id}', 'show');
+                    Route::post('/', 'store');
+                    Route::post('/{id}', 'update');
+                    Route::post('/{id}/toggle', 'toggle');
+                    Route::delete('/{id}', 'destroy');
+                });
+            });
+
+            Route::prefix('/courses')->group(function () {
+                Route::controller(CourseController::class)->group(function () {
                     Route::get('/', 'index');
                     Route::get('/{id}', 'show');
                     Route::post('/', 'store');
