@@ -66,6 +66,7 @@ class CourseController extends Controller
         foreach ($courseDays as $courseDay) {
             $this->courseDayService->create([
                 'course_id' => $item->id,
+                'name' => isset($courseDay['name']) ? $courseDay['name'] : null,
                 'day_number' => $courseDay['day_number'],
                 'type' => $courseDay['type'],
                 'video_link' => $courseDay['video_link'],
@@ -116,6 +117,7 @@ class CourseController extends Controller
                 if(isset($courseDay['id'])) {
                     $this->courseDayService->update($courseDay['id'], [
                         'day_number' => $courseDay['day_number'],
+                        'name' => isset($courseDay['name']) ? $courseDay['name'] : null,
                         'type' => $courseDay['type'],
                         'video_link' => $courseDay['video_link'],
                         'duration' => $courseDay['duration'],
@@ -124,6 +126,7 @@ class CourseController extends Controller
                     $this->courseDayService->create([
                         'course_id' => $item->id,
                         'day_number' => $courseDay['day_number'],
+                        'name' => isset($courseDay['name']) ? $courseDay['name'] : null,
                         'type' => $courseDay['type'],
                         'video_link' => $courseDay['video_link'],
                         'duration' => $courseDay['duration'],

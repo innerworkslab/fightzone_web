@@ -10,6 +10,7 @@ class CourseDay extends Model
     use HasFactory;
 
     protected $fillable = [
+        'name',
         'course_id',
         'day_number',
         'type',
