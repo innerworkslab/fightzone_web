@@ -48,6 +48,7 @@ Route::prefix('/v1')->group(function () {
                 Route::get('/category/{categoryId}', [CourseController::class, 'getByCategory']);
                 Route::get('/level/{level}', [CourseController::class, 'getByLevel']);
                 Route::get('/{id}', [CourseController::class, 'show']);
+                Route::get('/{id}/course_levels/{levelId}/lesson_days', [CourseController::class, 'getCourseLevelLessonDays']);
             });
 
             Route::prefix('/deposits')->group(function () {

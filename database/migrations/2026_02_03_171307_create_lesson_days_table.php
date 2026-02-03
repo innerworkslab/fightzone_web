@@ -15,10 +15,10 @@ return new class extends Migration
             $table->id();
             $table->foreignId('course_level_id')->constrained('course_levels')->cascadeOnDelete();
             $table->integer('day_number');
-            $table->enum('type', ['Lesson', 'Rest']);
-            $table->string('name');
-            $table->string('video_url');
-            $table->time('duration');
+            $table->enum('type', ['Lesson', 'Rest'])->default('Lesson');
+            $table->string('name')->nullable();
+            $table->string('video_url')->nullable();
+            $table->time('duration')->nullable();
 
             $table->timestamps();
         });

@@ -45,34 +45,29 @@ class CourseController extends Controller
             'name' => 'required|string|max:255',
             'description' => 'nullable|string',
             'course_category_id' => 'required|exists:course_categories,id',
-            'level' => 'required|in:beginner,intermediate,expert',
-            'price' => 'required|numeric|min:0',
             'is_active' => 'boolean',
-            'course_days' => 'required|json'
         ]);
 
         $data = $request->only([
             'name',
             'description',
             'course_category_id',
-            'level',
-            'price',
             'is_active'
         ]);
 
         $item = $this->service->create($data);
 
-        $courseDays = json_decode($validated['course_days'], true);
-        foreach ($courseDays as $courseDay) {
-            $this->courseDayService->create([
-                'course_id' => $item->id,
-                'name' => isset($courseDay['name']) ? $courseDay['name'] : null,
-                'day_number' => $courseDay['day_number'],
-                'type' => $courseDay['type'],
-                'video_link' => $courseDay['video_link'],
-                'duration' => $courseDay['duration'],
-            ]);
-        }
+        // $courseDays = json_decode($validated['course_days'], true);
+        // foreach ($courseDays as $courseDay) {
+        //     $this->courseDayService->create([
+        //         'course_id' => $item->id,
+        //         'name' => isset($courseDay['name']) ? $courseDay['name'] : null,
+        //         'day_number' => $courseDay['day_number'],
+        //         'type' => $courseDay['type'],
+        //         'video_link' => $courseDay['video_link'],
+        //         'duration' => $courseDay['duration'],
+        //     ]);
+        // }
 
         ResponseData($item, 201);
     }
@@ -90,10 +85,7 @@ class CourseController extends Controller
             'name' => 'sometimes|string|max:255',
             'description' => 'nullable|string',
             'course_category_id' => 'sometimes|exists:course_categories,id',
-            'level' => 'sometimes|in:beginner,intermediate,expert',
-            'price' => 'sometimes|numeric|min:0',
             'is_active' => 'boolean',
-            'course_days' => 'sometimes|json'
         ]);
 
         $item = $this->service->find($id);
@@ -103,37 +95,35 @@ class CourseController extends Controller
             'name',
             'description',
             'course_category_id',
-            'level',
-            'price',
             'is_active'
         ]);
 
         $updated = $this->service->update($id, $data);
         if (!$updated) ResponseMessage('Course not found', 404);
 
-        if($request->has('course_days')) {
-            $courseDays = json_decode($validated['course_days'], true);
-            foreach ($courseDays as $courseDay) {
-                if(isset($courseDay['id'])) {
-                    $this->courseDayService->update($courseDay['id'], [
-                        'day_number' => $courseDay['day_number'],
-                        'name' => isset($courseDay['name']) ? $courseDay['name'] : null,
-                        'type' => $courseDay['type'],
-                        'video_link' => $courseDay['video_link'],
-                        'duration' => $courseDay['duration'],
-                    ]);
-                } else {
-                    $this->courseDayService->create([
-                        'course_id' => $item->id,
-                        'day_number' => $courseDay['day_number'],
-                        'name' => isset($courseDay['name']) ? $courseDay['name'] : null,
-                        'type' => $courseDay['type'],
-                        'video_link' => $courseDay['video_link'],
-                        'duration' => $courseDay['duration'],
-                    ]);
-                }
-            }
-        }
+        // if($request->has('course_days')) {
+        //     $courseDays = json_decode($validated['course_days'], true);
+        //     foreach ($courseDays as $courseDay) {
+        //         if(isset($courseDay['id'])) {
+        //             $this->courseDayService->update($courseDay['id'], [
+        //                 'day_number' => $courseDay['day_number'],
+        //                 'name' => isset($courseDay['name']) ? $courseDay['name'] : null,
+        //                 'type' => $courseDay['type'],
+        //                 'video_link' => $courseDay['video_link'],
+        //                 'duration' => $courseDay['duration'],
+        //             ]);
+        //         } else {
+        //             $this->courseDayService->create([
+        //                 'course_id' => $item->id,
+        //                 'day_number' => $courseDay['day_number'],
+        //                 'name' => isset($courseDay['name']) ? $courseDay['name'] : null,
+        //                 'type' => $courseDay['type'],
+        //                 'video_link' => $courseDay['video_link'],
+        //                 'duration' => $courseDay['duration'],
+        //             ]);
+        //         }
+        //     }
+        // }
 
         ResponseData($updated);
     }

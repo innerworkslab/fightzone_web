@@ -3,6 +3,7 @@
 namespace App\Repositories\Course;
 
 use App\Models\Course;
+use App\Models\LessonDay;
 
 class CourseRepository implements CourseRepositoryInterface
 {
@@ -51,9 +52,7 @@ class CourseRepository implements CourseRepositoryInterface
 
     public function findWithDetails($id)
     {
-        return Course::with(['category', 'courseDays' => function ($query) {
-            $query->orderBy('day_number');
-        }])->find($id);
+        return Course::with(['category', 'courseLevels'])->find($id);
     }
 
     public function create(array $data): Course

@@ -67,4 +67,9 @@ class CourseService
             ? $query->paginate($limit ?? config('common.list_count'))
             : $query->get();
     }
+
+    public function getLessonDays($courseId, $levelId)
+    {
+
+    }
 }

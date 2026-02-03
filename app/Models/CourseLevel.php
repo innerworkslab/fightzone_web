@@ -41,14 +41,6 @@ class CourseLevel extends Model
     }
 
     /**
-     * Get active lesson days only
-     */
-    public function activeLessonDays()
-    {
-        return $this->lessonDays()->where('is_active', true);
-    }
-
-    /**
      * Get lesson days only (not rest days)
      */
     public function lessons()

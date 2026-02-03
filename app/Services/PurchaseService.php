@@ -70,6 +70,11 @@ class PurchaseService
             throw new \RuntimeException('Purchasable item not found');
         }
 
+        // Validate that courses cannot be purchased directly (must purchase course levels)
+        if ($purchasable instanceof \App\Models\Course) {
+            throw new \RuntimeException('Courses cannot be purchased directly. Please purchase a specific course level.');
+        }
+
         // Calculate total points needed (same logic as deposit conversion)
         $unitPrice = $this->getItemPrice($purchasable);
         $rate = (float) config('payments.points_per_unit', 1);

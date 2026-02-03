@@ -7,10 +7,11 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 
 use App\Services\CourseService;
+use App\Services\CourseLevelService;
 
 class CourseController extends Controller
 {
-    public function __construct(protected CourseService $service)
+    public function __construct(protected CourseService $service, protected CourseLevelService $levelService)
     {
 
     }
@@ -75,6 +76,13 @@ class CourseController extends Controller
             $request->page,
             $request->limit
         );
+
+        ResponseData($data);
+    }
+
+    public function getCourseLevelLessonDays($id, $levelId)
+    {
+        $data = $this->levelService->getLessons($id, $levelId);
 
         ResponseData($data);
     }

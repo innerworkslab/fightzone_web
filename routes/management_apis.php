@@ -12,6 +12,7 @@ use App\Http\Controllers\API\v1\Management\DepositController;
 use App\Http\Controllers\API\v1\Management\PurchaseController;
 use App\Http\Controllers\API\v1\Management\CourseCategoryController;
 use App\Http\Controllers\API\v1\Management\CourseController;
+use App\Http\Controllers\API\v1\Management\CourseLevelController;
 
 Route::prefix('/v1/management')->group(function () {
     Route::post('/login', [LoginController::class, 'login']);
@@ -64,6 +65,20 @@ Route::prefix('/v1/management')->group(function () {
                 });
             });
 
+            Route::prefix('/deposits')->group(function () {
+                Route::get('/', [DepositController::class, 'index']);
+                Route::get('/{id}', [DepositController::class, 'show']);
+                Route::post('/{id}/confirm', [DepositController::class, 'confirm']);
+                Route::post('/{id}/reject', [DepositController::class, 'reject']);
+            });
+
+            Route::prefix('/purchases')->group(function () {
+                Route::get('/', [PurchaseController::class, 'index']);
+                Route::get('/{id}', [PurchaseController::class, 'show']);
+                Route::post('/{id}/confirm', [PurchaseController::class, 'confirm']);
+                Route::post('/{id}/reject', [PurchaseController::class, 'reject']);
+            });
+
             Route::prefix('/course-categories')->group(function () {
                 Route::controller(CourseCategoryController::class)->group(function () {
                     Route::get('/', 'index');
@@ -86,18 +101,15 @@ Route::prefix('/v1/management')->group(function () {
                 });
             });
 
-            Route::prefix('/deposits')->group(function () {
-                Route::get('/', [DepositController::class, 'index']);
-                Route::get('/{id}', [DepositController::class, 'show']);
-                Route::post('/{id}/confirm', [DepositController::class, 'confirm']);
-                Route::post('/{id}/reject', [DepositController::class, 'reject']);
-            });
-
-            Route::prefix('/purchases')->group(function () {
-                Route::get('/', [PurchaseController::class, 'index']);
-                Route::get('/{id}', [PurchaseController::class, 'show']);
-                Route::post('/{id}/confirm', [PurchaseController::class, 'confirm']);
-                Route::post('/{id}/reject', [PurchaseController::class, 'reject']);
+            Route::prefix('/course-levels')->group(function () {
+                Route::controller(CourseLevelController::class)->group(function () {
+                    Route::get('/', 'index');
+                    Route::get('/{id}', 'show');
+                    Route::post('/', 'store');
+                    Route::post('/{id}', 'update');
+                    Route::post('/{id}/toggle', 'toggle');
+                    Route::delete('/{id}', 'destroy');
+                });
             });
         });
     });
