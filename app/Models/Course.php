@@ -13,16 +13,12 @@ class Course extends Model
         'name',
         'description',
         'course_category_id',
-        'level',
-        'price',
         'is_active',
     ];
 
     protected $casts = [
         'course_category_id' => 'integer',
-        'price' => 'decimal:2',
         'is_active' => 'boolean',
-        'level' => 'string',
     ];
 
     /**
@@ -34,46 +30,50 @@ class Course extends Model
     }
 
     /**
-     * Get all course days
+     * Get all course levels
      */
-    public function courseDays()
+    public function courseLevels()
     {
-        return $this->hasMany(CourseDay::class)->orderBy('day_number');
+        return $this->hasMany(CourseLevel::class);
     }
 
     /**
-     * Get active course days only
+     * Get active course levels only
      */
-    public function activeCourseDays()
+    public function activeCourseLevels()
     {
-        return $this->courseDays()->where('is_active', true);
+        return $this->courseLevels()->where('is_active', true);
     }
 
     /**
-     * Get total duration of all lesson days
+     * Get course level by level name
      */
-    public function getTotalDurationAttribute()
+    public function getLevel($level)
     {
-        return $this->courseDays()
-            ->where('type', 'Lesson')
-            ->sum('duration_seconds');
+        return $this->courseLevels()->where('level', ucfirst(strtolower($level)))->first();
     }
 
     /**
-     * Get total number of lesson days
+     * Get beginner level
      */
-    public function getLessonDaysCountAttribute()
+    public function beginnerLevel()
     {
-        return $this->courseDays()
-            ->where('type', 'Lesson')
-            ->count();
+        return $this->courseLevels()->where('level', 'Beginner')->first();
     }
 
     /**
-     * Get total number of days (including rest days)
+     * Get intermediate level
      */
-    public function getTotalDaysAttribute()
+    public function intermediateLevel()
     {
-        return $this->courseDays()->count();
+        return $this->courseLevels()->where('level', 'Intermediate')->first();
+    }
+
+    /**
+     * Get expert level
+     */
+    public function expertLevel()
+    {
+        return $this->courseLevels()->where('level', 'Expert')->first();
     }
 }

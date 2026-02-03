@@ -11,19 +11,15 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('course_days', function (Blueprint $table) {
+        Schema::create('course_levels', function (Blueprint $table) {
             $table->id();
             $table->foreignId('course_id')->constrained('courses')->cascadeOnDelete();
-            $table->integer('day_number');
-            $table->enum('type', ['Lesson', 'Rest'])->default('Lesson');
-            $table->string('video_link')->nullable();
-            $table->time('duration')->nullable(); // HH:MM:SS format
+            $table->enum('level', ['Beginner', 'Intermediate', 'Expert'])->default('Beginner');
+            $table->double('price')->default(0);
             $table->boolean('is_active')->default(true);
             $table->timestamps();
 
-            // Unique constraint: each course can have only one day_number
-            $table->unique(['course_id', 'day_number']);
-            $table->index(['course_id', 'type']);
+            $table->index(['course_id', 'level']);
             $table->index(['course_id', 'is_active']);
         });
     }
@@ -33,6 +29,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('course_days');
+        Schema::dropIfExists('course_levels');
     }
 };
