@@ -14,8 +14,9 @@ return [
     */
     'purchasable_types' => [
         'App\\Models\\Package',
-        'App\\Models\\Course',
+        'package',
         'App\\Models\\CourseLevel',
+        'course_level'
         // Add more purchasable types here as needed
         // 'App\\Models\\Equipment',
     ],

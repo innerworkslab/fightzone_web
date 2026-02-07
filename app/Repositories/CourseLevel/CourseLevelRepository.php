@@ -9,10 +9,10 @@ class CourseLevelRepository implements CourseLevelRepositoryInterface
     public function all(bool $onlyActive = true, ?array $filters = [], ?int $limit = null)
     {
         $query = CourseLevel::query()
-        // ->with(['course'])
-        ->orderBy('level');
+            ->with(['course'])
+            ->orderBy('level');
 
-        if($onlyActive) {
+        if ($onlyActive) {
             $query->where('is_active', true);
         }
 
@@ -37,7 +37,7 @@ class CourseLevelRepository implements CourseLevelRepositoryInterface
 
     public function find($id)
     {
-        return CourseLevel::with(['course','lessonDays'])->find($id);
+        return CourseLevel::with(['course', 'lessonDays'])->find($id);
     }
 
     public function create(array $data): CourseLevel

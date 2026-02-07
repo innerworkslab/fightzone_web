@@ -10,10 +10,7 @@ class AppServiceProvider extends ServiceProvider
     /**
      * Register any application services.
      */
-    public function register(): void
-    {
-
-    }
+    public function register(): void {}
 
     /**
      * Bootstrap any application services.
@@ -26,7 +23,8 @@ class AppServiceProvider extends ServiceProvider
             'user' => 'App\Models\User',
             'deposit' => 'App\Models\Deposit',
             'package' => 'App\Models\Package',
-            'course' => 'App\Models\Course'
+            'course' => 'App\Models\Course',
+            'course_level' => 'App\Models\CourseLevel'
         ]);
     }
 }
