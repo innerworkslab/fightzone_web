@@ -7,11 +7,10 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 
 use App\Services\CourseService;
-use App\Services\CourseDayService;
 
 class CourseController extends Controller
 {
-    public function __construct(protected CourseService $service, protected CourseDayService $courseDayService)
+    public function __construct(protected CourseService $service)
     {
 
     }
@@ -57,18 +56,6 @@ class CourseController extends Controller
 
         $item = $this->service->create($data);
 
-        // $courseDays = json_decode($validated['course_days'], true);
-        // foreach ($courseDays as $courseDay) {
-        //     $this->courseDayService->create([
-        //         'course_id' => $item->id,
-        //         'name' => isset($courseDay['name']) ? $courseDay['name'] : null,
-        //         'day_number' => $courseDay['day_number'],
-        //         'type' => $courseDay['type'],
-        //         'video_link' => $courseDay['video_link'],
-        //         'duration' => $courseDay['duration'],
-        //     ]);
-        // }
-
         ResponseData($item, 201);
     }
 
@@ -100,30 +87,6 @@ class CourseController extends Controller
 
         $updated = $this->service->update($id, $data);
         if (!$updated) ResponseMessage('Course not found', 404);
-
-        // if($request->has('course_days')) {
-        //     $courseDays = json_decode($validated['course_days'], true);
-        //     foreach ($courseDays as $courseDay) {
-        //         if(isset($courseDay['id'])) {
-        //             $this->courseDayService->update($courseDay['id'], [
-        //                 'day_number' => $courseDay['day_number'],
-        //                 'name' => isset($courseDay['name']) ? $courseDay['name'] : null,
-        //                 'type' => $courseDay['type'],
-        //                 'video_link' => $courseDay['video_link'],
-        //                 'duration' => $courseDay['duration'],
-        //             ]);
-        //         } else {
-        //             $this->courseDayService->create([
-        //                 'course_id' => $item->id,
-        //                 'day_number' => $courseDay['day_number'],
-        //                 'name' => isset($courseDay['name']) ? $courseDay['name'] : null,
-        //                 'type' => $courseDay['type'],
-        //                 'video_link' => $courseDay['video_link'],
-        //                 'duration' => $courseDay['duration'],
-        //             ]);
-        //         }
-        //     }
-        // }
 
         ResponseData($updated);
     }

@@ -13,7 +13,6 @@ use App\Http\Controllers\API\v1\User\Shop\PurchaseController;
 use App\Http\Controllers\API\v1\User\ProfileController;
 use App\Http\Controllers\API\v1\User\Shop\CourseCategoryController;
 use App\Http\Controllers\API\v1\User\Shop\CourseController;
-use App\Http\Controllers\API\v1\User\Shop\CourseDayController;
 
 Route::prefix('/v1')->group(function () {
     Route::controller(RegisterController::class)->group(function () {

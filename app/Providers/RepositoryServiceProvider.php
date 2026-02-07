@@ -22,8 +22,6 @@ use App\Repositories\CourseCategory\CourseCategoryRepositoryInterface;
 use App\Repositories\CourseCategory\CourseCategoryRepository;
 use App\Repositories\Course\CourseRepositoryInterface;
 use App\Repositories\Course\CourseRepository;
-use App\Repositories\CourseDay\CourseDayRepositoryInterface;
-use App\Repositories\CourseDay\CourseDayRepository;
 use App\Repositories\CourseLevel\CourseLevelRepositoryInterface;
 use App\Repositories\CourseLevel\CourseLevelRepository;
 use App\Repositories\LessonDay\LessonDayRepositoryInterface;
@@ -46,7 +44,6 @@ class RepositoryServiceProvider extends ServiceProvider
         $this->app->bind(ProfileRepositoryInterface::class, ProfileRepository::class);
         $this->app->bind(CourseCategoryRepositoryInterface::class, CourseCategoryRepository::class);
         $this->app->bind(CourseRepositoryInterface::class, CourseRepository::class);
-        $this->app->bind(CourseDayRepositoryInterface::class, CourseDayRepository::class);
         $this->app->bind(CourseLevelRepositoryInterface::class, CourseLevelRepository::class);
         $this->app->bind(LessonDayRepositoryInterface::class, LessonDayRepository::class);
     }
