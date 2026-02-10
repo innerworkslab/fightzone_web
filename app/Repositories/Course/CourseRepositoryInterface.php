@@ -12,6 +12,8 @@ interface CourseRepositoryInterface
 
     public function findWithDetails($id);
 
+    public function findWithDetailsForUser($id, $userId);
+
     public function create(array $data): Course;
 
     public function update($id, array $data): Course;

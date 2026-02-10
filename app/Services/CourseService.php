@@ -30,6 +30,11 @@ class CourseService
         return $this->repo->findWithDetails($id);
     }
 
+    public function findWithCourseLevelPurchaseStatus($courseId, $userId)
+    {
+        return $this->repo->findWithDetailsForUser($courseId, $userId);
+    }
+
     public function create(array $data)
     {
         return $this->repo->create($data);

@@ -41,7 +41,8 @@ class CourseController extends Controller
 
     public function show($id)
     {
-        $course = $this->service->findWithDetails($id);
+        $userId = ApiUser()->id;
+        $course = $this->service->findWithCourseLevelPurchaseStatus($id, $userId);
 
         if (!$course) {
             ResponseMessage('Course not found', 404);

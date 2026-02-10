@@ -33,6 +33,14 @@ class CourseLevel extends Model
     }
 
     /**
+     * Get total number of lesson days
+     */
+    public function getTotalLessonDaysCountAttribute()
+    {
+        return $this->lessonDays()->count();
+    }
+
+    /**
      * Get all lesson days for this level
      */
     public function lessonDays()
@@ -64,14 +72,6 @@ class CourseLevel extends Model
         return $this->lessonDays()
             ->where('type', 'Lesson')
             ->sum('duration_seconds');
-    }
-
-    /**
-     * Get total number of lesson days
-     */
-    public function getLessonDaysCountAttribute()
-    {
-        return $this->lessons()->count();
     }
 
     /**
