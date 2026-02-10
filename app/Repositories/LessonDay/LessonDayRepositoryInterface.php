@@ -16,5 +16,7 @@ interface LessonDayRepositoryInterface
 
     public function delete($id);
 
-    public function toggleActive($id): LessonDay;
+    public function attachVideoToLessonDay(int $lessonDayId, array $data);
+
+    public function updateLessonDayVideo(int $id, array $data);
 }

@@ -11,14 +11,14 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('lesson_days', function (Blueprint $table) {
+        Schema::create('lesson_day_videos', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('course_level_id')->constrained('course_levels')->cascadeOnDelete();
-            $table->integer('day_number');
-            $table->enum('type', ['Lesson', 'Rest'])->default('Lesson');
+            $table->foreignId('lesson_day_id')->constrained()->cascadeOnDelete();
             $table->string('name')->nullable();
-            $table->time('duration')->nullable();
-
+            $table->string('description')->nullable();
+            $table->string('thumbnail_url')->nullable();
+            $table->string('url');
+            $table->time('duration');
             $table->timestamps();
         });
     }
@@ -28,6 +28,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('lesson_days');
+        Schema::dropIfExists('lesson_day_videos');
     }
 };

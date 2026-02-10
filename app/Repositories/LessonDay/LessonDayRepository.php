@@ -3,6 +3,7 @@
 namespace App\Repositories\LessonDay;
 
 use App\Models\LessonDay;
+use App\Models\LessonDayVideo;
 
 class LessonDayRepository implements LessonDayRepositoryInterface
 {
@@ -31,7 +32,7 @@ class LessonDayRepository implements LessonDayRepositoryInterface
 
     public function find($id)
     {
-        return LessonDay::find($id);
+        return LessonDay::with('videos')->find($id);
     }
 
     public function create(array $data): LessonDay
@@ -59,14 +60,21 @@ class LessonDayRepository implements LessonDayRepositoryInterface
         return $lessonDay->delete();
     }
 
-    public function toggleActive($id): LessonDay
+    public function attachVideoToLessonDay(int $lessonDayId, array $data)
     {
-        $lessonDay = $this->find($id);
+        $lessonDay = $this->find($lessonDayId);
         if (!$lessonDay) {
             throw new \RuntimeException('Lesson day not found');
         }
-        $lessonDay->is_active = !$lessonDay->is_active;
-        $lessonDay->save();
-        return $lessonDay;
+        $data['lesson_day_id'] = $lessonDayId;
+        return LessonDayVideo::updateOrCreate([
+            'lesson_day_id' => $data['lesson_day_id'],
+            'url' => $data['url']
+        ], $data);
+    }
+
+    public function updateLessonDayVideo(int $id, array $data)
+    {
+        return LessonDayVideo::find($id)->update($data);
     }
 }

@@ -2,13 +2,22 @@
 
 namespace App\Services;
 
+use Illuminate\Support\Facades\DB;
+
 use App\Models\Course;
 
 use App\Repositories\CourseLevel\CourseLevelRepositoryInterface;
 
+use App\Services\LessonDayService;
+use App\Services\LessonDayVideoService;
+
 class CourseLevelService
 {
-    public function __construct(protected CourseLevelRepositoryInterface $levelRepo)
+    public function __construct(
+        protected CourseLevelRepositoryInterface $levelRepo,
+        protected LessonDayService $lessonDayService,
+        protected LessonDayVideoService $videoService
+    )
     {
 
     }
@@ -27,7 +36,7 @@ class CourseLevelService
         return $this->levelRepo->find($id);
     }
 
-    public function create(array $data)
+    public function create(array $data, array $lessonDays=[])
     {
         $course = Course::find($data['course_id']);
         if (!$course) {
@@ -38,10 +47,33 @@ class CourseLevelService
             throw new \RuntimeException('Course level already exists');
         }
 
-        return $this->levelRepo->create($data);
+        try{
+            DB::beginTransaction();
+            $courseLevel = $this->levelRepo->create($data);
+
+            foreach ($lessonDays as $lessonDay) {
+                $createdLessonDay = $this->lessonDayService->create($courseLevel->id, [
+                    'name' => isset($lessonDay['name']) ? $lessonDay['name'] : "Day " . $lessonDay['day_number'],
+                    'course_level_id' => $courseLevel->id,
+                    'day_number' => $lessonDay['day_number'],
+                    'type' => $lessonDay['type'],
+                    'duration' => isset($lessonDay['duration']) ? $lessonDay['duration'] : null,
+                ]);
+
+                if(count($lessonDay['videos']) > 0){
+                    $this->videoService->attachVideoToLesson($createdLessonDay->id, $lessonDay['videos']);
+                }
+            }
+
+            DB::commit();
+            return $courseLevel;
+        }catch(\Exception $e){
+            DB::rollBack();
+            throw new \Exception($e->getMessage());
+        }
     }
 
-    public function update($id, array $data)
+    public function update($id, array $data, array $lessonDays=[])
     {
         $course = Course::find($data['course_id']);
         if (!$course) {
@@ -57,7 +89,44 @@ class CourseLevelService
             throw new \RuntimeException('Course level not found');
         }
 
-        return $this->levelRepo->update($id, $data);
+        try{
+            DB::beginTransaction();
+            $courseLevel = $this->levelRepo->update($id, $data);
+
+            if(count($lessonDays) > 0){
+                foreach($lessonDays as $lessonDay){
+                    if(isset($lessonDay['id'])){
+                        $updatedLessonDay = $this->lessonDayService->update($lessonDay['id'], [
+                            'name' => isset($lessonDay['name']) ? $lessonDay['name'] : null,
+                            'type' => $lessonDay['type'],
+                            'duration' => isset($lessonDay['duration']) ? $lessonDay['duration'] : null,
+                        ]);
+
+                        if(isset($lessonDay['videos'])){
+                            $this->videoService->attachVideoToLesson($updatedLessonDay->id, $lessonDay['videos']);
+                        }
+                    }else{
+                        $createdLessonDay = $this->lessonDayService->create($courseLevel->id, [
+                            'name' => isset($lessonDay['name']) ? $lessonDay['name'] : "Day " . $lessonDay['day_number'],
+                            'course_level_id' => $item->id,
+                            'day_number' => $lessonDay['day_number'],
+                            'type' => $lessonDay['type'],
+                            'duration' => isset($lessonDay['duration']) ? $lessonDay['duration'] : null,
+                        ]);
+
+                        if(isset($lessonDay['videos'])){
+                            $this->videoService->attachVideoToLesson($createdLessonDay->id, $lessonDay['videos']);
+                        }
+                    }
+                }
+            }
+
+            DB::commit();
+            return $courseLevel;
+        }catch(\Exception $e){
+            DB::rollBack();
+            throw new \Exception($e->getMessage());
+        }
     }
 
     public function delete($id)

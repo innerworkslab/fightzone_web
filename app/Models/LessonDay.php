@@ -14,7 +14,6 @@ class LessonDay extends Model
         'day_number',
         'type',
         'name',
-        'video_url',
         'duration',
         'is_active',
     ];
@@ -23,7 +22,6 @@ class LessonDay extends Model
         'course_level_id' => 'integer',
         'day_number' => 'integer',
         'duration' => 'string',
-        'is_active' => 'boolean',
         'type' => 'string',
     ];
 
@@ -46,6 +44,11 @@ class LessonDay extends Model
     public function course()
     {
         return $this->hasOneThrough(Course::class, CourseLevel::class, 'id', 'id', 'course_level_id', 'course_id');
+    }
+
+    public function videos()
+    {
+        return $this->hasMany(LessonDayVideo::class);
     }
 
     /**

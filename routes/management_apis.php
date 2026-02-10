@@ -13,6 +13,8 @@ use App\Http\Controllers\API\v1\Management\PurchaseController;
 use App\Http\Controllers\API\v1\Management\CourseCategoryController;
 use App\Http\Controllers\API\v1\Management\CourseController;
 use App\Http\Controllers\API\v1\Management\CourseLevelController;
+use App\Http\Controllers\API\v1\Management\LessonDayController;
+use App\Http\Controllers\API\v1\Management\LessonDayVideoController;
 
 Route::prefix('/v1/management')->group(function () {
     Route::post('/login', [LoginController::class, 'login']);
@@ -109,6 +111,21 @@ Route::prefix('/v1/management')->group(function () {
                     Route::post('/{id}', 'update');
                     Route::post('/{id}/toggle', 'toggle');
                     Route::delete('/{id}', 'destroy');
+                });
+
+                Route::controller(LessonDayController::class)->group(function () {
+                    Route::get('/{levelId}/lesson_days', 'index');
+                    Route::get('/{levelId}/lesson_days/{lessonDayId}', 'show');
+                    Route::post('/{levelId}/lesson_days/', 'store');
+                    Route::post('/{levelId}/lesson_days/{lessonDayId}', 'update');
+                    Route::delete('/{levelId}/lesson_days/{lessonDayId}', 'destroy');
+                });
+            });
+
+            Route::prefix('/lesson-day-videos')->group(function () {
+                Route::controller(LessonDayVideoController::class)->group(function () {
+                    Route::post('/', 'store');
+                    Route::post('/{id}', 'update');
                 });
             });
         });

@@ -11,10 +11,15 @@ use App\Enums\CourseLevels;
 
 use App\Services\CourseLevelService;
 use App\Services\LessonDayService;
+use App\Services\LessonDayVideoService;
 
 class CourseLevelController extends Controller
 {
-    public function __construct(protected CourseLevelService $service, protected LessonDayService $lessonDayService)
+    public function __construct(
+        protected CourseLevelService $service,
+        protected LessonDayService $lessonDayService,
+        protected LessonDayVideoService $videoService
+    )
     {
 
     }
@@ -43,25 +48,10 @@ class CourseLevelController extends Controller
             'level' => ['required', Rule::enum(CourseLevels::class)],
             'price' => 'required|numeric|min:0',
             'is_active' => 'boolean',
-            'lesson_days' => 'required|json',
+            'lesson_days' => 'sometimes|json',
         ]);
 
-        $item = $this->service->create($validated);
-
-        $lessonDays = json_decode($validated['lesson_days'], true);
-        if(count($lessonDays) < 1){
-            ResponseMessage("Lesson days must be present", 400);
-        }
-        foreach ($lessonDays as $lessonDay) {
-            $this->lessonDayService->create([
-                'name' => isset($lessonDay['name']) ? $lessonDay['name'] : "Day " . $lessonDay['day_number'],
-                'course_level_id' => $item->id,
-                'day_number' => $lessonDay['day_number'],
-                'type' => $lessonDay['type'],
-                'video_url' => isset($lessonDay['video_url']) ? $lessonDay['video_url'] : null,
-                'duration' => isset($lessonDay['duration']) ? $lessonDay['duration'] : null,
-            ]);
-        }
+        $item = $this->service->create($validated, ($request->lesson_days)? json_decode($validated['lesson_days'], true): []);
 
         ResponseData($item, 201);
     }
@@ -86,33 +76,8 @@ class CourseLevelController extends Controller
         $item = $this->service->find($id);
         if (!$item) ResponseMessage('Course level not found', 404);
 
-        $updated = $this->service->update($id, $validated);
+        $updated = $this->service->update($id, $validated, ($request->lesson_days)? json_decode($request->lesson_days, true): []);
         if (!$updated) ResponseMessage('Course level not found', 404);
-
-        $lessonDays = json_decode($request->lesson_days, true);
-        if(count($lessonDays) > 0){
-            foreach($lessonDays as $lessonDay){
-                if(isset($lessonDay['id'])){
-                    $this->lessonDayService->update($lessonDay['id'], [
-                        'name' => isset($lessonDay['name']) ? $lessonDay['name'] : "Day " . $lessonDay['day_number'],
-                        // 'course_level_id' => $item->id,
-                        // 'day_number' => $lessonDay['day_number'],
-                        'type' => $lessonDay['type'],
-                        'video_url' => isset($lessonDay['video_url']) ? $lessonDay['video_url'] : null,
-                        'duration' => isset($lessonDay['duration']) ? $lessonDay['duration'] : null,
-                    ]);
-                }else{
-                    $this->lessonDayService->create([
-                        'name' => isset($lessonDay['name']) ? $lessonDay['name'] : "Day " . $lessonDay['day_number'],
-                        'course_level_id' => $item->id,
-                        'day_number' => $lessonDay['day_number'],
-                        'type' => $lessonDay['type'],
-                        'video_url' => isset($lessonDay['video_url']) ? $lessonDay['video_url'] : null,
-                        'duration' => isset($lessonDay['duration']) ? $lessonDay['duration'] : null,
-                    ]);
-                }
-            }
-        }
 
         ResponseData($updated);
     }
