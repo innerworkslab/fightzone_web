@@ -22,6 +22,11 @@ class LessonDayVideo extends Model
         'duration' => 'string',
     ];
 
+    protected $appends = [
+        'duration_seconds',
+        'formatted_duration',
+    ];
+
     public function lessonDay()
     {
         return $this->belongsTo(LessonDay::class);

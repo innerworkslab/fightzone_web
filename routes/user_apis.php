@@ -13,6 +13,7 @@ use App\Http\Controllers\API\v1\User\Shop\PurchaseController;
 use App\Http\Controllers\API\v1\User\ProfileController;
 use App\Http\Controllers\API\v1\User\Shop\CourseCategoryController;
 use App\Http\Controllers\API\v1\User\Shop\CourseController;
+use App\Http\Controllers\API\v1\User\Shop\LessonDayController;
 
 Route::prefix('/v1')->group(function () {
     Route::controller(RegisterController::class)->group(function () {
@@ -48,6 +49,7 @@ Route::prefix('/v1')->group(function () {
                 Route::get('/level/{level}', [CourseController::class, 'getByLevel']);
                 Route::get('/{id}', [CourseController::class, 'show']);
                 Route::get('/{id}/course_levels/{levelId}/lesson_days', [CourseController::class, 'getCourseLevelLessonDays']);
+                Route::get('/{courseId}/course_levels/{levelId}/lesson_days/{id}', [LessonDayController::class, 'show']);
             });
 
             Route::prefix('/deposits')->group(function () {
