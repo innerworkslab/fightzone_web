@@ -36,7 +36,7 @@ const currentHeader = computed(() => {
 </script>
 
 <template>
-    <header v-if="currentHeader">
+    <header v-if="currentHeader" class="border-b pb-3">
         <Label class="text-xl font-bold text-primary">{{ currentHeader }}</Label>
     </header>
 </template>

@@ -14,6 +14,11 @@ import DepositsList from "../../../views/components/deposits/DepositsList.vue";
 import { getDecryptedCookie } from "@/lib/utils.cookies";
 import { COOKIES, LOCALSTORAGE } from "@/constant/global.constant";
 import { getDecryptedLocalStorage } from "@/lib/utils.localStorage";
+import CoursesForm from "../../../views/components/courses/CoursesForm.vue";
+import CoursesList from "../../../views/components/courses/CoursesList.vue";
+import CourseCategoriesList from "../../../views/components/course-categories/CourseCategoriesList.vue";
+import CourseDaysList from "../../../views/components/course-days/CourseDaysList.vue";
+import CourseDayForm from "../../../views/components/course-days/CourseDayForm.vue";
 
 const routes = [
     {
@@ -121,6 +126,57 @@ const routes = [
                 component: DepositsList,
                 meta: { permissions: ["all"] },
             },
+            {
+                path: "courses",
+                name: RouteNames.CoursesList,
+                component: CoursesList,
+            },
+            {
+                path: "courses/add",
+                name: RouteNames.AddCourse,
+                component: CoursesForm,
+                meta: { permissions: ["all"] },
+            },
+            {
+                path: "courses/edit/:id",
+                name: RouteNames.EditCourse,
+                component: CoursesForm,
+                meta: { permissions: ["all"] },
+            },
+            {
+                path: "courses/view/:id",
+                name: RouteNames.ViewCourse,
+                component: CoursesForm,
+                meta: { permissions: ["all"] },
+            },
+            {
+                path: "categories",
+                name: RouteNames.CourseCategoriesList,
+                component: CourseCategoriesList,
+            },
+            {
+                path: "course-days",
+                name: RouteNames.CourseDaysList,
+                component: CourseDaysList,
+            },
+            {
+                path: "course-days/add",
+                name: RouteNames.AddCourseDay,
+                component: CourseDayForm,
+                meta: { permissions: ["all"] },
+            },
+            {
+                path: "course-days/edit/:id",
+                name: RouteNames.EditCourseDay,
+                component: CourseDayForm,
+                meta: { permissions: ["all"] },
+            },
+            {
+                path: "course-days/view/:id",
+                name: RouteNames.ViewCourseDay,
+                component: CourseDayForm,
+                meta: { permissions: ["all"] },
+            },
         ],
     },
 ];
@@ -142,7 +198,7 @@ router.beforeEach((to, from, next) => {
         // console.log("Required Permissions:", requiredPermissions);
 
         const hasFullAccess = userPermissions.some(
-            (p: any) => p.permission_type && p.permission_type.name === "all"
+            (p: any) => p.permission_type && p.permission_type.name === "all",
         );
 
         if (hasFullAccess) {
@@ -157,8 +213,8 @@ router.beforeEach((to, from, next) => {
             userPermissions.some(
                 (userPerm: any) =>
                     userPerm.permission_type_name &&
-                    userPerm.permission_type_name === requiredPerm
-            )
+                    userPerm.permission_type_name === requiredPerm,
+            ),
         );
     };
 

@@ -19,6 +19,8 @@ export const API_URLS = {
     PACKAGE: "packages",
     PURCHASE: "purchases",
     DEPOSIT: "deposits",
+    COURSE: "courses",
+    COURSE_CATEGORY: "course-categories",
 };
 
 export const COOKIES = {
