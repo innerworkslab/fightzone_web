@@ -1,12 +1,11 @@
 import Login from "../../../views/components/login/Login.vue";
-import PackagesList from "../../../views/components/packages/PackagesList.vue";
-import PackagesForm from "../../../views/components/packages/PackagesForm.vue";
 import {
     UserSquare,
     CreditCard,
     Package,
     ShoppingCart,
     Banknote,
+    BookAudio,
 } from "lucide-vue-next";
 
 export const RouteNames = {
@@ -26,6 +25,15 @@ export const RouteNames = {
     PackagesList: "packages-list",
     PurchasesList: "purchases-list",
     DepositsList: "deposits-list",
+    CoursesList: "courses-list",
+    AddCourse: "add-course",
+    ViewCourse: "view-course",
+    EditCourse: "edit-course",
+    CourseCategoriesList: "course-categories-list",
+    CourseDaysList: "course-days-list",
+    AddCourseDay: "add-course-day",
+    ViewCourseDay: "view-course-day",
+    EditCourseDay: "edit-course-day",
     Unauthorized: "unauthorized",
 };
 
@@ -170,6 +178,84 @@ export const routes = [
                 name: RouteNames.DepositsList,
                 header: "Deposit Transaction Management",
                 route: "/auth/deposits",
+            },
+        ],
+    },
+    {
+        label: "Course",
+        name: "course_group",
+        icon: BookAudio,
+        route: "/auth/courses",
+        children: [
+            {
+                label: "Course List",
+                name: RouteNames.CoursesList,
+                header: "Course Management",
+                route: "/auth/courses",
+            },
+            {
+                label: "",
+                name: RouteNames.AddCourse,
+                header: "Add Course",
+                route: "/auth/courses/add",
+            },
+            {
+                label: "",
+                name: RouteNames.EditCourse,
+                header: "Edit Course",
+                route: "",
+            },
+            {
+                label: "",
+                name: RouteNames.ViewCourse,
+                header: "View Course",
+                route: "",
+            },
+        ],
+    },
+    {
+        label: "Category",
+        name: "category_group",
+        icon: BookAudio,
+        route: "/auth/categories",
+        children: [
+            {
+                label: "Category List",
+                name: RouteNames.CourseCategoriesList,
+                header: "Categories Management",
+                route: "/auth/categories",
+            },
+        ],
+    },
+    {
+        label: "Course Day",
+        name: "course_day_group",
+        icon: BookAudio,
+        route: "/auth/course-days",
+        children: [
+            {
+                label: "Course List",
+                name: RouteNames.CourseDaysList,
+                header: "Course Days Management",
+                route: "/auth/course-days",
+            },
+            {
+                label: "",
+                name: RouteNames.AddCourseDay,
+                header: "Add Course Day",
+                route: "/auth/course-days/add",
+            },
+            {
+                label: "",
+                name: RouteNames.EditCourseDay,
+                header: "Edit Course Day",
+                route: "",
+            },
+            {
+                label: "",
+                name: RouteNames.ViewCourseDay,
+                header: "View Course Day",
+                route: "",
             },
         ],
     },
