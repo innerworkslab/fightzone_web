@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 
@@ -11,8 +12,9 @@ use App\Models\PointBalance;
 use App\Models\Admin;
 use App\Models\User;
 use App\Models\Purchase;
+use App\Models\CourseLevel;
+use App\Models\CourseLevelPurchase;
 
-use Illuminate\Database\Eloquent\Relations\Relation;
 use App\Repositories\Purchase\PurchaseRepositoryInterface;
 
 class PurchaseService
@@ -156,6 +158,40 @@ class PurchaseService
                 'admin_id' => $admin->id,
                 'confirmed_at' => Carbon::now(),
             ]);
+
+            // If the purchasable is a CourseLevel, record course_level_purchases for the user.
+            if ($purchasable instanceof CourseLevel) {
+                $confirmedAt = $purchase->confirmed_at ?? Carbon::now();
+
+                // Validity period: confirmed_at + number of LESSON days (type='Lesson')
+                $lessonDaysCount = (int) $purchasable->lessonDays()
+                    ->where('type', 'Lesson')
+                    ->count();
+
+                $validFrom = $confirmedAt;
+                $validUntil = (clone $confirmedAt)->addDays($lessonDaysCount);
+
+                $courseLevelPurchase = CourseLevelPurchase::firstOrCreate(
+                    ['purchase_id' => $purchase->id],
+                    [
+                        'user_id' => $purchase->user_id,
+                        'course_level_id' => $purchasable->id,
+                        'valid_from' => $validFrom,
+                        'valid_until' => $validUntil,
+                        'finished_lesson_days_count' => 0,
+                    ]
+                );
+
+                // If already exists (e.g. confirm retried), keep progress but refresh validity fields.
+                if (! $courseLevelPurchase->wasRecentlyCreated) {
+                    $courseLevelPurchase->update([
+                        'user_id' => $purchase->user_id,
+                        'course_level_id' => $purchasable->id,
+                        'valid_from' => $validFrom,
+                        'valid_until' => $validUntil,
+                    ]);
+                }
+            }
 
             // Deduct points from user's balance (negative value)
             $itemName = $purchasable->name ?? 'Item';

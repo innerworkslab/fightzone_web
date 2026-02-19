@@ -170,4 +170,9 @@ class User extends Authenticatable implements MustVerifyEmail
     {
         return $this->hasOne(PointBalance::class);
     }
+
+    public function courseLevelPurchases()
+    {
+        return $this->hasMany(CourseLevelPurchase::class);
+    }
 }
