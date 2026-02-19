@@ -18,7 +18,13 @@ class LessonDayController extends Controller
 
     public function show(Request $request, $courseId, $levelId, $id)
     {
-        $data = $this->service->find($id);
+        $userId = ApiUser()->id;
+        $data = $this->service->findWithCompletionForUser(
+            (int) $courseId,
+            (int) $levelId,
+            (int) $id,
+            (int) $userId
+        );
         ResponseData($data);
     }
 }

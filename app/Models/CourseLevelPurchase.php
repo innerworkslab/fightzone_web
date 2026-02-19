@@ -12,7 +12,6 @@ class CourseLevelPurchase extends Model
         'purchase_id',
         'valid_from',
         'valid_until',
-        'finished_lesson_days_count',
     ];
 
     protected $casts = [

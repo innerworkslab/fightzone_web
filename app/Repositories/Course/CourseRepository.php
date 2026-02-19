@@ -7,7 +7,8 @@ use Illuminate\Support\Facades\DB;
 
 use App\Models\Course;
 use App\Models\Purchase;
-use App\Models\LessonDay;
+use App\Models\CourseLevelPurchase;
+use App\Models\LessonDayCompletion;
 
 class CourseRepository implements CourseRepositoryInterface
 {
@@ -61,44 +62,92 @@ class CourseRepository implements CourseRepositoryInterface
 
     public function findWithDetailsForUser($id, $userId)
     {
-        // Get the course with its levels
+        // Get the course with its levels and lesson day counts
         $course = Course::with([
             'category',
             'courseLevels' => function ($q) {
                 $q->withCount('lessonDays');
             }
-        ])
-        ->find($id);
+        ])->find($id);
 
-        if (!$course) {
+        if (! $course) {
             return null;
         }
 
-        // Get course level IDs for this course
-        $courseLevelIds = $course->courseLevels->pluck('id')->toArray();
+        $courseLevelIds = $course->courseLevels->pluck('id')->all();
 
         if (empty($courseLevelIds)) {
-            // No levels found, return course with empty levels
             return $course;
         }
 
-        // Get purchases for this user and these course levels
-        $purchases = Purchase::where('user_id', $userId)
-            ->where('purchasable_type', 'App\\Models\\CourseLevel')
-            ->orWhere('purchasable_type', 'course_level')
+        // Get latest purchases per course level for this user (pending/confirmed/rejected)
+        $purchaseRows = Purchase::where('user_id', $userId)
             ->whereIn('purchasable_id', $courseLevelIds)
-            ->get(['purchasable_id', 'status'])
-            ->keyBy('purchasable_id');
+            ->whereIn('purchasable_type', ['App\\Models\\CourseLevel', 'course_level'])
+            ->orderByDesc('id')
+            ->get(['purchasable_id', 'status', 'id']);
 
-        // Add purchase status to each course level
-        $course->courseLevels->transform(function ($level) use ($purchases) {
-            $purchase = $purchases->get($level->id);
+        $purchasesByLevel = $purchaseRows
+            ->groupBy('purchasable_id')
+            ->map(function ($group) {
+                // latest by id
+                return $group->first();
+            });
 
-            if (!$purchase) {
-                // Level not purchased
-                $level->purchase_status = 'not_purchased';
-            }else{
-                $level->purchase_status = $purchase->status;
+        // Get course_level_purchases for validity & finished days
+        $clpCollection = CourseLevelPurchase::where('user_id', $userId)
+            ->whereIn('course_level_id', $courseLevelIds)
+            ->get();
+
+        $clpByLevel = $clpCollection->keyBy('course_level_id');
+
+        // Aggregate completed lesson-day tasks per course_level_purchase
+        $clpIds = $clpCollection->pluck('id')->all();
+        $completedCountsByClp = [];
+        if (! empty($clpIds)) {
+            $completedCountsByClp = LessonDayCompletion::selectRaw('course_level_purchase_id, COUNT(*) as completed_tasks')
+                ->whereIn('course_level_purchase_id', $clpIds)
+                ->groupBy('course_level_purchase_id')
+                ->get()
+                ->keyBy('course_level_purchase_id');
+        }
+
+        $now = now();
+
+        $course->courseLevels->transform(function ($level) use ($purchasesByLevel, $clpByLevel, $completedCountsByClp, $now) {
+            $purchase = $purchasesByLevel->get($level->id);
+            $clp = $clpByLevel->get($level->id);
+
+            // Default values
+            $level->purchase_status = $purchase->status ?? 'not_purchased';
+            $level->valid_from = $clp?->valid_from;
+            $level->valid_until = $clp?->valid_until;
+            $level->is_within_validity = false;
+
+            // Summary: tasks = lesson days for this level
+            $totalTasks = (int) ($level->lesson_days_count ?? 0);
+            $completedTasks = 0;
+            $remainingTasks = $totalTasks;
+            $completionPercent = 0.0;
+
+            if ($clp) {
+                $cc = $completedCountsByClp[$clp->id] ?? null;
+                if ($cc) {
+                    $completedTasks = (int) $cc->completed_tasks;
+                    $remainingTasks = max($totalTasks - $completedTasks, 0);
+                    $completionPercent = $totalTasks > 0
+                        ? round(($completedTasks / $totalTasks) * 100, 2)
+                        : 0.0;
+                }
+            }
+
+            $level->total_tasks = $totalTasks;
+            $level->completed_tasks = $completedTasks;
+            $level->remaining_tasks = $remainingTasks;
+            $level->completion_percent = $completionPercent;
+
+            if ($clp && $clp->valid_from && $clp->valid_until) {
+                $level->is_within_validity = $now->between($clp->valid_from, $clp->valid_until);
             }
 
             return $level;

@@ -139,8 +139,14 @@ class CourseLevelService
         return $this->levelRepo->toggleActive($id);
     }
 
-    public function getLessons(int $courseId, $levelId)
+    public function getLessons(int $courseId, $levelId, int $userId = null)
     {
+        // When a user ID is provided, include completion info for that user.
+        if ($userId !== null) {
+            return $this->lessonDayService->allWithCompletionForUser($courseId, $levelId, $userId);
+        }
+
+        // Fallback: original behaviour (no completion info)
         return $this->levelRepo->getLessonDays($courseId, $levelId);
     }
 }

@@ -177,8 +177,7 @@ class PurchaseService
                         'user_id' => $purchase->user_id,
                         'course_level_id' => $purchasable->id,
                         'valid_from' => $validFrom,
-                        'valid_until' => $validUntil,
-                        'finished_lesson_days_count' => 0,
+                        'valid_until' => $validUntil
                     ]
                 );
 

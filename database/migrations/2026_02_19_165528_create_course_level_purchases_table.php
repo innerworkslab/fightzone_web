@@ -19,7 +19,6 @@ return new class extends Migration
 
             $table->timestamp('valid_from');
             $table->timestamp('valid_until');
-            $table->unsignedInteger('finished_lesson_days_count')->default(0);
 
             $table->timestamps();
 

@@ -83,7 +83,8 @@ class CourseController extends Controller
 
     public function getCourseLevelLessonDays($id, $levelId)
     {
-        $data = $this->levelService->getLessons($id, $levelId);
+        $userId = ApiUser()->id;
+        $data = $this->levelService->getLessons((int) $id, (int) $levelId, (int) $userId);
 
         ResponseData($data);
     }
