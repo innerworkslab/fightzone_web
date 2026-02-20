@@ -52,6 +52,10 @@ Route::prefix('/v1')->group(function () {
                 Route::get('/{courseId}/course_levels/{levelId}/lesson_days/{id}', [LessonDayController::class, 'show']);
             });
 
+            Route::prefix('/lesson_day_videos')->group(function () {
+                Route::post('/{lessonDayVideoId}/complete', [LessonDayController::class, 'markVideoCompletion']);
+            });
+
             Route::prefix('/deposits')->group(function () {
                 Route::get('/', [DepositController::class, 'index']);
                 Route::post('/', [DepositController::class, 'store']);

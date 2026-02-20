@@ -253,4 +253,97 @@ class LessonDayService
 
         return $lessonDay;
     }
+
+    /**
+     * Mark a lesson video as completed for a user.
+     * Automatically marks the lesson day as completed if all videos are completed.
+     *
+     * @param int $userId
+     * @param int $lessonDayVideoId
+     * @return array
+     * @throws \RuntimeException
+     */
+    public function markVideoCompletion(int $userId, int $lessonDayVideoId)
+    {
+        // Get the lesson day video
+        $video = LessonDayVideo::with('lessonDay.courseLevel')->find($lessonDayVideoId);
+        
+        if (!$video) {
+            throw new \RuntimeException('Lesson video not found');
+        }
+
+        $lessonDay = $video->lessonDay;
+        if (!$lessonDay) {
+            throw new \RuntimeException('Lesson day not found');
+        }
+
+        $courseLevel = $lessonDay->courseLevel;
+        if (!$courseLevel) {
+            throw new \RuntimeException('Course level not found');
+        }
+
+        // Find the course level purchase for this user and course level
+        $clp = CourseLevelPurchase::where('user_id', $userId)
+            ->where('course_level_id', $courseLevel->id)
+            ->orderByDesc('valid_until')
+            ->first();
+
+        if (!$clp) {
+            throw new \RuntimeException('Course level purchase not found. Please purchase this course level first.');
+        }
+
+        // Check if purchase is still valid
+        $now = now();
+        if ($clp->valid_from && $clp->valid_until) {
+            if (!$now->between($clp->valid_from, $clp->valid_until)) {
+                throw new \RuntimeException('Your course access has expired. Please renew your purchase.');
+            }
+        }
+
+        try {
+            DB::beginTransaction();
+
+            // Create or update video completion
+            $videoCompletion = LessonDayVideoCompletion::updateOrCreate(
+                [
+                    'course_level_purchase_id' => $clp->id,
+                    'lesson_day_video_id' => $lessonDayVideoId,
+                ],
+                [
+                    'completed_at' => $now,
+                ]
+            );
+
+            // Check if all videos in this lesson day are completed
+            $allVideos = LessonDayVideo::where('lesson_day_id', $lessonDay->id)->get();
+            $completedVideos = LessonDayVideoCompletion::where('course_level_purchase_id', $clp->id)
+                ->whereIn('lesson_day_video_id', $allVideos->pluck('id'))
+                ->get();
+
+            $allCompleted = $allVideos->count() > 0 && $allVideos->count() === $completedVideos->count();
+
+            // If all videos are completed, mark the lesson day as completed
+            if ($allCompleted) {
+                LessonDayCompletion::updateOrCreate(
+                    [
+                        'course_level_purchase_id' => $clp->id,
+                        'lesson_day_id' => $lessonDay->id,
+                    ],
+                    [
+                        'completed_at' => $now,
+                    ]
+                );
+            }
+
+            DB::commit();
+
+            return [
+                'video_completion' => $videoCompletion,
+                'lesson_day_completed' => $allCompleted,
+            ];
+        } catch (\Exception $e) {
+            DB::rollBack();
+            throw new \Exception('Failed to mark video completion: ' . $e->getMessage());
+        }
+    }
 }

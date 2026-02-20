@@ -27,4 +27,21 @@ class LessonDayController extends Controller
         );
         ResponseData($data);
     }
+
+    /**
+     * Mark a lesson video as completed
+     */
+    public function markVideoCompletion(Request $request, $lessonDayVideoId)
+    {
+        $userId = ApiUser()->id;
+        
+        try {
+            $result = $this->service->markVideoCompletion((int) $userId, (int) $lessonDayVideoId);
+            ResponseData($result, 200);
+        } catch (\RuntimeException $e) {
+            ResponseMessage($e->getMessage(), 404);
+        } catch (\Exception $e) {
+            ResponseMessage($e->getMessage(), 500);
+        }
+    }
 }
