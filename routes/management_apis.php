@@ -114,13 +114,24 @@ Route::prefix('/v1/management')->group(function () {
                 });
 
                 Route::controller(LessonDayController::class)->group(function () {
-                    Route::get('/{levelId}/lesson_days', 'index');
-                    Route::get('/{levelId}/lesson_days/{lessonDayId}', 'show');
-                    Route::post('/{levelId}/lesson_days/', 'store');
-                    Route::post('/{levelId}/lesson_days/{lessonDayId}', 'update');
-                    Route::delete('/{levelId}/lesson_days/{lessonDayId}', 'destroy');
+                    Route::get('/{levelId}/lesson-days', 'index');
+                    // Route::get('/{levelId}/lesson_days/{lessonDayId}', 'show');
+                    Route::post('/{levelId}/lesson-days/', 'store');
+                    // Route::post('/{levelId}/lesson_days/{lessonDayId}', 'update');
+                    // Route::delete('/{levelId}/lesson_days/{lessonDayId}', 'destroy');
                 });
             });
+
+            Route::prefix('/lesson-days')->group(function () {
+                Route::controller(LessonDayController::class)->group(function () {
+                    // Route::get('/', 'index');
+                    Route::get('{lessonDayId}', 'show');
+                    // Route::post('/', 'store');
+                    Route::post('/{lessonDayId}', 'update');
+                    Route::delete('/{lessonDayId}', 'destroy');
+                });
+            });
+
 
             Route::prefix('/lesson-day-videos')->group(function () {
                 Route::controller(LessonDayVideoController::class)->group(function () {
