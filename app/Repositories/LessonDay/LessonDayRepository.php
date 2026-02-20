@@ -9,7 +9,7 @@ class LessonDayRepository implements LessonDayRepositoryInterface
 {
     public function all(?array $filters = [], ?int $limit = null)
     {
-        $query = LessonDay::query()->orderBy('day_number');
+        $query = LessonDay::query()->withCount('videos')->orderBy('day_number');
 
         $normalized = [];
         foreach ($filters ?? [] as $k => $v) {

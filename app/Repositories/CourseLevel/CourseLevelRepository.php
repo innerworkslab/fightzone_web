@@ -37,7 +37,7 @@ class CourseLevelRepository implements CourseLevelRepositoryInterface
 
     public function find($id)
     {
-        return CourseLevel::with(['course', 'lessonDays'])->find($id);
+        return CourseLevel::with(['course', 'lessonDays'])->withCount('lessonDays')->find($id);
     }
 
     public function create(array $data): CourseLevel
