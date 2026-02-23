@@ -7,8 +7,10 @@ import { toast } from "vue3-toastify";
 import { PackagesPayload, PackagesServices } from "@/api/Packages.service";
 import { Button } from "@/components/ui/button";
 import { useModalStore } from "@/store/modal";
+import { useDataStore } from "@/store/data";
 
 const modalStore = useModalStore();
+const dataStore = useDataStore();
 const isUpdateMode = computed(() => !!modalStore.initialValues);
 const isReadMode = computed(() => modalStore.isReadMode);
 
@@ -61,7 +63,7 @@ const submitForm = handleSubmit(async (values) => {
 
         if (response?.success) {
             toast.success(isUpdateMode.value ? "Package updated successfully" : "Package created successfully");
-            modalStore.triggerRefresh();
+            dataStore.triggerRefresh();
             modalStore.closeModal();
         }
     } catch (error) { }

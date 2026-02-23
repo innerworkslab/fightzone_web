@@ -1,24 +1,28 @@
 <script setup lang="ts">
 import { computed, watch } from "vue";
+import { useRouter } from "vue-router";
 import { storeToRefs } from "pinia";
 import { useDataStore } from "@/store/data";
-import { CoursesColumns, CoursesActions, CoursesSubColumns, CoursesSubActions } from "./columns";
+import { useModalStore } from "@/store/modal";
+import { LessonDaysServices } from "@/api/LessonDays.service";
+import { LessonDaysColumns, LessonDaysActions, LessonDaySubColumns, LessonDaySubActions } from "./columns";
 import { DEFAULT_PAGE_LIMIT } from "@/constant/global.constant";
-import { CoursesServices } from "@/api/Courses.service";
 import { buildApiFilter } from "@/utils/buildAPIFilter";
-import { useRouter } from "vue-router";
-import { CourseLevelsServices } from "@/api/CourseLevels.service";
+import { LessonDayVideosServices } from "@/api/LessonDayVideos.service";
 
 const router = useRouter();
+const courseLevelId = computed(() => router.currentRoute.value.params.courseLevelId as string);
 
 const dataStore = useDataStore();
+const modalStore = useModalStore();
 
 const { filters, refreshTrigger } = storeToRefs(dataStore);
 
-const { data, loading, refresh } = CoursesServices.useCourses(filters.value);
+const { data, loading, refresh } =
+    LessonDaysServices.useLessonDays(courseLevelId.value, buildApiFilter(filters.value));
 
 const records = computed(() => {
-    return (data.value as any)?.data?.data || [];
+    return (data.value as any)?.data || [];
 });
 
 const paginationInfo = computed(() => {
@@ -31,7 +35,7 @@ const startIndex = computed(() => {
 });
 
 const fetchSubData = async (row: any) => {
-    const res = await CourseLevelsServices.getCourseLevelsByCourseId(row.id);
+    const res = await LessonDayVideosServices.getLessonDayVideosByLessonDayId(row.id);
     return res.data || [];
 };
 
@@ -55,12 +59,15 @@ watch(refreshTrigger, () => {
 </script>
 
 <template>
-    <CoursesFilter />
+    <LessonDaysFilter />
 
-    <DataTable :data="records" :columns="CoursesColumns" :subColumns="CoursesSubColumns" :actions="CoursesActions"
-        :subActions="CoursesSubActions" :loading="loading" :fetchSubData="fetchSubData" :extraArgs="{
-            startIndex: startIndex,
+    <DataTable :data="records" :columns="LessonDaysColumns" :subColumns="LessonDaySubColumns"
+        :actions="LessonDaysActions" :subActions="LessonDaySubActions" :loading="loading" :fetchSubData="fetchSubData"
+        :extraArgs="{
+            startIndex,
             router,
+            dataStore,
+            modalStore,
             refresh: () => refresh(buildApiFilter(filters)),
         }" />
 

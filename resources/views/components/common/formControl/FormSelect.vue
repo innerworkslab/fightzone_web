@@ -69,6 +69,13 @@ function selectOption(value: string | number | bigint) {
     }
 }
 
+function clearSelection(event?: MouseEvent) {
+    if (event) event.stopPropagation();
+    if (!props.disabled) {
+        emit("update:modelValue", null);
+    }
+}
+
 const allOptions = computed(() => {
     if (props.fetchFn) {
         return dynamicOptions.value;
@@ -77,9 +84,13 @@ const allOptions = computed(() => {
 });
 
 const selectedItemLabel = computed(() => {
-    const optionsToSearch = props.fetchFn ? dynamicOptions.value : props.options;
-    const selectedOption = optionsToSearch?.find(option => option.value === props.modelValue);
-    return selectedOption ? selectedOption.label : props.placeholder ?? "Select an option";
+    const optionsToSearch = props.fetchFn
+        ? dynamicOptions.value
+        : props.options;
+    const selectedOption = optionsToSearch?.find(
+        (option) => option.value === props.modelValue
+    );
+    return selectedOption?.label ?? props.placeholder ?? "Select an option";
 });
 
 function handleClickOutside(event: MouseEvent) {
@@ -184,12 +195,20 @@ onBeforeUnmount(() => {
                     : 'cursor-pointer border-border bg-secondary/50 text-foreground hover:border-primary/50 hover:bg-secondary',
                 isOpen ? 'ring-4 ring-primary/10 border-primary bg-background' : ''
             ]" @click="toggleDropdown">
-            <span :class="{ 'text-muted-foreground/50': selectedItemLabel === placeholder }">
+            <span :class="{ 'text-muted-foreground/50': !props.modelValue }">
                 {{ selectedItemLabel }}
             </span>
-            <span class="ml-2 text-primary transition-transform duration-300" :class="{ 'rotate-180': isOpen }">
-                <ChevronDown class="w-4 h-4" />
-            </span>
+
+            <div class="flex items-center gap-2">
+                <button v-if="props.modelValue && !disabled" type="button" @click.stop="clearSelection"
+                    class="text-muted-foreground hover:text-destructive transition-colors">
+                    ✕
+                </button>
+
+                <span class="text-primary transition-transform duration-300" :class="{ 'rotate-180': isOpen }">
+                    <ChevronDown class="w-4 h-4" />
+                </span>
+            </div>
         </div>
 
         <transition enter-active-class="transition duration-100 ease-out"
@@ -198,7 +217,6 @@ onBeforeUnmount(() => {
             leave-to-class="transform scale-95 opacity-0">
             <div v-if="isOpen"
                 class="absolute z-50 w-full mt-2 bg-card border border-border rounded-xl shadow-2xl overflow-hidden backdrop-blur-md">
-
                 <div v-if="fetchFn || addFn" class="p-2 border-b border-border bg-muted/30 flex items-center gap-2">
                     <div class="relative flex-1">
                         <Search class="absolute left-2.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-muted-foreground" />
@@ -232,8 +250,11 @@ onBeforeUnmount(() => {
                                 d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z">
                             </path>
                         </svg>
-                        <span class="text-[10px] font-black uppercase">Syncing...</span>
+                        <span class="text-[10px] font-black uppercase">
+                            Syncing...
+                        </span>
                     </li>
+
                     <li v-else-if="allOptions.length === 0" class="px-4 py-8 text-center">
                         <span class="text-[10px] font-black uppercase text-muted-foreground italic tracking-widest">
                             No Results Found

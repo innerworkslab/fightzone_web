@@ -21,6 +21,9 @@ export const API_URLS = {
     DEPOSIT: "deposits",
     COURSE: "courses",
     COURSE_CATEGORY: "course-categories",
+    COURSE_LEVEL: "course-levels",
+    LESSON_DAY: "lesson_days",
+    LESSON_DAY_VIDEO: "lesson-day-videos",
 };
 
 export const COOKIES = {

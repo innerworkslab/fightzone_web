@@ -7,20 +7,10 @@ export type CourseCategoriessFilter = Filters & {
     status?: "active" | "inactive";
 };
 
-export interface CourseCategoriesDayData {
-    id: number;
-    day_number: number;
-    duration: string;
-    video_link: string | null;
-    created_at: string;
-    updated_at: string;
-}
-
 export interface CourseCategoriesData {
     id: number;
     name: string;
-    course_category_id: number;
-    price: number;
+    description: string;
     is_active: boolean;
     created_at: string;
     updated_at: string;
@@ -28,16 +18,13 @@ export interface CourseCategoriesData {
 
 export interface CourseCategoriesPayload {
     name: string;
+    description: string;
 }
 
 const baseURL = `${API_URLS.VERSION}/${API_URLS.MANAGEMENT}/${API_URLS.COURSE_CATEGORY}`;
 
 const useCourseCategoriess = (filter: CourseCategoriessFilter = {}) => {
     return useFetch<APIResult<CourseCategoriesData[]>>(baseURL, filter);
-};
-
-const useCourseCategoriesDetail = (id: number | string) => {
-    return useFetch<APIResult<CourseCategoriesData>>(`/${baseURL}/${id}`);
 };
 
 const useCourseCategoriesActions = () => {
@@ -71,8 +58,7 @@ const useCourseCategoriesActions = () => {
     };
 };
 
-export const CourseCategoriessServices = {
+export const CourseCategoriesServices = {
     useCourseCategoriess,
-    useCourseCategoriesDetail,
     useCourseCategoriesActions,
 };

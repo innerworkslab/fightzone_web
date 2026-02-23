@@ -3,7 +3,8 @@ import { defineStore } from "pinia";
 export interface Filters {
     search: string;
     page: number;
-    [key: string]: string | number;
+    month?: string;
+    is_active?: string;
 }
 
 export interface State {

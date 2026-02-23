@@ -41,10 +41,8 @@ export interface CourseDayPayload {
 
 export interface CoursePayload {
     name: string;
+    description?: string;
     course_category_id: number;
-    level: CourseLevel;
-    price: number;
-    course_days: CourseDayPayload[];
 }
 
 const baseURL = `${API_URLS.VERSION}/${API_URLS.MANAGEMENT}/${API_URLS.COURSE}`;
@@ -53,7 +51,7 @@ const useCourses = (filter: CoursesFilter = {}) => {
     return useFetch<APIResult<CourseData[]>>(baseURL, filter);
 };
 
-const useCourseDetail = (id: number | string) => {
+const useCourseDetail = (id: string | string) => {
     return useFetch<APIResult<CourseData>>(`/${baseURL}/${id}`);
 };
 
@@ -64,14 +62,14 @@ const useCourseActions = () => {
         return mutate(METHODS.POST, baseURL, data);
     };
 
-    const updateCourse = (id: number, data: Partial<CoursePayload>) => {
+    const updateCourse = (id: string, data: Partial<CoursePayload>) => {
         return mutate(METHODS.POST, `/${baseURL}/${id}`, data);
     };
 
-    const deleteCourse = (id: number) =>
+    const deleteCourse = (id: string) =>
         mutate(METHODS.DELETE, `/${baseURL}/${id}`);
 
-    const toggleStatus = (id: number) =>
+    const toggleStatus = (id: string) =>
         mutate(METHODS.POST, `/${baseURL}/${id}/${API_URLS.TOGGLE}`);
 
     return {

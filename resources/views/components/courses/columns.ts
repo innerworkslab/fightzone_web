@@ -1,9 +1,17 @@
 import { ActionDef, ColumnDef } from "../common/data-table/type";
-import { Edit2, Folder, Check, X } from "lucide-vue-next";
+import {
+    Edit2,
+    Folder,
+    Check,
+    X,
+    CopyPlus,
+    CalendarDays,
+} from "lucide-vue-next";
 import { CoursesServices } from "@/api/Courses.service";
 import { toast } from "vue3-toastify";
+import { RouteNames } from "@/config/route.config";
 
-const { deleteCourse, toggleStatus } = CoursesServices.useCourseActions();
+const { toggleStatus } = CoursesServices.useCourseActions();
 
 export const CoursesColumns: ColumnDef<any>[] = [
     {
@@ -19,22 +27,15 @@ export const CoursesColumns: ColumnDef<any>[] = [
         render: (row) => row.name,
     },
     {
-        label: "Level",
-        key: "level",
-        className: "capitalize",
-        render: (row) => row.level,
+        label: "Category",
+        key: "name",
+        render: (row) => row.category.name,
     },
     {
-        label: "Price",
-        key: "price",
-        className: "text-right",
-        render: (row) => `${row.price.toLocaleString()} pts`,
-    },
-    {
-        label: "Days",
-        key: "course_days",
-        className: "text-center",
-        render: (row) => row.course_days?.length ?? 0,
+        label: "Description",
+        key: "description",
+        render: (row) =>
+            `${row.description?.substring(0, 50) ?? ""}${row.description && row.description.length > 50 ? "..." : ""}`,
     },
     {
         label: "Status",
@@ -73,16 +74,24 @@ export const CoursesColumns: ColumnDef<any>[] = [
     },
 ];
 
+export const CoursesSubColumns: ColumnDef<any>[] = [
+    { key: "level", label: "Level" },
+    { key: "price", label: "Price" },
+    {
+        key: "is_active",
+        label: "Status",
+        render: (row) => (row.is_active ? "Active" : "Inactive"),
+    },
+];
+
 export const CoursesActions: ActionDef<any>[] = [
     {
         icon: Folder,
         tooltip: "View Details",
         onClick: (row, extraArgs) => {
-            extraArgs.modalStore.openModal({
-                formIndex: "course",
-                initialValues: row,
-                isReadMode: true,
-                refreshCallback: extraArgs.refresh,
+            extraArgs.router.push({
+                name: RouteNames.ViewCourse,
+                params: { id: row.id },
             });
         },
     },
@@ -90,11 +99,9 @@ export const CoursesActions: ActionDef<any>[] = [
         icon: Edit2,
         tooltip: "Edit",
         onClick: (row, extraArgs) => {
-            extraArgs.modalStore.openModal({
-                formIndex: "course",
-                initialValues: row,
-                isReadMode: false,
-                refreshCallback: extraArgs.refresh,
+            extraArgs.router.push({
+                name: RouteNames.EditCourse,
+                params: { id: row.id },
             });
         },
     },
@@ -113,6 +120,16 @@ export const CoursesActions: ActionDef<any>[] = [
         show: (row) => !row.is_active,
     },
     {
+        icon: CopyPlus,
+        tooltip: "Add Levels",
+        onClick: (row, extraArgs) => {
+            extraArgs.router.push({
+                name: RouteNames.AddCourseLevel,
+                params: { courseId: row.id },
+            });
+        },
+    },
+    {
         icon: X,
         tooltip: "Deactivate",
         onClick: async (row, extraArgs) => {
@@ -125,5 +142,28 @@ export const CoursesActions: ActionDef<any>[] = [
             }
         },
         show: (row) => row.is_active,
+    },
+];
+
+export const CoursesSubActions: ActionDef<any>[] = [
+    {
+        icon: CalendarDays,
+        tooltip: "View Days",
+        onClick: (row, extraArgs) => {
+            extraArgs.router.push({
+                name: RouteNames.LessonDaysList,
+                params: { courseLevelId: row.id },
+            });
+        },
+    },
+    {
+        icon: Edit2,
+        tooltip: "Edit Level",
+        onClick: (row, extraArgs) => {
+            extraArgs.router.push({
+                name: RouteNames.EditCourseLevel,
+                params: { courseId: row.course_id, id: row.id },
+            });
+        },
     },
 ];

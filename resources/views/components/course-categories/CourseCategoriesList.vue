@@ -1,12 +1,13 @@
 <script setup lang="ts">
-import { computed, watch, provide } from "vue";
+import { computed, watch } from "vue";
 import { useRouter } from "vue-router";
 import { storeToRefs } from "pinia";
 import { useDataStore } from "@/store/data";
 import { useModalStore } from "@/store/modal";
-import { CourseCategoriessServices } from "@/api/CourseCategories.service";
+import { CourseCategoriesServices } from "@/api/CourseCategories.service";
 import { CourseCategoriesColumns, CourseCategoriesActions } from "./columns";
 import { DEFAULT_PAGE_LIMIT } from "@/constant/global.constant";
+import { buildApiFilter } from "@/utils/buildAPIFilter";
 
 const dataStore = useDataStore();
 const modalStore = useModalStore();
@@ -14,9 +15,10 @@ const router = useRouter();
 
 const { filters, refreshTrigger } = storeToRefs(dataStore);
 
-const { data, loading, refresh } = CourseCategoriessServices.useCourseCategoriess(filters.value);
+const { data, loading, refresh } =
+    CourseCategoriesServices.useCourseCategoriess(buildApiFilter(filters.value));
 
-const packageData = computed(() => {
+const records = computed(() => {
     return (data.value as any)?.data?.data || [];
 });
 
@@ -38,48 +40,26 @@ watch(paginationInfo, (newInfo) => {
 watch(
     filters,
     () => {
-        const apiFilter = { ...filters.value };
-
-        if (filters.value.search) {
-            apiFilter.name = filters.value.search;
-            delete (apiFilter as any).search;
-        }
-
-        if (apiFilter.status === "all") {
-            delete apiFilter.status;
-        }
-
-        refresh(apiFilter);
+        refresh(buildApiFilter(filters.value));
     },
     { deep: true }
 );
 
 watch(refreshTrigger, () => {
-    const apiFilter = { ...filters.value };
-
-    if (filters.value.search) {
-        apiFilter.name = filters.value.search;
-        delete (apiFilter as any).search;
-    }
-
-    if (apiFilter.status === "all") {
-        delete apiFilter.status;
-    }
-
-    refresh(apiFilter);
+    refresh(buildApiFilter(filters.value));
 });
 </script>
 
 <template>
     <CourseCategoriesFilter />
 
-    <DataTable :data="packageData" :columns="CourseCategoriesColumns" :actions="CourseCategoriesActions"
-        :loading="loading" :extraArgs="{
-            startIndex: startIndex,
+    <DataTable :data="records" :columns="CourseCategoriesColumns" :actions="CourseCategoriesActions" :loading="loading"
+        :extraArgs="{
+            startIndex,
             router,
             dataStore,
             modalStore,
-            refresh: () => refresh(filters),
+            refresh: () => refresh(buildApiFilter(filters)),
         }" />
 
     <div class="relative flex justify-center items-center">
