@@ -28,7 +28,7 @@ class LessonDayController extends Controller
         ResponseData($data);
     }
 
-    public function show($levelId, $lessonDayId)
+    public function show($lessonDayId)
     {
         $data = $this->lessonDayService->find($lessonDayId);
 
@@ -56,7 +56,7 @@ class LessonDayController extends Controller
         ResponseData($createdLessonDay);
     }
 
-    public function update(Request $request, $levelId, $lessonDayId)
+    public function update(Request $request, $lessonDayId)
     {
         $request->validate([
             'type' => ['sometimes', Rule::enum(LessonDayTypes::class)],

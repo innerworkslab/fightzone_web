@@ -52,12 +52,17 @@ class CourseRepository implements CourseRepositoryInterface
 
     public function find($id)
     {
-        return Course::find($id);
+        return Course::withCount('courseLevels')->find($id);
     }
 
     public function findWithDetails($id)
     {
-        return Course::with(['category', 'courseLevels'])->find($id);
+        return Course::with([
+            'category', 
+            'courseLevels' => function ($q) {
+                $q->withCount('lessonDays');
+            }
+        ])->find($id);
     }
 
     public function findWithDetailsForUser($id, $userId)
