@@ -22,7 +22,7 @@ export const API_URLS = {
     COURSE: "courses",
     COURSE_CATEGORY: "course-categories",
     COURSE_LEVEL: "course-levels",
-    LESSON_DAY: "lesson_days",
+    LESSON_DAY: "lesson-days",
     LESSON_DAY_VIDEO: "lesson-day-videos",
 };
 
