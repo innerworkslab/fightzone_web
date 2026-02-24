@@ -49,7 +49,11 @@ const useLessonDaysActions = () => {
         id: number,
         data: Partial<LessonDaysPayload>,
     ) => {
-        return mutate(METHODS.POST, `/${baseURL(courseLevelId)}/${id}`, data);
+        return mutate(
+            METHODS.POST,
+            `/${API_URLS.VERSION}/${API_URLS.MANAGEMENT}/${API_URLS.LESSON_DAY}/${id}`,
+            data,
+        );
     };
 
     return {
