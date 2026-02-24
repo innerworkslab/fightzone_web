@@ -155,7 +155,7 @@ async function toggleRow(row: any) {
                                                         class="px-4 py-3 text-sm">
                                                         {{ col.render
                                                             ? col.render(subRow, subIndex, props.extraArgs)
-                                                            : subRow[col.key] ?? "-" }}
+                                                            : subRow[col.key]?.substring(0, 50) ?? "-" }}
                                                     </TableCell>
 
                                                     <TableCell v-if="props.subActions" class="px-4 py-3 text-center">

@@ -21,7 +21,8 @@ export const CourseCategoriesColumns: ColumnDef<any>[] = [
     {
         label: "Description",
         key: "description",
-        render: (row) => row.description,
+        render: (row) =>
+            `${row.description?.substring(0, 50) ?? ""}${row.description && row.description.length > 50 ? "..." : ""}`,
     },
     {
         label: "Status",

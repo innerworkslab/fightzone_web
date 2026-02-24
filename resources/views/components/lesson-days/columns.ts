@@ -42,13 +42,9 @@ export const LessonDaysColumns: ColumnDef<any>[] = [
 ];
 
 export const LessonDaySubColumns: ColumnDef<any>[] = [
-    { key: "level", label: "Level" },
-    { key: "price", label: "Price" },
-    {
-        key: "is_active",
-        label: "Status",
-        render: (row) => (row.is_active ? "Active" : "Inactive"),
-    },
+    { key: "name", label: "Name" },
+    { key: "description", label: "Description" },
+    { key: "duration", label: "Duration" },
 ];
 
 export const LessonDaysActions: ActionDef<any>[] = [

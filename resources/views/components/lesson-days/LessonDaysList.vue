@@ -36,7 +36,7 @@ const startIndex = computed(() => {
 
 const fetchSubData = async (row: any) => {
     const res = await LessonDayVideosServices.getLessonDayVideosByLessonDayId(row.id);
-    return res.data || [];
+    return res.data?.videos || [];
 };
 
 watch(paginationInfo, (newInfo) => {
