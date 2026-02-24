@@ -23,9 +23,12 @@ export interface ActionDef<T> {
 export interface Props<T> {
     data: T[];
     columns: ColumnDef<T>[];
+    subColumns?: ColumnDef<T>[];
     actions?: ActionDef<T>[];
+    subActions?: ActionDef<any>[];
     loading?: boolean;
     perPage?: number;
     startIndex?: number;
     extraArgs?: any;
+    fetchSubData?: (row: any) => Promise<any[]>;
 }

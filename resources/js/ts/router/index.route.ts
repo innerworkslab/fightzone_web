@@ -17,8 +17,9 @@ import { getDecryptedLocalStorage } from "@/lib/utils.localStorage";
 import CoursesForm from "../../../views/components/courses/CoursesForm.vue";
 import CoursesList from "../../../views/components/courses/CoursesList.vue";
 import CourseCategoriesList from "../../../views/components/course-categories/CourseCategoriesList.vue";
-import CourseDaysList from "../../../views/components/course-days/CourseDaysList.vue";
-import CourseDayForm from "../../../views/components/course-days/CourseDayForm.vue";
+import CourseLevelsForm from "../../../views/components/course-levels/CourseLevelsForm.vue";
+import LessonDaysList from "../../../views/components/lesson-days/LessonDaysList.vue";
+import LessonDayForm from "../../../views/components/lesson-days/LessonDayForm.vue";
 
 const routes = [
     {
@@ -150,31 +151,49 @@ const routes = [
                 meta: { permissions: ["all"] },
             },
             {
+                path: "courses/:courseId/add",
+                name: RouteNames.AddCourseLevel,
+                component: CourseLevelsForm,
+                meta: { permissions: ["all"] },
+            },
+            {
+                path: "courses/:courseId/edit/:id",
+                name: RouteNames.EditCourseLevel,
+                component: CourseLevelsForm,
+                meta: { permissions: ["all"] },
+            },
+            {
+                path: "courses/:courseId/view/:id",
+                name: RouteNames.ViewCourseLevel,
+                component: CourseLevelsForm,
+                meta: { permissions: ["all"] },
+            },
+            {
                 path: "categories",
                 name: RouteNames.CourseCategoriesList,
                 component: CourseCategoriesList,
             },
             {
-                path: "course-days",
-                name: RouteNames.CourseDaysList,
-                component: CourseDaysList,
+                path: "course-level/:courseLevelId/lesson-days",
+                name: RouteNames.LessonDaysList,
+                component: LessonDaysList,
             },
             {
-                path: "course-days/add",
-                name: RouteNames.AddCourseDay,
-                component: CourseDayForm,
+                path: "course-level/:courseLevelId/lesson-days/add",
+                name: RouteNames.AddLessonDay,
+                component: LessonDayForm,
                 meta: { permissions: ["all"] },
             },
             {
-                path: "course-days/edit/:id",
-                name: RouteNames.EditCourseDay,
-                component: CourseDayForm,
+                path: "course-level/:courseLevelId/lesson-days/edit/:id",
+                name: RouteNames.EditLessonDay,
+                component: LessonDayForm,
                 meta: { permissions: ["all"] },
             },
             {
-                path: "course-days/view/:id",
-                name: RouteNames.ViewCourseDay,
-                component: CourseDayForm,
+                path: "course-level/:courseLevelId/lesson-days/view/:id",
+                name: RouteNames.ViewLessonDay,
+                component: LessonDayForm,
                 meta: { permissions: ["all"] },
             },
         ],

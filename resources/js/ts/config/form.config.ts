@@ -4,6 +4,7 @@ import DepositsForm from "../../../views/components/deposits/DepositsForm.vue";
 import UsersPasswordChangeForm from "../../../views/components/users/UsersPasswordChangeForm.vue";
 import AdminsChangePasswordForm from "../../../views/components/admins/AdminsChangePasswordForm.vue";
 import CourseCategoriesForm from "../../../views/components/course-categories/CourseCategoriesForm.vue";
+import LessonDayVideoForm from "../../../views/components/lesson-day-videos/lessonDayVideoForm.vue";
 
 export const getFormConfig = (initialValues: any, isReadMode: boolean) => ({
     // #A
@@ -42,6 +43,14 @@ export const getFormConfig = (initialValues: any, isReadMode: boolean) => ({
         message: isReadMode
             ? "View purchase details"
             : "Provide a reason for rejecting this purchase",
+    },
+    // #L
+    lessonDayVideo: {
+        form: LessonDayVideoForm,
+        header: `${isReadMode ? "Upload Video" : "Update Video"}`,
+        message: isReadMode
+            ? "Upload video for this lesson day"
+            : "Update video for this lesson day",
     },
     // #U
     usersChangePassword: {

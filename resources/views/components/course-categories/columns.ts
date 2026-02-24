@@ -1,9 +1,9 @@
 import { ActionDef, ColumnDef } from "../common/data-table/type";
 import { Edit2, Folder, Check, X } from "lucide-vue-next";
-import { CourseCategoriessServices } from "@/api/CourseCategories.service";
+import { CourseCategoriesServices } from "@/api/CourseCategories.service";
 import { toast } from "vue3-toastify";
 
-const { deleteCourseCategories, toggleStatus } = CourseCategoriessServices.useCourseCategoriesActions();
+const { toggleStatus } = CourseCategoriesServices.useCourseCategoriesActions();
 
 export const CourseCategoriesColumns: ColumnDef<any>[] = [
     {
@@ -14,27 +14,14 @@ export const CourseCategoriesColumns: ColumnDef<any>[] = [
             (extraArgs?.startIndex ?? 0) + rowIndex + 1,
     },
     {
-        label: "CourseCategories Name",
+        label: "Name",
         key: "name",
         render: (row) => row.name,
     },
     {
-        label: "Level",
-        key: "level",
-        className: "capitalize",
-        render: (row) => row.level,
-    },
-    {
-        label: "Price",
-        key: "price",
-        className: "text-right",
-        render: (row) => `${row.price.toLocaleString()} pts`,
-    },
-    {
-        label: "Days",
-        key: "course_days",
-        className: "text-center",
-        render: (row) => row.course_days?.length ?? 0,
+        label: "Description",
+        key: "description",
+        render: (row) => row.description,
     },
     {
         label: "Status",
@@ -79,7 +66,7 @@ export const CourseCategoriesActions: ActionDef<any>[] = [
         tooltip: "View Details",
         onClick: (row, extraArgs) => {
             extraArgs.modalStore.openModal({
-                formIndex: "course",
+                formIndex: "courseCategory",
                 initialValues: row,
                 isReadMode: true,
                 refreshCallback: extraArgs.refresh,
@@ -91,7 +78,7 @@ export const CourseCategoriesActions: ActionDef<any>[] = [
         tooltip: "Edit",
         onClick: (row, extraArgs) => {
             extraArgs.modalStore.openModal({
-                formIndex: "course",
+                formIndex: "courseCategory",
                 initialValues: row,
                 isReadMode: false,
                 refreshCallback: extraArgs.refresh,
@@ -106,7 +93,9 @@ export const CourseCategoriesActions: ActionDef<any>[] = [
 
             const response = await toggleStatus(row.id);
             if (response?.success) {
-                toast.success(response.message ?? "CourseCategories activated");
+                toast.success(
+                    response.message ?? "Course categories activated",
+                );
                 extraArgs.refresh();
             }
         },
@@ -120,7 +109,9 @@ export const CourseCategoriesActions: ActionDef<any>[] = [
 
             const response = await toggleStatus(row.id);
             if (response?.success) {
-                toast.success(response.message ?? "CourseCategories deactivated");
+                toast.success(
+                    response.message ?? "Course categories deactivated",
+                );
                 extraArgs.refresh();
             }
         },
