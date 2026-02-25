@@ -47,10 +47,18 @@ export const getFormConfig = (initialValues: any, isReadMode: boolean) => ({
     // #L
     lessonDayVideo: {
         form: LessonDayVideoForm,
-        header: `${isReadMode ? "Upload Video" : "Update Video"}`,
-        message: isReadMode
-            ? "Upload video for this lesson day"
-            : "Update video for this lesson day",
+        header: `${
+            initialValues?.id
+                ? isReadMode
+                    ? "(Read Only) "
+                    : "Update"
+                : "Upload"
+        } Lesson Day Video`,
+        message: initialValues?.id
+            ? isReadMode
+                ? "View video for this lesson day"
+                : "Update video for this lesson day"
+            : "Upload a video for this lesson day",
     },
     // #U
     usersChangePassword: {

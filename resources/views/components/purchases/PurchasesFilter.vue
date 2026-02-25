@@ -2,11 +2,14 @@
 import { ref, watch } from "vue";
 import { useDataStore } from "@/store/data";
 import BaseFilter from "../common/filter/BaseFilter.vue";
+import { useRouter } from "vue-router";
+
+const router = useRouter();
 
 const dataStore = useDataStore();
 
 const search = ref("");
-const status = ref("all");
+const isActive = ref("all");
 
 const statusOptions = [
     { label: "All", value: "all" },
@@ -15,19 +18,21 @@ const statusOptions = [
     { label: "Rejected", value: "rejected" },
 ];
 
-watch([search, status], ([newSearch, newStatus]) => {
-    if (dataStore.filters.search !== newSearch || dataStore.filters.status !== newStatus) {
-        dataStore.filters.search = newSearch;
-        dataStore.filters.status = newStatus;
-        dataStore.filters.page = 1;
+watch([search, isActive], ([newSearch, newStatus]) => {
+    if (
+        dataStore.filters.search !== newSearch ||
+        dataStore.filters.is_active !== newStatus
+    ) {
+        dataStore.setFilter("search", newSearch);
+        dataStore.setFilter("is_active", newStatus);
+        dataStore.setFilter("page", 1);
     }
 });
 
 function handleReset() {
     search.value = "";
-    status.value = "all";
-    dataStore.filters.search = "";
-    dataStore.filters.status = "all";
+    isActive.value = "all";
+    dataStore.resetFilters();
 }
 </script>
 
@@ -35,11 +40,11 @@ function handleReset() {
     <BaseFilter @reset="handleReset" :show-add="false">
         <div class="flex items-center gap-x-3 w-full">
             <div>
-                <FormInput id="search" v-model="search" placeholder="Search by user name or phone..." />
+                <FormInput id="search" v-model="search" placeholder="Search by name" />
             </div>
 
             <div class="w-44">
-                <FormSelect id="status" v-model="status" :options="statusOptions" placeholder="Select status"
+                <FormSelect id="status" v-model="isActive" :options="statusOptions" placeholder="Select status"
                     class="h-10 bg-secondary/30 border-border/50 w-full" />
             </div>
         </div>

@@ -2,6 +2,7 @@ import { ActionDef, ColumnDef } from "../common/data-table/type";
 import { Edit2, Folder, Check, X } from "lucide-vue-next";
 import { CourseCategoriesServices } from "@/api/CourseCategories.service";
 import { toast } from "vue3-toastify";
+import { SUCCESS_MESSAGE } from "@/constant/global.constant";
 
 const { toggleStatus } = CourseCategoriesServices.useCourseCategoriesActions();
 
@@ -27,31 +28,50 @@ export const CourseCategoriesColumns: ColumnDef<any>[] = [
     {
         label: "Status",
         key: "is_active",
-        className: "w-[120px]",
         render: (row) => {
-            const active = row.is_active;
+            let theme = {
+                color: "text-emerald-500",
+                bg: "bg-emerald-500/10",
+                border: "border-emerald-500/20",
+                label: "Active",
+            };
 
-            const theme = active
-                ? {
-                      color: "text-emerald-400",
-                      bg: "bg-emerald-400/10",
-                      border: "border-emerald-400/20",
-                      label: "Active",
-                  }
-                : {
-                      color: "text-rose-500",
-                      bg: "bg-rose-500/10",
-                      border: "border-rose-500/20",
-                      label: "Inactive",
-                  };
+            if (!row.is_active) {
+                theme = {
+                    color: "text-red-500",
+                    bg: "bg-red-500/10",
+                    border: "border-red-500/20",
+                    label: "Inactive",
+                };
+            }
 
             return `
-            <div class="flex items-center gap-1.5 w-fit px-3 py-1 rounded-md border ${theme.bg} ${theme.border}">
-                <span class="text-[9px] font-black uppercase tracking-[0.15em] ${theme.color}">
-                    ${theme.label}
-                </span>
-            </div>
-            `;
+                <div class="inline-flex items-center px-2 py-0.5 rounded border ${theme.bg} ${theme.border}">
+                    <span class="text-[9px] font-black uppercase tracking-[0.1em] ${theme.color}">
+                        ${theme.label}
+                    </span>
+                </div>
+                `;
+        },
+        onClick: (row, extraArgs) => {
+            extraArgs.modalStore.openConfirmModal({
+                message: row.is_active
+                    ? "Are you sure you want to inactivate?"
+                    : "Are you sure you want to activate?",
+                onApprove: async () => {
+                    const response = await toggleStatus(row.id);
+                    if (response?.success) {
+                        toast.success(
+                            response.message ??
+                                (row.is_active
+                                    ? SUCCESS_MESSAGE.INACTIVATED
+                                    : SUCCESS_MESSAGE.ACTIVATED),
+                        );
+                        extraArgs.refresh();
+                    }
+                },
+                approveBtnText: "Verify",
+            });
         },
     },
     {
@@ -85,37 +105,5 @@ export const CourseCategoriesActions: ActionDef<any>[] = [
                 refreshCallback: extraArgs.refresh,
             });
         },
-    },
-    {
-        icon: Check,
-        tooltip: "Activate",
-        onClick: async (row, extraArgs) => {
-            if (row.is_active) return;
-
-            const response = await toggleStatus(row.id);
-            if (response?.success) {
-                toast.success(
-                    response.message ?? "Course categories activated",
-                );
-                extraArgs.refresh();
-            }
-        },
-        show: (row) => !row.is_active,
-    },
-    {
-        icon: X,
-        tooltip: "Deactivate",
-        onClick: async (row, extraArgs) => {
-            if (!row.is_active) return;
-
-            const response = await toggleStatus(row.id);
-            if (response?.success) {
-                toast.success(
-                    response.message ?? "Course categories deactivated",
-                );
-                extraArgs.refresh();
-            }
-        },
-        show: (row) => row.is_active,
     },
 ];

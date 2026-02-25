@@ -36,7 +36,7 @@ function handleAdd() {
 </script>
 
 <template>
-    <BaseFilter add-label="Add" @reset="handleReset" @add="handleAdd">
+    <BaseFilter add-label="Add New" @reset="handleReset" @add="handleAdd">
         <div class="flex items-center gap-x-3 w-full">
             <div>
                 <FormInput id="search" v-model="search" placeholder="Search day..." />

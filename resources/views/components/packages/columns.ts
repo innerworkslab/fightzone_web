@@ -70,7 +70,7 @@ export const PackageColumns: ColumnDef<any>[] = [
                             response.message ??
                                 (row.is_active
                                     ? SUCCESS_MESSAGE.INACTIVATED
-                                    : SUCCESS_MESSAGE.ACTIVATED)
+                                    : SUCCESS_MESSAGE.ACTIVATED),
                         );
                         extraArgs.refresh();
                     }
@@ -83,6 +83,17 @@ export const PackageColumns: ColumnDef<any>[] = [
 
 export const PackageActions: ActionDef<any>[] = [
     {
+        icon: Folder,
+        tooltip: "View",
+        onClick: (row, extraArgs) =>
+            extraArgs.modalStore.openModal({
+                formIndex: "package",
+                initialValues: row,
+                isReadMode: true,
+                refreshCallback: extraArgs.refresh,
+            }),
+    },
+    {
         icon: Edit2,
         tooltip: "Edit",
         onClick: (row, extraArgs) => {
@@ -93,16 +104,5 @@ export const PackageActions: ActionDef<any>[] = [
                 refreshCallback: extraArgs.refresh,
             });
         },
-    },
-    {
-        icon: Folder,
-        tooltip: "View",
-        onClick: (row, extraArgs) =>
-            extraArgs.modalStore.openModal({
-                formIndex: "package",
-                initialValues: row,
-                isReadMode: true,
-                refreshCallback: extraArgs.refresh,
-            }),
     },
 ];

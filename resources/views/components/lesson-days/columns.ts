@@ -42,22 +42,31 @@ export const LessonDaysColumns: ColumnDef<any>[] = [
 ];
 
 export const LessonDaySubColumns: ColumnDef<any>[] = [
-    { key: "name", label: "Name" },
-    { key: "description", label: "Description" },
-    { key: "duration", label: "Duration" },
+    { label: "Name", key: "name" },
+    {
+        label: "Description",
+        key: "description",
+        render: (row) =>
+            `${row.description?.substring(0, 50) ?? ""}${row.description && row.description.length > 50 ? "..." : ""}`,
+    },
+    {
+        label: "Thumbnail",
+        key: "thumbnail_url",
+        className: "text-center w-[80px]",
+        render: (row) => {
+            const logoUrl = row.thumbnail_url;
+            if (logoUrl) {
+                return `<img src="${logoUrl}" alt="Thumbnail" class="max-w-28 h-15 rounded-sm object-cover mx-auto" />`;
+            }
+            return `<div class="w-10 h-10 rounded-full bg-gray-200 flex items-center justify-center mx-auto">
+                <CreditCard class="h-5 w-5 text-gray-500" />
+            </div>`;
+        },
+    },
+    { label: "Duration", key: "duration" },
 ];
 
 export const LessonDaysActions: ActionDef<any>[] = [
-    {
-        icon: Folder,
-        tooltip: "View Details",
-        onClick: (row, extraArgs) => {
-            extraArgs.router.push({
-                name: RouteNames.ViewLessonDay,
-                params: { courseLevelId: row.course_level_id, id: row.id },
-            });
-        },
-    },
     {
         icon: Edit2,
         tooltip: "Edit",
@@ -74,9 +83,12 @@ export const LessonDaysActions: ActionDef<any>[] = [
         onClick: (row, extraArgs) => {
             extraArgs.modalStore.openModal({
                 formIndex: "lessonDayVideo",
-                initialValues: row,
+                initialValues: { lesson_day_id: row.id },
                 isReadMode: false,
-                refreshCallback: extraArgs.refresh,
+                refreshCallback: () =>
+                    extraArgs.reloadSubTable({
+                        id: row.id,
+                    }),
             });
         },
     },
@@ -85,11 +97,18 @@ export const LessonDaysActions: ActionDef<any>[] = [
 export const LessonDaySubActions: ActionDef<any>[] = [
     {
         icon: Edit2,
-        tooltip: "Edit Level",
+        tooltip: "Edit Video",
         onClick: (row, extraArgs) => {
-            extraArgs.router.push({
-                name: RouteNames.EditCourseLevel,
-                params: { courseId: row.course_id, id: row.id },
+            console.log("row", row);
+
+            extraArgs.modalStore.openModal({
+                formIndex: "lessonDayVideo",
+                initialValues: row,
+                isReadMode: false,
+                refreshCallback: () =>
+                    extraArgs.reloadSubTable({
+                        id: row.lesson_day_id,
+                    }),
             });
         },
     },
