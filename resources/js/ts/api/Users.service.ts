@@ -41,7 +41,7 @@ const useUserActions = () => {
 
     const createUser = (data: UsersPayload) => {
         data = cleanPayload(data) as UsersPayload;
-        mutate(METHODS.POST, baseURL, data);
+        return mutate(METHODS.POST, baseURL, data);
     };
 
     const updateUser = (id: number, data: Partial<UsersPayload>) => {

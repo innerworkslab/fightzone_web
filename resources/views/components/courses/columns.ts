@@ -10,8 +10,13 @@ import {
 import { CoursesServices } from "@/api/Courses.service";
 import { toast } from "vue3-toastify";
 import { RouteNames } from "@/config/route.config";
+import { SUCCESS_MESSAGE } from "@/constant/global.constant";
+import { CourseLevelsServices } from "@/api/CourseLevels.service";
+import { formatPriceOrNumber } from "@/utils/helper";
 
 const { toggleStatus } = CoursesServices.useCourseActions();
+const { toggleStatus: toggleCourseLevelStatus } =
+    CourseLevelsServices.useCourseLevelActions();
 
 export const CoursesColumns: ColumnDef<any>[] = [
     {
@@ -40,31 +45,50 @@ export const CoursesColumns: ColumnDef<any>[] = [
     {
         label: "Status",
         key: "is_active",
-        className: "w-[120px]",
         render: (row) => {
-            const active = row.is_active;
+            let theme = {
+                color: "text-emerald-500",
+                bg: "bg-emerald-500/10",
+                border: "border-emerald-500/20",
+                label: "Active",
+            };
 
-            const theme = active
-                ? {
-                      color: "text-emerald-400",
-                      bg: "bg-emerald-400/10",
-                      border: "border-emerald-400/20",
-                      label: "Active",
-                  }
-                : {
-                      color: "text-rose-500",
-                      bg: "bg-rose-500/10",
-                      border: "border-rose-500/20",
-                      label: "Inactive",
-                  };
+            if (!row.is_active) {
+                theme = {
+                    color: "text-red-500",
+                    bg: "bg-red-500/10",
+                    border: "border-red-500/20",
+                    label: "Inactive",
+                };
+            }
 
             return `
-            <div class="flex items-center gap-1.5 w-fit px-3 py-1 rounded-md border ${theme.bg} ${theme.border}">
-                <span class="text-[9px] font-black uppercase tracking-[0.15em] ${theme.color}">
-                    ${theme.label}
-                </span>
-            </div>
-            `;
+                <div class="inline-flex items-center px-2 py-0.5 rounded border ${theme.bg} ${theme.border}">
+                    <span class="text-[9px] font-black uppercase tracking-[0.1em] ${theme.color}">
+                        ${theme.label}
+                    </span>
+                </div>
+                `;
+        },
+        onClick: (row, extraArgs) => {
+            extraArgs.modalStore.openConfirmModal({
+                message: row.is_active
+                    ? "Are you sure you want to inactivate?"
+                    : "Are you sure you want to activate?",
+                onApprove: async () => {
+                    const response = await toggleStatus(row.id);
+                    if (response?.success) {
+                        toast.success(
+                            response.message ??
+                                (row.is_active
+                                    ? SUCCESS_MESSAGE.INACTIVATED
+                                    : SUCCESS_MESSAGE.ACTIVATED),
+                        );
+                        extraArgs.refresh();
+                    }
+                },
+                approveBtnText: "Verify",
+            });
         },
     },
     {
@@ -75,12 +99,60 @@ export const CoursesColumns: ColumnDef<any>[] = [
 ];
 
 export const CoursesSubColumns: ColumnDef<any>[] = [
-    { key: "level", label: "Level" },
-    { key: "price", label: "Price" },
+    { label: "Level", key: "level" },
     {
-        key: "is_active",
+        label: "Price",
+        key: "price",
+        render: (row) => `${formatPriceOrNumber(row.price)}`,
+    },
+    {
         label: "Status",
-        render: (row) => (row.is_active ? "Active" : "Inactive"),
+        key: "is_active",
+        render: (row) => {
+            let theme = {
+                color: "text-emerald-500",
+                bg: "bg-emerald-500/10",
+                border: "border-emerald-500/20",
+                label: "Active",
+            };
+
+            if (!row.is_active) {
+                theme = {
+                    color: "text-red-500",
+                    bg: "bg-red-500/10",
+                    border: "border-red-500/20",
+                    label: "Inactive",
+                };
+            }
+
+            return `
+            <div class="inline-flex items-center px-2 py-0.5 rounded border ${theme.bg} ${theme.border}">
+                <span class="text-[9px] font-black uppercase tracking-[0.1em] ${theme.color}">
+                    ${theme.label}
+                </span>
+            </div>
+            `;
+        },
+        onClick: (row, extraArgs) => {
+            extraArgs.modalStore.openConfirmModal({
+                message: row.is_active
+                    ? "Are you sure you want to inactivate?"
+                    : "Are you sure you want to activate?",
+                onApprove: async () => {
+                    const response = await toggleCourseLevelStatus(row.id);
+                    if (response?.success) {
+                        toast.success(
+                            response.message ??
+                                (row.is_active
+                                    ? SUCCESS_MESSAGE.INACTIVATED
+                                    : SUCCESS_MESSAGE.ACTIVATED),
+                        );
+                        extraArgs.reloadSubTable(row.__parentRow);
+                    }
+                },
+                approveBtnText: "Verify",
+            });
+        },
     },
 ];
 
@@ -106,20 +178,6 @@ export const CoursesActions: ActionDef<any>[] = [
         },
     },
     {
-        icon: Check,
-        tooltip: "Activate",
-        onClick: async (row, extraArgs) => {
-            if (row.is_active) return;
-
-            const response = await toggleStatus(row.id);
-            if (response?.success) {
-                toast.success(response.message ?? "Course activated");
-                extraArgs.refresh();
-            }
-        },
-        show: (row) => !row.is_active,
-    },
-    {
         icon: CopyPlus,
         tooltip: "Add Levels",
         onClick: (row, extraArgs) => {
@@ -128,20 +186,6 @@ export const CoursesActions: ActionDef<any>[] = [
                 params: { courseId: row.id },
             });
         },
-    },
-    {
-        icon: X,
-        tooltip: "Deactivate",
-        onClick: async (row, extraArgs) => {
-            if (!row.is_active) return;
-
-            const response = await toggleStatus(row.id);
-            if (response?.success) {
-                toast.success(response.message ?? "Course deactivated");
-                extraArgs.refresh();
-            }
-        },
-        show: (row) => row.is_active,
     },
 ];
 

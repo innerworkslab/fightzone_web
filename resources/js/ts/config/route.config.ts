@@ -192,6 +192,12 @@ export const routes = [
         route: "/auth/courses",
         children: [
             {
+                label: "Category List",
+                name: RouteNames.CourseCategoriesList,
+                header: "Categories Management",
+                route: "/auth/categories",
+            },
+            {
                 label: "Course List",
                 name: RouteNames.CoursesList,
                 header: "Course Management",
@@ -214,12 +220,6 @@ export const routes = [
                 name: RouteNames.ViewCourse,
                 header: "View Course",
                 route: "",
-            },
-            {
-                label: "Category List",
-                name: RouteNames.CourseCategoriesList,
-                header: "Categories Management",
-                route: "/auth/categories",
             },
         ],
     },

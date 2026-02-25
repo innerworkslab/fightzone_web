@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, watch } from "vue";
+import { computed, ref, watch } from "vue";
 import { useRouter } from "vue-router";
 import { storeToRefs } from "pinia";
 import { useDataStore } from "@/store/data";
@@ -15,6 +15,8 @@ const courseLevelId = computed(() => router.currentRoute.value.params.courseLeve
 
 const dataStore = useDataStore();
 const modalStore = useModalStore();
+
+const dataTableRef = ref();
 
 const { filters, refreshTrigger } = storeToRefs(dataStore);
 
@@ -39,6 +41,11 @@ const fetchSubData = async (row: any) => {
     return res.data?.videos || [];
 };
 
+const reloadSubTable = (parentRow: any) => {
+    if (!dataTableRef.value) return;
+    dataTableRef.value.reloadSubTable(parentRow);
+};
+
 watch(paginationInfo, (newInfo) => {
     if (newInfo && newInfo.total !== undefined) {
         dataStore.setTotalItems(newInfo.total);
@@ -61,7 +68,7 @@ watch(refreshTrigger, () => {
 <template>
     <LessonDaysFilter />
 
-    <DataTable :data="records" :columns="LessonDaysColumns" :subColumns="LessonDaySubColumns"
+    <DataTable ref="dataTableRef" :data="records" :columns="LessonDaysColumns" :subColumns="LessonDaySubColumns"
         :actions="LessonDaysActions" :subActions="LessonDaySubActions" :loading="loading" :fetchSubData="fetchSubData"
         :extraArgs="{
             startIndex,
@@ -69,6 +76,7 @@ watch(refreshTrigger, () => {
             dataStore,
             modalStore,
             refresh: () => refresh(buildApiFilter(filters)),
+            reloadSubTable,
         }" />
 
     <div class="relative flex justify-center items-center">

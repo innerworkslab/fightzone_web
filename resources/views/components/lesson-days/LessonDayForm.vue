@@ -61,9 +61,33 @@ const {
     loading: isSubmitting,
 } = LessonDaysServices.useLessonDaysActions();
 
+
+// const { data: videoDetail } = isUpdateMode.value
+//     ? LessonDayVideosServices.useLessonDayVideos(videoId.value.toString())
+//     : { data: null };
+
+// watch(
+//     () => videoDetail?.value,
+//     (val: any) => {
+//         console.log("initial", val);
+
+//         if (val?.data) {
+//             setValues({
+//                 name: val.data.name,
+//                 description: val.data.description,
+//                 duration: val.data.duration,
+//                 url: val.data.url,
+//             });
+//         }
+//     },
+//     { immediate: true }
+// );
+
 watch(
     () => modalStore.initialValues,
     (val: any) => {
+        console.log("initial", val);
+
         if (val) {
             setValues({
                 day_number: val.day_number,

@@ -16,8 +16,8 @@ const isUpdateMode = computed(() => !!route.params.id);
 const isReadMode = computed(() => route.name === RouteNames.ViewCourse);
 
 const schema = yup.object({
-    name: yup.string().required().min(3),
-    course_category_id: yup.number().required(),
+    name: yup.string().required("Course name is required").min(3, "Course name must be at least 3 characters"),
+    course_category_id: yup.number().required("Course category is required"),
     description: yup.string().nullable(),
 });
 
