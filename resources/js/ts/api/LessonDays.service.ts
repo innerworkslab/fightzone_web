@@ -34,6 +34,12 @@ const useLessonDays = (id: string, filter: LessonDaysFilter = {}) => {
     return useFetch<APIResult<LessonDaysData[]>>(baseURL(id), filter);
 };
 
+const useLessonDayDetail = (id: number | string) => {
+    return useFetch<APIResult<LessonDaysData>>(
+        `/${API_URLS.VERSION}/${API_URLS.MANAGEMENT}/${API_URLS.LESSON_DAY}/${id}`,
+    );
+};
+
 const useLessonDaysActions = () => {
     const { mutate, loading, error, data } = useMutation();
 
@@ -67,5 +73,6 @@ const useLessonDaysActions = () => {
 
 export const LessonDaysServices = {
     useLessonDays,
+    useLessonDayDetail,
     useLessonDaysActions,
 };

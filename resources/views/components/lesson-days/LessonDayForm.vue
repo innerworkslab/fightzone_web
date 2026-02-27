@@ -61,27 +61,40 @@ const {
     loading: isSubmitting,
 } = LessonDaysServices.useLessonDaysActions();
 
+const { data: courseData } =
+    LessonDaysServices.useLessonDays(courseLevelId.value);
 
-// const { data: videoDetail } = isUpdateMode.value
-//     ? LessonDayVideosServices.useLessonDayVideos(videoId.value.toString())
-//     : { data: null };
+watch(
+    () => courseData?.value,
+    (val: any) => {
+        const nextDayNumber = val?.data?.length ? val.data.length + 1 : 1;
 
-// watch(
-//     () => videoDetail?.value,
-//     (val: any) => {
-//         console.log("initial", val);
+        if (val?.data) {
+            setValues({
+                day_number: nextDayNumber,
+            });
+        }
+    },
+    { immediate: true }
+);
 
-//         if (val?.data) {
-//             setValues({
-//                 name: val.data.name,
-//                 description: val.data.description,
-//                 duration: val.data.duration,
-//                 url: val.data.url,
-//             });
-//         }
-//     },
-//     { immediate: true }
-// );
+const { data: lessonDayDetail } = isUpdateMode.value
+    ? LessonDaysServices.useLessonDayDetail(lessonDayId.value)
+    : { data: null };
+
+watch(
+    () => lessonDayDetail?.value,
+    (val: any) => {
+        if (val?.data) {
+            setValues({
+                day_number: val.data.day_number,
+                duration: val.data.duration,
+                type: val.data.type,
+            });
+        }
+    },
+    { immediate: true }
+);
 
 watch(
     () => modalStore.initialValues,
