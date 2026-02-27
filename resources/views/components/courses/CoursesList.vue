@@ -36,7 +36,7 @@ const startIndex = computed(() => {
 
 const fetchSubData = async (row: any) => {
     const res = await CourseLevelsServices.getCourseLevelsByCourseId(row.id);
-    return res.data || [];
+    return res.data.course_levels || [];
 };
 
 const reloadSubTable = (parentRow: any) => {
