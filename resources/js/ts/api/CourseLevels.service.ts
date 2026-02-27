@@ -66,7 +66,9 @@ const useCourseLevelActions = () => {
 };
 
 const getCourseLevelsByCourseId = async (id: number) => {
-    const response = await api.get(`${baseURL}`);
+    const response = await api.get(
+        `${API_URLS.VERSION}/${API_URLS.MANAGEMENT}/${API_URLS.COURSE}/${id}`,
+    );
     return response.data;
 };
 
