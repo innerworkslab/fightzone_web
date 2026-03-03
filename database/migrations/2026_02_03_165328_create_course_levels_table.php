@@ -14,6 +14,7 @@ return new class extends Migration
         Schema::create('course_levels', function (Blueprint $table) {
             $table->id();
             $table->foreignId('course_id')->constrained('courses')->cascadeOnDelete();
+            $table->string('name')->nullable();
             $table->enum('level', ['Beginner', 'Intermediate', 'Expert'])->default('Beginner');
             $table->double('price')->default(0);
             $table->boolean('is_active')->default(true);

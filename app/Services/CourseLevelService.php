@@ -49,6 +49,7 @@ class CourseLevelService
 
         try{
             DB::beginTransaction();
+            $data['name'] = "{$course->name} course {$data['level']} level";
             $courseLevel = $this->levelRepo->create($data);
 
             foreach ($lessonDays as $lessonDay) {
@@ -91,6 +92,7 @@ class CourseLevelService
 
         try{
             DB::beginTransaction();
+            $data['name'] = "{$course->name} course {$data['level']} level";
             $courseLevel = $this->levelRepo->update($id, $data);
 
             if(count($lessonDays) > 0){

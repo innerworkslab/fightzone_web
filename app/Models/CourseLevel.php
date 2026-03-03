@@ -12,6 +12,7 @@ class CourseLevel extends Model
 
     protected $fillable = [
         'course_id',
+        'name',
         'level',
         'price',
         'is_active',
