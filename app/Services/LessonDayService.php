@@ -105,6 +105,7 @@ class LessonDayService
             $day->is_completed = false;
             $day->completed_at = null;
             $day->is_within_validity = false;
+            $day->accessible = false;
 
             foreach ($day->videos as $video) {
                 $video->is_completed = false;
@@ -113,10 +114,7 @@ class LessonDayService
         }
 
         // Find the latest course_level_purchase for this user & level
-        $clp = CourseLevelPurchase::where('user_id', $userId)
-            ->where('course_level_id', $levelId)
-            ->orderByDesc('valid_until')
-            ->first();
+        $clp = $this->getCourseLevelPurchase($levelId, $userId);
 
         if (! $clp) {
             // User has not purchased this level; return with defaults
@@ -127,6 +125,23 @@ class LessonDayService
         $isWithinValidity = false;
         if ($clp->valid_from && $clp->valid_until) {
             $isWithinValidity = $now->between($clp->valid_from, $clp->valid_until);
+        }
+
+        // Determine how many lesson days should be accessible based on
+        // how many days have passed since the subscription effectively started.
+        $accessibleCount = 0;
+        if ($clp->valid_from) {
+            // Use calendar-day difference, but subtract one so that:
+            // - On the first subscription day, only the first lesson day is accessible
+            // - Each subsequent day unlocks exactly one more lesson day
+            $daysSinceStart = $clp->valid_from->startOfDay()->diffInDays($now->startOfDay()) ; // - 1 is removed after diffInDays()
+            if ($daysSinceStart < 0) {
+                $daysSinceStart = 0;
+            }
+
+            // On the first subscription day, only the first lesson day is accessible.
+            // Each subsequent day unlocks the next lesson day, until all are accessible.
+            $accessibleCount = min($daysSinceStart + 1, $lessonDays->count());
         }
 
         $dayIds = $lessonDays->pluck('id')->all();
@@ -150,8 +165,13 @@ class LessonDayService
                 ->keyBy('lesson_day_video_id');
         }
 
-        foreach ($lessonDays as $day) {
+        foreach ($lessonDays as $index => $day) {
             $day->is_within_validity = $isWithinValidity;
+
+            // Accessibility is driven by subscription age:
+            // - Day 0: only first lesson day accessible
+            // - Day 1: first two, etc.
+            $day->accessible = ($index < $accessibleCount);
 
             $dc = $dayCompletions->get($day->id);
             if ($dc) {
@@ -189,6 +209,7 @@ class LessonDayService
         $lessonDay->is_completed = false;
         $lessonDay->completed_at = null;
         $lessonDay->is_within_validity = false;
+        $lessonDay->accessible = false;
 
         foreach ($lessonDay->videos as $video) {
             $video->is_completed = false;
@@ -196,10 +217,7 @@ class LessonDayService
         }
 
         // Find the latest course_level_purchase for this user & level
-        $clp = CourseLevelPurchase::where('user_id', $userId)
-            ->where('course_level_id', $levelId)
-            ->orderByDesc('valid_until')
-            ->first();
+        $clp = $this->getCourseLevelPurchase($levelId, $userId);
 
         if (! $clp) {
             // User has not purchased this level; return with defaults
@@ -209,6 +227,30 @@ class LessonDayService
         $now = now();
         if ($clp->valid_from && $clp->valid_until) {
             $lessonDay->is_within_validity = $now->between($clp->valid_from, $clp->valid_until);
+        }
+
+        // Determine accessibility for this specific lesson day using the
+        // same rules as the lesson-day list endpoint.
+        $allDays = LessonDay::where('course_level_id', $levelId)
+            ->orderBy('day_number')
+            ->get(['id']);
+
+        $accessibleCount = 0;
+        if ($clp->valid_from) {
+            $daysSinceStart = $clp->valid_from->startOfDay()->diffInDays($now->startOfDay()) - 1;
+            if ($daysSinceStart < 0) {
+                $daysSinceStart = 0;
+            }
+
+            $accessibleCount = min($daysSinceStart + 1, $allDays->count());
+        }
+
+        $position = $allDays->search(function ($d) use ($lessonDay) {
+            return $d->id === $lessonDay->id;
+        });
+
+        if ($position !== false) {
+            $lessonDay->accessible = ($position < $accessibleCount);
         }
 
         // Lesson day completion
@@ -267,7 +309,7 @@ class LessonDayService
     {
         // Get the lesson day video
         $video = LessonDayVideo::with('lessonDay.courseLevel')->find($lessonDayVideoId);
-        
+
         if (!$video) {
             throw new \RuntimeException('Lesson video not found');
         }
@@ -283,10 +325,7 @@ class LessonDayService
         }
 
         // Find the course level purchase for this user and course level
-        $clp = CourseLevelPurchase::where('user_id', $userId)
-            ->where('course_level_id', $courseLevel->id)
-            ->orderByDesc('valid_until')
-            ->first();
+        $clp = $this->getCourseLevelPurchase($courseLevel->id, $userId);
 
         if (!$clp) {
             throw new \RuntimeException('Course level purchase not found. Please purchase this course level first.');
@@ -345,5 +384,14 @@ class LessonDayService
             DB::rollBack();
             throw new \Exception('Failed to mark video completion: ' . $e->getMessage());
         }
+    }
+
+    public function getCourseLevelPurchase(int $courseLevelId, int $userId)
+    {
+        // Find the course level purchase for this user and course level
+        return CourseLevelPurchase::where('user_id', $userId)
+            ->where('course_level_id', $courseLevelId)
+            ->orderByDesc('valid_until')
+            ->first();
     }
 }

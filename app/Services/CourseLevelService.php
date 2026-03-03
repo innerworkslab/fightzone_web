@@ -141,7 +141,7 @@ class CourseLevelService
         return $this->levelRepo->toggleActive($id);
     }
 
-    public function getLessons(int $courseId, $levelId, int $userId = null)
+    public function getLessons(int $courseId, $levelId, ?int $userId)
     {
         // When a user ID is provided, include completion info for that user.
         if ($userId !== null) {
