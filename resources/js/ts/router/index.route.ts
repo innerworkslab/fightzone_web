@@ -20,6 +20,7 @@ import CourseCategoriesList from "../../../views/components/course-categories/Co
 import CourseLevelsForm from "../../../views/components/course-levels/CourseLevelsForm.vue";
 import LessonDaysList from "../../../views/components/lesson-days/LessonDaysList.vue";
 import LessonDayForm from "../../../views/components/lesson-days/LessonDayForm.vue";
+import WalkInsList from "../../../views/components/walk-ins/WalkInsList.vue";
 
 const routes = [
     {
@@ -195,6 +196,11 @@ const routes = [
                 name: RouteNames.ViewLessonDay,
                 component: LessonDayForm,
                 meta: { permissions: ["all"] },
+            },
+            {
+                path: "walk-in",
+                name: RouteNames.WalkInsList,
+                component: WalkInsList,
             },
         ],
     },

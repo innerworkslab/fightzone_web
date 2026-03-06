@@ -24,6 +24,7 @@ export const API_URLS = {
     COURSE_LEVEL: "course-levels",
     LESSON_DAY: "lesson-days",
     LESSON_DAY_VIDEO: "lesson-day-videos",
+    WALK_IN: "walkins",
 };
 
 export const COOKIES = {

@@ -38,6 +38,7 @@ export const RouteNames = {
     AddLessonDay: "add-lesson-day",
     ViewLessonDay: "view-lesson-day",
     EditLessonDay: "edit-lesson-day",
+    WalkInsList: "walk-ins-list",
     Unauthorized: "unauthorized",
 };
 
@@ -251,6 +252,20 @@ export const routes = [
                 name: RouteNames.ViewLessonDay,
                 header: "View Lesson Day",
                 route: "/auth/course-level/:courseLevelId/lesson-days/:id/view",
+            },
+        ],
+    },
+    {
+        label: "Walk In",
+        name: "walk_in_group",
+        icon: Banknote,
+        route: "/auth/walk-in",
+        children: [
+            {
+                label: "Walk In List",
+                name: RouteNames.WalkInsList,
+                header: "Walk In Management",
+                route: "/auth/walk-in",
             },
         ],
     },

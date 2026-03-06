@@ -5,6 +5,7 @@ import UsersPasswordChangeForm from "../../../views/components/users/UsersPasswo
 import AdminsChangePasswordForm from "../../../views/components/admins/AdminsChangePasswordForm.vue";
 import CourseCategoriesForm from "../../../views/components/course-categories/CourseCategoriesForm.vue";
 import LessonDayVideoForm from "../../../views/components/lesson-day-videos/lessonDayVideoForm.vue";
+import WalkInForm from "../../../views/components/walk-ins/WalkInForm.vue";
 
 export const getFormConfig = (initialValues: any, isReadMode: boolean) => ({
     // #A
@@ -64,6 +65,18 @@ export const getFormConfig = (initialValues: any, isReadMode: boolean) => ({
     usersChangePassword: {
         form: UsersPasswordChangeForm,
         header: "Change User Password",
+        message: "",
+    },
+    // #W
+    walkInForm: {
+        form: WalkInForm,
+        header: `${
+            initialValues
+                ? isReadMode
+                    ? "(Read Only) "
+                    : "Update"
+                : "Scan QR for"
+        } Walk In`,
         message: "",
     },
 });

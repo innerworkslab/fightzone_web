@@ -58,5 +58,8 @@ declare module 'vue' {
     UsersForm: typeof import('./../../views/components/users/UsersForm.vue')['default']
     UsersList: typeof import('./../../views/components/users/UsersList.vue')['default']
     UsersPasswordChangeForm: typeof import('./../../views/components/users/UsersPasswordChangeForm.vue')['default']
+    WalkInForm: typeof import('./../../views/components/walk-ins/WalkInForm.vue')['default']
+    WalkInsFilter: typeof import('./../../views/components/walk-ins/WalkInsFilter.vue')['default']
+    WalkInsList: typeof import('./../../views/components/walk-ins/WalkInsList.vue')['default']
   }
 }
