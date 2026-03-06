@@ -15,6 +15,7 @@ use App\Http\Controllers\API\v1\Management\CourseController;
 use App\Http\Controllers\API\v1\Management\CourseLevelController;
 use App\Http\Controllers\API\v1\Management\LessonDayController;
 use App\Http\Controllers\API\v1\Management\LessonDayVideoController;
+use App\Http\Controllers\API\v1\Management\WalkinController;
 
 Route::prefix('/v1/management')->group(function () {
     Route::post('/login', [LoginController::class, 'login']);
@@ -79,6 +80,10 @@ Route::prefix('/v1/management')->group(function () {
                 Route::get('/{id}', [PurchaseController::class, 'show']);
                 Route::post('/{id}/confirm', [PurchaseController::class, 'confirm']);
                 Route::post('/{id}/reject', [PurchaseController::class, 'reject']);
+            });
+
+            Route::prefix('/walkins')->group(function () {
+                Route::post('/confirm', [WalkinController::class, 'confirm']);
             });
 
             Route::prefix('/course-categories')->group(function () {

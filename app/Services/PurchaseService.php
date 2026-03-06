@@ -8,12 +8,13 @@ use Illuminate\Support\Str;
 
 use Carbon\Carbon;
 
-use App\Models\PointBalance;
 use App\Models\Admin;
-use App\Models\User;
-use App\Models\Purchase;
 use App\Models\CourseLevel;
 use App\Models\CourseLevelPurchase;
+use App\Models\Package;
+use App\Models\PackagePurchase;
+use App\Models\PointBalance;
+use App\Models\Purchase;
 
 use App\Repositories\Purchase\PurchaseRepositoryInterface;
 
@@ -75,6 +76,17 @@ class PurchaseService
         // Validate that courses cannot be purchased directly (must purchase course levels)
         if ($purchasable instanceof \App\Models\Course) {
             throw new \RuntimeException('Courses cannot be purchased directly. Please purchase a specific course level.');
+        }
+
+        // Prevent buying the same Package while the user has a valid, un-completed package purchase
+        if ($purchasable instanceof Package) {
+            $hasValid = PackagePurchase::where('user_id', $userId)
+                ->where('package_id', $purchasable->id)
+                ->valid()
+                ->exists();
+            if ($hasValid) {
+                throw new \RuntimeException('You already have an active package with remaining walk-in days. Use it up or wait until it is completed before buying the same package again.');
+            }
         }
 
         // Calculate total points needed (same logic as deposit conversion)
@@ -158,6 +170,18 @@ class PurchaseService
                 'admin_id' => $admin->id,
                 'confirmed_at' => Carbon::now(),
             ]);
+
+            if ($purchasable instanceof Package) {
+                $totalDays = (int) $purchasable->days * $purchase->quantity;
+                PackagePurchase::create([
+                    'user_id' => $purchase->user_id,
+                    'package_id' => $purchasable->id,
+                    'purchase_id' => $purchase->id,
+                    'total_days' => $totalDays,
+                    'remaining_days' => $totalDays,
+                    'completed' => false,
+                ]);
+            }
 
             // If the purchasable is a CourseLevel, record course_level_purchases for the user.
             if ($purchasable instanceof CourseLevel) {

@@ -17,7 +17,8 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        //
+        require base_path('routes/channels.php');
+
         Relation::enforceMorphMap([
             'admin' => 'App\Models\Admin',
             'user' => 'App\Models\User',

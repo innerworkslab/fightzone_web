@@ -14,6 +14,7 @@ use App\Http\Controllers\API\v1\User\ProfileController;
 use App\Http\Controllers\API\v1\User\Shop\CourseCategoryController;
 use App\Http\Controllers\API\v1\User\Shop\CourseController;
 use App\Http\Controllers\API\v1\User\Shop\LessonDayController;
+use App\Http\Controllers\API\v1\User\Shop\WalkinController;
 
 Route::prefix('/v1')->group(function () {
     Route::controller(RegisterController::class)->group(function () {
@@ -65,6 +66,10 @@ Route::prefix('/v1')->group(function () {
                 Route::get('/', [PurchaseController::class, 'index']);
                 Route::post('/', [PurchaseController::class, 'store']);
                 Route::get('/{id}', [PurchaseController::class, 'show']);
+            });
+
+            Route::prefix('/walk-ins')->group(function () {
+                Route::get('/qr-payload', [WalkinController::class, 'qrPayload']);
             });
         });
     });
