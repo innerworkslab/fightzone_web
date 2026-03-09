@@ -45,6 +45,7 @@ class CourseController extends Controller
             'description' => 'nullable|string',
             'course_category_id' => 'required|exists:course_categories,id',
             'is_active' => 'boolean',
+            'image' => 'sometimes|file'
         ]);
 
         $data = $request->only([
@@ -54,7 +55,7 @@ class CourseController extends Controller
             'is_active'
         ]);
 
-        $item = $this->service->create($data);
+        $item = $this->service->create($data, $request->hasFile('image')?$request->file('image'):null);
 
         ResponseData($item, 201);
     }
@@ -73,6 +74,7 @@ class CourseController extends Controller
             'description' => 'nullable|string',
             'course_category_id' => 'sometimes|exists:course_categories,id',
             'is_active' => 'boolean',
+            'image' => 'sometimes|file'
         ]);
 
         $item = $this->service->find($id);
@@ -85,7 +87,7 @@ class CourseController extends Controller
             'is_active'
         ]);
 
-        $updated = $this->service->update($id, $data);
+        $updated = $this->service->update($id, $data, $request->hasFile('image')?$request->file('image'):null);
         if (!$updated) ResponseMessage('Course not found', 404);
 
         ResponseData($updated);

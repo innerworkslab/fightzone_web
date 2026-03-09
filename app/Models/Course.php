@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Storage;
 
 class Course extends Model
 {
@@ -12,13 +13,22 @@ class Course extends Model
     protected $fillable = [
         'name',
         'description',
+        'image_path',
         'course_category_id',
         'is_active',
+    ];
+
+    protected $hidden = [
+        'image_path'
     ];
 
     protected $casts = [
         'course_category_id' => 'integer',
         'is_active' => 'boolean',
+    ];
+
+    protected $appends = [
+        'image_url'
     ];
 
     /**
@@ -75,5 +85,13 @@ class Course extends Model
     public function expertLevel()
     {
         return $this->courseLevels()->where('level', 'Expert')->first();
+    }
+
+    public function getImageUrlAttribute()
+    {
+        if($this->image_path){
+            return Storage::url($this->image_path);
+        }
+        return null;
     }
 }

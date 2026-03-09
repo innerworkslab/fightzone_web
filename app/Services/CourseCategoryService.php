@@ -2,6 +2,8 @@
 
 namespace App\Services;
 
+use Illuminate\Http\UploadedFile;
+
 use App\Repositories\CourseCategory\CourseCategoryRepositoryInterface;
 
 class CourseCategoryService
@@ -25,14 +27,28 @@ class CourseCategoryService
         return $this->repo->find($id);
     }
 
-    public function create(array $data)
+    public function create(array $data, ?UploadedFile $image=null)
     {
-        return $this->repo->create($data);
+        $cat = $this->repo->create($data);
+        if($image){
+            $path = $image->store("course_categories/{$cat->id}", 'public');
+            $cat->image_path = $path;
+            $cat->save();
+        }
+        return $cat;
     }
 
-    public function update($id, array $data)
+    public function update($id, array $data, ?UploadedFile $image=null)
     {
-        return $this->repo->update($id, $data);
+        $cat = $this->repo->update($id, $data);
+        if($image){
+            if($cat->image_path){
+                DeleteFileFromServer($cat->image_path);
+            }
+            $path = $image->store("course_categories/{$cat->id}", 'public');
+            $cat->image_path = $path;
+            $cat->save();
+        }
     }
 
     public function delete($id)

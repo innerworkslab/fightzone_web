@@ -37,10 +37,11 @@ class CourseCategoryController extends Controller
         $validated = $request->validate([
             'name' => 'required|string|max:255',
             'description' => 'nullable|string',
-            'is_active' => 'boolean'
+            'is_active' => 'boolean',
+            'image' => 'sometimes|file'
         ]);
 
-        $item = $this->service->create($validated);
+        $item = $this->service->create($validated, $request->hasFile('image')?$request->file('image'):null );
 
         ResponseData($item, 201);
     }

@@ -2,6 +2,8 @@
 
 namespace App\Services;
 
+use Illuminate\Http\UploadedFile;
+
 use App\Repositories\Course\CourseRepositoryInterface;
 
 class CourseService
@@ -35,14 +37,29 @@ class CourseService
         return $this->repo->findWithDetailsForUser($courseId, $userId);
     }
 
-    public function create(array $data)
+    public function create(array $data, ?UploadedFile $image=null)
     {
-        return $this->repo->create($data);
+        $course = $this->repo->create($data);
+        if($image){
+            $path = $image->store("courses/{$course->id}", 'public');
+            $course->image_path = $path;
+            $course->save();
+        }
+        return $course;
     }
 
-    public function update($id, array $data)
+    public function update($id, array $data, ?UploadedFile $image=null)
     {
-        return $this->repo->update($id, $data);
+        $course = $this->repo->update($id, $data);
+        if($image){
+            if($course->image_path){
+                DeleteFileFromServer($course->image_path);
+            }
+            $path = $image->store("courses/{$course->id}", 'public');
+            $course->image_path = $path;
+            $course->save();
+        }
+        return $course;
     }
 
     public function delete($id)
