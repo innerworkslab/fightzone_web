@@ -4,7 +4,6 @@ namespace App\Services;
 
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Str;
 
 use Carbon\Carbon;
 
@@ -78,6 +77,17 @@ class PurchaseService
             throw new \RuntimeException('Courses cannot be purchased directly. Please purchase a specific course level.');
         }
 
+        // Prevent buying the same Course Level while the user has a same course level purchased and it's in validity period
+        if ($purchasable instanceof CourseLevel) {
+            $hasValid = CourseLevelPurchase::where('user_id', $userId)
+                ->where('course_level_id', $purchasable->id)
+                ->valid()
+                ->exists();
+            if ($hasValid) {
+                throw new \RuntimeException('You already have an active course level with remaining lesson days. Use it up or wait until it is completed before buying the same course level again.');
+            }
+        }
+
         // Prevent buying the same Package while the user has a valid, un-completed package purchase
         if ($purchasable instanceof Package) {
             $hasValid = PackagePurchase::where('user_id', $userId)
@@ -96,14 +106,25 @@ class PurchaseService
         $pointsPerUnit = (int) floor(($unitPrice / $minor) * $rate);
         $totalPoints = $pointsPerUnit * $quantity;
 
-        return $this->repo->create([
-            'user_id' => $userId,
-            'purchasable_type' => $purchasableType,
-            'purchasable_id' => $purchasableId,
-            'quantity' => $quantity,
-            'unit_price' => $unitPrice,
-            'total_points' => $totalPoints,
-        ]);
+        try{
+            DB::beginTransaction();
+            $purchase = $this->repo->create([
+                'user_id' => $userId,
+                'purchasable_type' => $purchasableType,
+                'purchasable_id' => $purchasableId,
+                'quantity' => $quantity,
+                'unit_price' => $unitPrice,
+                'total_points' => $totalPoints,
+            ]);
+
+            $this->confirmPurchase(Admin::first(), $purchase->id);
+
+            DB::commit();
+            return $purchase;
+        }catch(\Exception $e){
+            DB::rollBack();
+            throw new \RuntimeException('Some error occourred, please try again', 500);
+        }
     }
 
     public function updatePurchase(int $id, array $data)
@@ -189,7 +210,6 @@ class PurchaseService
 
                 // Validity period: confirmed_at + number of LESSON days (type='Lesson')
                 $lessonDaysCount = (int) $purchasable->lessonDays()
-                    ->where('type', 'Lesson')
                     ->count();
 
                 $validFrom = $confirmedAt;
