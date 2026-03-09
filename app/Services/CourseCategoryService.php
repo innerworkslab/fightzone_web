@@ -49,6 +49,7 @@ class CourseCategoryService
             $cat->image_path = $path;
             $cat->save();
         }
+        return $cat;
     }
 
     public function delete($id)

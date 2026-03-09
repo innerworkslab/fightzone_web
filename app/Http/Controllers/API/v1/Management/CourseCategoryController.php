@@ -58,13 +58,14 @@ class CourseCategoryController extends Controller
         $validated = $request->validate([
             'name' => 'sometimes|string|max:255',
             'description' => 'nullable|string',
-            'is_active' => 'boolean'
+            'is_active' => 'boolean',
+            'image' => 'sometimes|file'
         ]);
 
         $item = $this->service->find($id);
         if (!$item) ResponseMessage('Course category not found', 404);
 
-        $updated = $this->service->update($id, $validated);
+        $updated = $this->service->update($id, $validated, $request->hasFile('image')?$request->file('image'):null);
         if (!$updated) ResponseMessage('Course category not found', 404);
         ResponseData($updated);
     }
