@@ -22,11 +22,6 @@ class LessonDay extends Model
         'type' => 'string',
     ];
 
-    protected $appends = [
-        'duration_seconds',
-        'formatted_duration',
-    ];
-
     /**
      * Get the course level this lesson day belongs to
      */
