@@ -38,7 +38,7 @@ class LessonDayController extends Controller
             'day_number' => 'required|numeric',
             // 'type' => ['required', Rule::enum(LessonDayTypes::class)],
             'name' => 'sometimes|string',
-            'duration' => 'sometimes|string',
+            // 'duration' => 'sometimes|string',
             'videos' => 'sometimes|json'
         ]);
 
@@ -47,7 +47,7 @@ class LessonDayController extends Controller
             'name' => $request->name ? $request->name : "Day " . $request->day_number,
             'day_number' => $request->day_number,
             // 'type' => $request->type,
-            'duration' => $request->duration ? $request->duration : null,
+            // 'duration' => $request->duration ? $request->duration : null,
         ], ($request->videos)? json_decode($request->videos, true): []);
 
         ResponseData($createdLessonDay);
@@ -58,14 +58,14 @@ class LessonDayController extends Controller
         $request->validate([
             // 'type' => ['sometimes', Rule::enum(LessonDayTypes::class)],
             'name' => 'sometimes|string',
-            'duration' => 'sometimes|string',
+            // 'duration' => 'sometimes|string',
             'videos' => 'sometimes|json'
         ]);
 
         $updatedLessonDay = $this->lessonDayService->update($lessonDayId, [
             'name' => $request->name,
             // 'type' => $request->type,
-            'duration' => $request->duration ? $request->duration : null,
+            // 'duration' => $request->duration ? $request->duration : null,
         ], ($request->videos)? json_decode($request->videos, true): []);
 
         ResponseData($updatedLessonDay);

@@ -16,7 +16,6 @@ return new class extends Migration
             $table->foreignId('course_level_id')->constrained('course_levels')->cascadeOnDelete();
             $table->integer('day_number');
             $table->string('name')->nullable();
-            $table->time('duration')->nullable();
 
             $table->timestamps();
         });
