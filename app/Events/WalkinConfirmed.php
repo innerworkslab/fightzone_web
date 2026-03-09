@@ -48,6 +48,7 @@ class WalkinConfirmed implements ShouldBroadcastNow
             'package_purchase_id' => $this->packagePurchaseId,
             'user_walkin_id' => $this->userWalkinId,
             'remaining_days' => $this->remainingDays,
+            'status' => 'confirmed',
             'completed' => $this->completed,
             'message' => $this->completed
                 ? 'Walk-in confirmed. This package is now fully used.'
