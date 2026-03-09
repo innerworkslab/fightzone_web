@@ -3,7 +3,6 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Facades\Storage;
 
 class LessonDayVideo extends Model
 {
@@ -14,7 +13,8 @@ class LessonDayVideo extends Model
         'description',
         'thumbnail_url',
         'url',
-        'duration'
+        'duration',
+        'type'
     ];
 
     protected $casts = [

@@ -15,7 +15,6 @@ return new class extends Migration
             $table->id();
             $table->foreignId('course_level_id')->constrained('course_levels')->cascadeOnDelete();
             $table->integer('day_number');
-            $table->enum('type', ['Lesson', 'Rest'])->default('Lesson');
             $table->string('name')->nullable();
             $table->time('duration')->nullable();
 

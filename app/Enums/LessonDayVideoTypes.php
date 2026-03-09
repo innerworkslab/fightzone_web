@@ -2,7 +2,7 @@
 
 namespace App\Enums;
 
-enum LessonDayTypes: string
+enum LessonDayVideoTypes: string
 {
     //
     case LESSON = 'Lesson';

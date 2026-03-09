@@ -3,11 +3,8 @@
 namespace App\Http\Controllers\API\v1\Management;
 
 use Illuminate\Http\Request;
-use Illuminate\Validation\Rule;
 
 use App\Http\Controllers\Controller;
-
-use App\Enums\LessonDayTypes;
 
 use App\Services\LessonDayService;
 
@@ -39,7 +36,7 @@ class LessonDayController extends Controller
     {
         $request->validate([
             'day_number' => 'required|numeric',
-            'type' => ['required', Rule::enum(LessonDayTypes::class)],
+            // 'type' => ['required', Rule::enum(LessonDayTypes::class)],
             'name' => 'sometimes|string',
             'duration' => 'sometimes|string',
             'videos' => 'sometimes|json'
@@ -49,7 +46,7 @@ class LessonDayController extends Controller
             'course_level_id' => $levelId,
             'name' => $request->name ? $request->name : "Day " . $request->day_number,
             'day_number' => $request->day_number,
-            'type' => $request->type,
+            // 'type' => $request->type,
             'duration' => $request->duration ? $request->duration : null,
         ], ($request->videos)? json_decode($request->videos, true): []);
 
@@ -59,7 +56,7 @@ class LessonDayController extends Controller
     public function update(Request $request, $lessonDayId)
     {
         $request->validate([
-            'type' => ['sometimes', Rule::enum(LessonDayTypes::class)],
+            // 'type' => ['sometimes', Rule::enum(LessonDayTypes::class)],
             'name' => 'sometimes|string',
             'duration' => 'sometimes|string',
             'videos' => 'sometimes|json'
@@ -67,7 +64,7 @@ class LessonDayController extends Controller
 
         $updatedLessonDay = $this->lessonDayService->update($lessonDayId, [
             'name' => $request->name,
-            'type' => $request->type,
+            // 'type' => $request->type,
             'duration' => $request->duration ? $request->duration : null,
         ], ($request->videos)? json_decode($request->videos, true): []);
 

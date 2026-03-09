@@ -12,7 +12,6 @@ class LessonDay extends Model
     protected $fillable = [
         'course_level_id',
         'day_number',
-        'type',
         'name',
         'duration',
         'is_active',

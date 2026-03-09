@@ -3,8 +3,11 @@
 namespace App\Http\Controllers\API\v1\Management;
 
 use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
 
 use App\Http\Controllers\Controller;
+
+use App\Enums\LessonDayVideoTypes;
 
 use App\Services\LessonDayVideoService;
 
@@ -23,7 +26,8 @@ class LessonDayVideoController extends Controller
             'url' => 'required|string',
             'name' => 'sometimes',
             'description' => 'sometimes',
-            'duration' => 'sometimes'
+            'duration' => 'sometimes',
+            'type' => ['required', Rule::enum(LessonDayVideoTypes::class)]
         ]);
 
         $this->service->attachVideoToLesson($request->lesson_day_id, [$request->all()]);
@@ -37,7 +41,8 @@ class LessonDayVideoController extends Controller
             'url' => 'required|string',
             'name' => 'sometimes',
             'description' => 'sometimes',
-            'duration' => 'sometimes'
+            'duration' => 'sometimes',
+            'type' => ['required', Rule::enum(LessonDayVideoTypes::class)]
         ]);
 
         $this->service->update($id, $request->all());
