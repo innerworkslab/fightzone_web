@@ -14,4 +14,6 @@ Broadcast::routes(['middleware' => ['auth:api']]);
 
 Broadcast::channel('user.{userId}', function ($user, $userId) {
     return (int) $user->id === (int) $userId;
-}, ['guards' => ['api']]);
+},
+// ['guards' => ['api']]
+);
