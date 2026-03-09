@@ -26,6 +26,8 @@ use App\Repositories\CourseLevel\CourseLevelRepositoryInterface;
 use App\Repositories\CourseLevel\CourseLevelRepository;
 use App\Repositories\LessonDay\LessonDayRepositoryInterface;
 use App\Repositories\LessonDay\LessonDayRepository;
+use App\Repositories\RestVideo\RestVideoRepositoryInterface;
+use App\Repositories\RestVideo\RestVideoRepository;
 
 class RepositoryServiceProvider extends ServiceProvider
 {
@@ -46,6 +48,7 @@ class RepositoryServiceProvider extends ServiceProvider
         $this->app->bind(CourseRepositoryInterface::class, CourseRepository::class);
         $this->app->bind(CourseLevelRepositoryInterface::class, CourseLevelRepository::class);
         $this->app->bind(LessonDayRepositoryInterface::class, LessonDayRepository::class);
+        $this->app->bind(RestVideoRepositoryInterface::class, RestVideoRepository::class);
     }
 
     /**

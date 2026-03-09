@@ -16,6 +16,7 @@ use App\Http\Controllers\API\v1\Management\CourseLevelController;
 use App\Http\Controllers\API\v1\Management\LessonDayController;
 use App\Http\Controllers\API\v1\Management\LessonDayVideoController;
 use App\Http\Controllers\API\v1\Management\WalkinController;
+use App\Http\Controllers\API\v1\Management\RestVideoController;
 
 Route::prefix('/v1/management')->group(function () {
     Route::post('/login', [LoginController::class, 'login']);
@@ -142,6 +143,17 @@ Route::prefix('/v1/management')->group(function () {
                 Route::controller(LessonDayVideoController::class)->group(function () {
                     Route::post('/', 'store');
                     Route::post('/{id}', 'update');
+                });
+            });
+
+            Route::prefix('/rest-videos')->group(function () {
+                Route::controller(RestVideoController::class)->group(function () {
+                    Route::get('/', 'index');
+                    Route::get('/{id}', 'show');
+                    Route::post('/', 'store');
+                    Route::post('/{id}', 'update');
+                    Route::post('/{id}/toggle', 'toggle');
+                    Route::delete('/{id}', 'destroy');
                 });
             });
         });
