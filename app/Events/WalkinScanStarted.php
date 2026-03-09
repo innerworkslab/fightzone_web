@@ -23,7 +23,7 @@ class WalkinScanStarted implements ShouldBroadcastNow
     public function broadcastOn(): array
     {
         return [
-            new Channel('user.' . $this->userId),
+            new PrivateChannel('user.' . $this->userId),
         ];
     }
 
