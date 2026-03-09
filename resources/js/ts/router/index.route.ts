@@ -21,6 +21,8 @@ import CourseLevelsForm from "../../../views/components/course-levels/CourseLeve
 import LessonDaysList from "../../../views/components/lesson-days/LessonDaysList.vue";
 import LessonDayForm from "../../../views/components/lesson-days/LessonDayForm.vue";
 import WalkInsList from "../../../views/components/walk-ins/WalkInsList.vue";
+import RestDayVideoList from "../../../views/components/rest-videos/RestDayVideoList.vue";
+import RestDayVideoForm from "../../../views/components/rest-videos/RestDayVideoForm.vue";
 
 const routes = [
     {
@@ -195,6 +197,29 @@ const routes = [
                 path: "course-level/:courseLevelId/lesson-days/view/:id",
                 name: RouteNames.ViewLessonDay,
                 component: LessonDayForm,
+                meta: { permissions: ["all"] },
+            },
+            {
+                path: "rest-day-videos",
+                name: RouteNames.RestDayVideosList,
+                component: RestDayVideoList,
+            },
+            {
+                path: "rest-day-videos/add",
+                name: RouteNames.AddRestDayVideo,
+                component: RestDayVideoForm,
+                meta: { permissions: ["all"] },
+            },
+            {
+                path: "rest-day-videos/edit/:id",
+                name: RouteNames.EditRestDayVideo,
+                component: RestDayVideoForm,
+                meta: { permissions: ["all"] },
+            },
+            {
+                path: "rest-day-videos/view/:id",
+                name: RouteNames.ViewRestDayVideo,
+                component: RestDayVideoForm,
                 meta: { permissions: ["all"] },
             },
             {

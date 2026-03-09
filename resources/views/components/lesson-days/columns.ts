@@ -17,12 +17,6 @@ export const LessonDaysColumns: ColumnDef<any>[] = [
         render: (row) => `Day ${row.day_number}`,
     },
     {
-        label: "Type",
-        key: "type",
-        className: "capitalize",
-        render: (row) => row.type,
-    },
-    {
         label: "Videos",
         key: "videos_count",
         className: "text-center",
