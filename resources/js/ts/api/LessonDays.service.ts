@@ -11,7 +11,6 @@ export interface LessonDaysData {
     id: number;
     course_level_id: number;
     day_number: number;
-    type: string;
     name: string;
     duration: string;
     videos_count: number;
@@ -23,7 +22,6 @@ export interface LessonDaysData {
 
 export interface LessonDaysPayload {
     day_number: number;
-    type: string;
     duration: string;
 }
 

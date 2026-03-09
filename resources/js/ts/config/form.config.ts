@@ -6,6 +6,7 @@ import AdminsChangePasswordForm from "../../../views/components/admins/AdminsCha
 import CourseCategoriesForm from "../../../views/components/course-categories/CourseCategoriesForm.vue";
 import LessonDayVideoForm from "../../../views/components/lesson-day-videos/lessonDayVideoForm.vue";
 import WalkInForm from "../../../views/components/walk-ins/WalkInForm.vue";
+import RestDayVideoForm from "../../../views/components/rest-videos/RestDayVideoForm.vue";
 
 export const getFormConfig = (initialValues: any, isReadMode: boolean) => ({
     // #A
@@ -60,6 +61,22 @@ export const getFormConfig = (initialValues: any, isReadMode: boolean) => ({
                 ? "View video for this lesson day"
                 : "Update video for this lesson day"
             : "Upload a video for this lesson day",
+    },
+    // #R
+    restDayVideo: {
+        form: RestDayVideoForm,
+        header: `${
+            initialValues?.id
+                ? isReadMode
+                    ? "(Read Only) "
+                    : "Update"
+                : "Upload"
+        } Rest Day Video`,
+        message: initialValues?.id
+            ? isReadMode
+                ? "View video for this rest day"
+                : "Update video for this rest day"
+            : "Upload a video for this rest day",
     },
     // #U
     usersChangePassword: {

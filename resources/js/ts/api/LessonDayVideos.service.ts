@@ -28,6 +28,7 @@ export interface LessonDayVideosPayload {
     description?: string;
     duration?: string;
     url?: string;
+    type?: string;
 }
 
 const baseURL = `${API_URLS.VERSION}/${API_URLS.MANAGEMENT}/${API_URLS.LESSON_DAY_VIDEO}`;
