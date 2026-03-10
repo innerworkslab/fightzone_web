@@ -6,15 +6,18 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\API\v1\User\Auth\LoginController;
 use App\Http\Controllers\API\v1\User\Auth\RegisterController;
 
-use App\Http\Controllers\API\v1\User\Shop\PaymentMethodController;
-use App\Http\Controllers\API\v1\User\Shop\PackageController;
-use App\Http\Controllers\API\v1\User\Shop\DepositController;
-use App\Http\Controllers\API\v1\User\Shop\PurchaseController;
-use App\Http\Controllers\API\v1\User\ProfileController;
-use App\Http\Controllers\API\v1\User\Shop\CourseCategoryController;
+use App\Http\Controllers\API\v1\User\Consumption\LessonDayController;
+use App\Http\Controllers\API\v1\User\Consumption\WalkinController;
+
+use App\Http\Controllers\API\v1\User\Profile\ProfileController;
+
+use App\Http\Controllers\API\v1\User\Purchase\DepositController;
+use App\Http\Controllers\API\v1\User\Purchase\PaymentMethodController;
+use App\Http\Controllers\API\v1\User\Purchase\PurchaseController;
+
 use App\Http\Controllers\API\v1\User\Shop\CourseController;
-use App\Http\Controllers\API\v1\User\Shop\LessonDayController;
-use App\Http\Controllers\API\v1\User\Shop\WalkinController;
+use App\Http\Controllers\API\v1\User\Shop\CourseCategoryController;
+use App\Http\Controllers\API\v1\User\Shop\PackageController;
 
 Route::prefix('/v1')->group(function () {
     Route::controller(RegisterController::class)->group(function () {

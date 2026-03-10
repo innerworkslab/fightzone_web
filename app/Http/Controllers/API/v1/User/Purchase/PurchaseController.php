@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\API\v1\User\Shop;
+namespace App\Http\Controllers\API\v1\User\Purchase;
 
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;

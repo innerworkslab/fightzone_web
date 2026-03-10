@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\API\v1\User\Shop;
+namespace App\Http\Controllers\API\v1\User\Consumption;
 
 use Illuminate\Http\Request;
 
@@ -34,7 +34,7 @@ class LessonDayController extends Controller
     public function markVideoCompletion(Request $request, $lessonDayVideoId)
     {
         $userId = ApiUser()->id;
-        
+
         try {
             $result = $this->service->markVideoCompletion((int) $userId, (int) $lessonDayVideoId);
             ResponseData($result, 200);

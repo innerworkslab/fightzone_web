@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\API\v1\User\Shop;
+namespace App\Http\Controllers\API\v1\User\Consumption;
 
 use App\Http\Controllers\Controller;
 use App\Services\WalkinService;
