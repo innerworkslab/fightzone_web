@@ -18,21 +18,21 @@ export const WalkInsColumns: ColumnDef<any>[] = [
     {
         label: "Package",
         key: "package",
-        render: (row) => `$${row.package.name}`,
+        render: (row) => `${row.package.name}`,
     },
     {
         label: "Price",
         key: "price",
-        render: (row) => `$${row.package.price}`,
+        render: (row) => `${row.package.price.toLocaleString()}`,
     },
     {
         label: "Days",
         key: "days",
-        render: (row) => `${row.package.days} days`,
+        render: (row) => `${row.remaining_days}/${row.total_days} days`,
     },
     {
-        label: "Created",
+        label: "Last Walkin At",
         key: "created_at",
-        render: (row) => new Date(row.created_at).toLocaleDateString(),
+        render: (row) => new Date(row.updated_at).toLocaleDateString(),
     },
 ];
