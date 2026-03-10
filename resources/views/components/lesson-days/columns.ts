@@ -31,6 +31,7 @@ export const LessonDaysColumns: ColumnDef<any>[] = [
 
 export const LessonDaySubColumns: ColumnDef<any>[] = [
     { label: "Name", key: "name" },
+    { label: "Type", key: "type" },
     {
         label: "Description",
         key: "description",
