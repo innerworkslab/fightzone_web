@@ -33,6 +33,21 @@ class LessonDayVideoService
 
     public function update(int $id, array $data)
     {
-        return $this->repo->updateLessonDayVideo($id, $data);
+        $lessonDayVideo = $this->repo->findLessonDayVideo($id);
+        if($lessonDayVideo->url == $data['url']){            
+            return $this->repo->updateLessonDayVideo($id, $data);  
+        }else{            
+            $videoMeta = $this->youtubeService->extractMeta($data['url']);
+            $videoData = [
+                'type' => $data['type']
+            ];
+            $videoData['thumbnail_url'] = $videoMeta['thumbnail'];
+            $videoData['duration'] = (isset($videoData['duration']))? $videoData['duration']: $this->secondsToTime($videoMeta['duration']);
+
+            $videoData['name'] = (isset($videoData['name']))? $videoData['name']: $videoMeta['name'];
+            $videoData['description'] = (isset($videoData['description']))? $videoData['description']: $videoMeta['description'];           
+            return $this->repo->updateLessonDayVideo($id, $videoData);
+        }
+        
     }
 }

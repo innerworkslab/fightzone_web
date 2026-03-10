@@ -40,13 +40,24 @@ class RestVideoService
 
     public function update(int $id, array $data)
     {
+        $restVideo = $this->repo->find($id);
+        if($restVideo->url == $data['url']){
+            return $this->repo->update($id, $data);
+        }else{
+            $videoMeta = $this->youtubeService->extractMeta($data['url']);
+            $data['thumbnail_url'] = $videoMeta['thumbnail'];
+            $data['duration'] = (isset($data['duration']))? $data['duration']: $this->secondsToTime($videoMeta['duration']);
+
+            $data['name'] = (isset($data['name']))? $data['name']: $videoMeta['name'];
+            $data['description'] = (isset($data['description']))? $data['description']: $videoMeta['description'];
+            return $this->repo->update($id, $data);
+        }
         $videoMeta = $this->youtubeService->extractMeta($data['url']);
         $data['thumbnail_url'] = $videoMeta['thumbnail'];
         $data['duration'] = (isset($data['duration']))? $data['duration']: $this->secondsToTime($videoMeta['duration']);
 
         $data['name'] = (isset($data['name']))? $data['name']: $videoMeta['name'];
         $data['description'] = (isset($data['description']))? $data['description']: $videoMeta['description'];
-        return $this->repo->update($id, $data);
     }
 
     public function delete($id)

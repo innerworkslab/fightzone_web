@@ -73,8 +73,13 @@ class LessonDayRepository implements LessonDayRepositoryInterface
         ], $data);
     }
 
+    public function findLessonDayVideo(int $id)
+    {
+        return LessonDayVideo::find($id);
+    }
+
     public function updateLessonDayVideo(int $id, array $data)
     {
-        return LessonDayVideo::find($id)->update($data);
+        return $this->findLessonDayVideo($id)->update($data);
     }
 }
