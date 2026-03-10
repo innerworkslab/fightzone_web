@@ -9,9 +9,15 @@ export type WalkInsFilter = Filters & {
 
 export interface CourseCategoriesData {
     id: number;
-    name: string;
-    description: string;
-    is_active: boolean;
+    user: {
+        name: string;
+    },
+    package: {
+        name: string;
+    }
+    total_days: number,
+    remaining_days: number,
+    completed: boolean,
     created_at: string;
     updated_at: string;
 }
@@ -23,7 +29,7 @@ export interface WalkInsPayload {
 const baseURL = `${API_URLS.VERSION}/${API_URLS.MANAGEMENT}/${API_URLS.WALK_IN}`;
 
 const useWalkIns = (filter: WalkInsFilter = {}) => {
-    return useFetch<APIResult<CourseCategoriesData[]>>(baseURL, filter);
+    return useFetch<APIResult<{data: CourseCategoriesData[]}>>(baseURL, filter);
 };
 
 const useWalkInsActions = () => {

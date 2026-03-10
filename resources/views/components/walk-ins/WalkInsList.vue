@@ -2,7 +2,7 @@
 import { computed, ref, watch } from "vue";
 import { storeToRefs } from "pinia";
 import { useDataStore } from "@/store/data";
-import { WalkInsColumns, WalkInsActions } from "./columns";
+import { WalkInsColumns } from "./columns";
 import { DEFAULT_PAGE_LIMIT } from "@/constant/global.constant";
 import { buildApiFilter } from "@/utils/buildAPIFilter";
 import { useRouter } from "vue-router";
@@ -19,7 +19,7 @@ const { filters, refreshTrigger } = storeToRefs(dataStore);
 const { data, refresh } = WalkInsServices.useWalkIns(filters.value);
 
 const paginationInfo = computed(() => {
-    return (data.value as any)?.data || {};
+    return (data.value as any)?.data.data || {};
 });
 
 const startIndex = computed(() => {
@@ -51,9 +51,8 @@ watch(refreshTrigger, () => {
 
     <DataTable
         ref="dataTableRef"
-        :data="[]"
+        :data="data ? data.data.data : []"
         :columns="WalkInsColumns"
-        :actions="WalkInsActions"
         :loading="false"
         :extraArgs="{
             startIndex: startIndex,

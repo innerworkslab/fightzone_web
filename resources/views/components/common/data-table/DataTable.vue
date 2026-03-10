@@ -92,7 +92,7 @@ defineExpose({
                         </TableRow>
                     </template>
 
-                    <template v-else-if="props.data.length">
+                    <template v-else-if="props.data?.length">
                         <template v-for="(row, rowIndex) in props.data" :key="row.id || rowIndex">
                             <TableRow class="group border-b border-border transition-colors hover:bg-primary/5">
                                 <TableCell v-for="(col, colIndex) in props.columns" :key="col.key"
