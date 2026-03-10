@@ -46,4 +46,14 @@ class WalkinController extends Controller
             'completed' => $result['completed'],
         ]);
     }
+
+    public function index(Request $request)
+    {
+        $data = $this->walkinService->getDailyWalkins(            
+            $request->page,
+            $request->limit
+        );
+
+        ResponseData($data);
+    }
 }

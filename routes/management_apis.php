@@ -84,6 +84,7 @@ Route::prefix('/v1/management')->group(function () {
             });
 
             Route::prefix('/walkins')->group(function () {
+                Route::get('/', [WalkinController::class, 'index']);
                 Route::post('/confirm', [WalkinController::class, 'confirm']);
             });
 

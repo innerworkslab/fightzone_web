@@ -10,6 +10,7 @@ use Illuminate\Support\Str;
 use App\Events\WalkinConfirmed;
 use App\Events\WalkinScanFailed;
 use App\Events\WalkinScanStarted;
+
 use App\Models\PackagePurchase;
 use App\Models\UserWalkin;
 
@@ -255,5 +256,19 @@ class WalkinService
         }
 
         return 'rejected';
+    }
+
+    public function getDailyWalkins(?int $page, ?int $limit)
+    {
+        $query = PackagePurchase::query()
+        ->with([
+            'user',
+            'package'
+        ])
+        ->orderByDesc('updated_at');
+
+        return $page
+            ? $query->paginate($limit ?? config('common.list_count'))
+            : $query->get();
     }
 }
