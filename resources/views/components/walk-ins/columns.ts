@@ -1,16 +1,6 @@
 import { ActionDef, ColumnDef } from "../common/data-table/type";
-import {
-    Edit2,
-    Folder,
-    Check,
-    X,
-    CopyPlus,
-    CalendarDays,
-} from "lucide-vue-next";
-import { CoursesServices } from "@/api/Courses.service";
-import { toast } from "vue3-toastify";
+import { Edit2, Folder, CopyPlus } from "lucide-vue-next";
 import { RouteNames } from "@/config/route.config";
-import { SUCCESS_MESSAGE } from "@/constant/global.constant";
 
 export const WalkInsColumns: ColumnDef<any>[] = [
     {
@@ -23,7 +13,22 @@ export const WalkInsColumns: ColumnDef<any>[] = [
     {
         label: "Name",
         key: "name",
-        render: (row) => row.name,
+        render: (row) => row.user.name + " (" + row.user.phone_number + ")",
+    },
+    {
+        label: "Package",
+        key: "package",
+        render: (row) => `$${row.package.name}`,
+    },
+    {
+        label: "Price",
+        key: "price",
+        render: (row) => `$${row.package.price}`,
+    },
+    {
+        label: "Days",
+        key: "days",
+        render: (row) => `${row.package.days} days`,
     },
     {
         label: "Description",
