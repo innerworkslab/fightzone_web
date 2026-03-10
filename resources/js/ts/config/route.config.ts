@@ -6,6 +6,7 @@ import {
     ShoppingCart,
     Banknote,
     BookAudio,
+    Video,
 } from "lucide-vue-next";
 
 export const RouteNames = {
@@ -38,10 +39,10 @@ export const RouteNames = {
     AddLessonDay: "add-lesson-day",
     ViewLessonDay: "view-lesson-day",
     EditLessonDay: "edit-lesson-day",
-    RestDayVideosList: "rest-day-videos-list",
-    AddRestDayVideo: "add-rest-day-video",
-    ViewRestDayVideo: "view-rest-day-video",
-    EditRestDayVideo: "edit-rest-day-video",
+    RestDayVideosList: "rest-videos-list",
+    AddRestDayVideo: "add-rest-video",
+    ViewRestDayVideo: "view-rest-video",
+    EditRestDayVideo: "edit-rest-video",
     WalkInsList: "walk-ins-list",
     Unauthorized: "unauthorized",
 };
@@ -226,30 +227,6 @@ export const routes = [
                 header: "View Course",
                 route: "",
             },
-            {
-                label: "Rest Day Video List",
-                name: RouteNames.RestDayVideosList,
-                header: "Rest Day Video Management",
-                route: "/auth/rest-day-videos",
-            },
-            {
-                label: "",
-                name: RouteNames.AddRestDayVideo,
-                header: "Add Rest Day Video",
-                route: "/auth/courses/add",
-            },
-            {
-                label: "",
-                name: RouteNames.EditRestDayVideo,
-                header: "Edit Rest Day Video",
-                route: "",
-            },
-            {
-                label: "",
-                name: RouteNames.ViewRestDayVideo,
-                header: "View Rest Day Video",
-                route: "",
-            },
         ],
     },
     {
@@ -280,6 +257,38 @@ export const routes = [
                 name: RouteNames.ViewLessonDay,
                 header: "View Lesson Day",
                 route: "/auth/course-level/:courseLevelId/lesson-days/:id/view",
+            },
+        ],
+    },
+    {
+        label: "Rest Videos",
+        name: "rest_video_group",
+        icon: Video,
+        route: "/auth/rest-videos",
+        children: [
+            {
+                label: "Rest Video List",
+                name: RouteNames.RestDayVideosList,
+                header: "Rest Video Management",
+                route: "/auth/rest-videos",
+            },
+            {
+                label: "",
+                name: RouteNames.AddRestDayVideo,
+                header: "Add Rest Video",
+                route: "/auth/rest-videos/add",
+            },
+            {
+                label: "",
+                name: RouteNames.EditRestDayVideo,
+                header: "Edit Rest Video",
+                route: "",
+            },
+            {
+                label: "",
+                name: RouteNames.ViewRestDayVideo,
+                header: "View Rest Video",
+                route: "",
             },
         ],
     },

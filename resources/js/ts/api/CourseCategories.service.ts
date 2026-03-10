@@ -18,6 +18,7 @@ export interface CourseCategoriesData {
 
 export interface CourseCategoriesPayload {
     name: string;
+    image?: File;
     description: string;
 }
 
@@ -30,13 +31,15 @@ const useCourseCategoriess = (filter: CourseCategoriessFilter = {}) => {
 const useCourseCategoriesActions = () => {
     const { mutate, loading, error, data } = useMutation();
 
-    const createCourseCategories = (data: CourseCategoriesPayload) => {
+    const createCourseCategories = (
+        data: CourseCategoriesPayload | FormData,
+    ) => {
         return mutate(METHODS.POST, baseURL, data);
     };
 
     const updateCourseCategories = (
         id: number,
-        data: Partial<CourseCategoriesPayload>,
+        data: Partial<CourseCategoriesPayload> | FormData,
     ) => {
         return mutate(METHODS.POST, `/${baseURL}/${id}`, data);
     };

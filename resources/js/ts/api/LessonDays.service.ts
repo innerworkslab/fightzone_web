@@ -12,7 +12,6 @@ export interface LessonDaysData {
     course_level_id: number;
     day_number: number;
     name: string;
-    duration: string;
     videos_count: number;
     duration_seconds: number;
     formatted_duration: string;
@@ -22,7 +21,6 @@ export interface LessonDaysData {
 
 export interface LessonDaysPayload {
     day_number: number;
-    duration: string;
 }
 
 const baseURL = (id: string) =>

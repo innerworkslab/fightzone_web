@@ -23,12 +23,6 @@ export const LessonDaysColumns: ColumnDef<any>[] = [
         render: (row) => row.videos_count ?? 0,
     },
     {
-        label: "Duration",
-        key: "formatted_duration",
-        className: "text-right",
-        render: (row) => row.formatted_duration,
-    },
-    {
         label: "Created",
         key: "created_at",
         render: (row) => new Date(row.created_at).toLocaleDateString(),

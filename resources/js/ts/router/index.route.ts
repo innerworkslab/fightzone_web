@@ -200,24 +200,24 @@ const routes = [
                 meta: { permissions: ["all"] },
             },
             {
-                path: "rest-day-videos",
+                path: "rest-videos",
                 name: RouteNames.RestDayVideosList,
                 component: RestDayVideoList,
             },
             {
-                path: "rest-day-videos/add",
+                path: "rest-videos/add",
                 name: RouteNames.AddRestDayVideo,
                 component: RestDayVideoForm,
                 meta: { permissions: ["all"] },
             },
             {
-                path: "rest-day-videos/edit/:id",
+                path: "rest-videos/edit/:id",
                 name: RouteNames.EditRestDayVideo,
                 component: RestDayVideoForm,
                 meta: { permissions: ["all"] },
             },
             {
-                path: "rest-day-videos/view/:id",
+                path: "rest-videos/view/:id",
                 name: RouteNames.ViewRestDayVideo,
                 component: RestDayVideoForm,
                 meta: { permissions: ["all"] },
