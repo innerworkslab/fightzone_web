@@ -4,11 +4,10 @@ import { storeToRefs } from "pinia";
 import { useDataStore } from "@/store/data";
 import { WalkInsColumns, WalkInsActions } from "./columns";
 import { DEFAULT_PAGE_LIMIT } from "@/constant/global.constant";
-import { CoursesServices } from "@/api/Courses.service";
 import { buildApiFilter } from "@/utils/buildAPIFilter";
 import { useRouter } from "vue-router";
-import { CourseLevelsServices } from "@/api/CourseLevels.service";
 import { useModalStore } from "@/store/modal";
+import { WalkInsServices } from "@/api/WalkIns.service";
 
 const router = useRouter();
 
@@ -17,13 +16,7 @@ const modalStore = useModalStore();
 
 const { filters, refreshTrigger } = storeToRefs(dataStore);
 
-const { data, loading, refresh } = CoursesServices.useCourses(filters.value);
-
-const dataTableRef = ref();
-
-const records = computed(() => {
-    return (data.value as any)?.data?.data || [];
-});
+const { data, refresh } = WalkInsServices.useWalkIns(filters.value);
 
 const paginationInfo = computed(() => {
     return (data.value as any)?.data || {};
@@ -33,16 +26,6 @@ const startIndex = computed(() => {
     const page = filters.value.page || 1;
     return (page - 1) * DEFAULT_PAGE_LIMIT;
 });
-
-const fetchSubData = async (row: any) => {
-    const res = await CourseLevelsServices.getCourseLevelsByCourseId(row.id);
-    return res.data.course_levels || [];
-};
-
-const reloadSubTable = (parentRow: any) => {
-    if (!dataTableRef.value) return;
-    dataTableRef.value.reloadSubTable(parentRow);
-};
 
 watch(paginationInfo, (newInfo) => {
     if (newInfo && newInfo.total !== undefined) {
@@ -55,7 +38,7 @@ watch(
     () => {
         refresh(buildApiFilter(filters.value));
     },
-    { deep: true }
+    { deep: true },
 );
 
 watch(refreshTrigger, () => {
@@ -66,14 +49,19 @@ watch(refreshTrigger, () => {
 <template>
     <WalkInsFilter />
 
-    <DataTable ref="dataTableRef" :data="[]" :columns="WalkInsColumns" :actions="WalkInsActions" :loading="false"
+    <DataTable
+        ref="dataTableRef"
+        :data="[]"
+        :columns="WalkInsColumns"
+        :actions="WalkInsActions"
+        :loading="false"
         :extraArgs="{
             startIndex: startIndex,
             modalStore,
             router,
             refresh: () => refresh(buildApiFilter(filters)),
-            reloadSubTable,
-        }" />
+        }"
+    />
 
     <div class="relative flex justify-center items-center">
         <p class="absolute top-[20px] left-[15px]">
