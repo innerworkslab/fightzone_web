@@ -79,6 +79,13 @@ class RestVideoController extends Controller
         ResponseMessage('Rest video deleted');
     }
 
+    public function show($id)
+    {
+        $item = $this->service->find($id);
+        if (!$item) ResponseMessage('Rest video not found', 404);
+        ResponseData($item);
+    }
+
     public function toggle($id)
     {
         $item = $this->service->toggleActive($id);

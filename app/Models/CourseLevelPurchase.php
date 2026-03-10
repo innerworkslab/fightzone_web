@@ -47,4 +47,11 @@ class CourseLevelPurchase extends Model
     {
         return $this->hasMany(LessonDayVideoCompletion::class);
     }
+
+    /** Scope: is between validity period */
+    public function scopeValid($query)
+    {
+        return $query->where('valid_from', '<=', now())
+        ->where('valid_until', '>=', now());
+    }
 }
