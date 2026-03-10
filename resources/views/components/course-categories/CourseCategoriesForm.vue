@@ -53,6 +53,7 @@ watch(
                 name: newVal.name,
                 description: newVal.description,
             });
+            imagePreview.value = imgBaseUrl + newVal.image_url;
         }
     },
     { immediate: true, deep: true },
@@ -75,15 +76,24 @@ const submitForm = handleSubmit(async (values) => {
     if (isReadMode.value) return;
 
     try {
+        const formData = new FormData();
+
+        formData.append("name", values.name);
+        formData.append("description", values.description);
+
+        if (image.value) {
+            formData.append("image", image.value);
+        }
+
         let response;
 
         if (isUpdateMode.value) {
             response = await updateCourseCategories(
                 modalStore.initialValues.id,
-                values,
+                formData,
             );
         } else {
-            response = await createCourseCategories(values);
+            response = await createCourseCategories(formData);
         }
 
         if (response?.success) {

@@ -178,12 +178,24 @@ const submitForm = handleSubmit(async (values: any) => {
                     <ErrorMessage name="type" class="text-red-500 text-sm" />
                 </div>
 
+                <div v-if="type === 'Rest'">
+                    <FormSelect
+                        id="video"
+                        v-model="video"
+                        label="Video"
+                        :options="restVideoOptions"
+                        :loading="restVideoLoading"
+                        :disabled="isReadMode"
+                    />
+                    <ErrorMessage name="video" class="text-red-500 text-sm" />
+                </div>
+
                 <div>
                     <FormInput
                         id="url"
                         v-model="url"
                         label="Youtube URL"
-                        :disabled="isReadMode"
+                        :disabled="isReadMode || type === 'Rest'"
                     />
                     <ErrorMessage name="url" class="text-red-500 text-sm" />
                 </div>

@@ -42,6 +42,7 @@ export interface CourseDayPayload {
 export interface CoursePayload {
     name: string;
     description?: string;
+    image?: File;
     course_category_id: number;
 }
 
@@ -58,11 +59,14 @@ const useCourseDetail = (id: string | string) => {
 const useCourseActions = () => {
     const { mutate, loading, error, data } = useMutation();
 
-    const createCourse = (data: CoursePayload) => {
+    const createCourse = (data: CoursePayload | FormData) => {
         return mutate(METHODS.POST, baseURL, data);
     };
 
-    const updateCourse = (id: string, data: Partial<CoursePayload>) => {
+    const updateCourse = (
+        id: string,
+        data: Partial<CoursePayload> | FormData,
+    ) => {
         return mutate(METHODS.POST, `/${baseURL}/${id}`, data);
     };
 

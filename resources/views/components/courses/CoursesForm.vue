@@ -62,6 +62,7 @@ watch(
                 course_category_id: val.data.course_category_id,
                 description: val.data.description,
             });
+            imagePreview.value = imgBaseUrl + val.data.image_url;
         }
     },
     { immediate: true },
@@ -102,9 +103,19 @@ const removeImage = () => {
 };
 
 const submitForm = handleSubmit(async (payload) => {
+    const formData = new FormData();
+
+    Object.entries(payload).forEach(([key, value]) => {
+        formData.append(key, value as string);
+    });
+
+    if (image.value) {
+        formData.append("image", image.value);
+    }
+
     const response = isUpdateMode.value
-        ? await updateCourse(route.params.id as string, payload)
-        : await createCourse(payload);
+        ? await updateCourse(route.params.id as string, formData)
+        : await createCourse(formData);
 
     if (response?.success) {
         toast.success(response.message ?? "Success");

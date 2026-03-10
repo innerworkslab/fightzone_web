@@ -28,25 +28,16 @@ const schema = yup.object({
         .typeError("Day number is required")
         .required("Day number is required")
         .min(1),
-    duration: yup
-        .string()
-        .required("Duration is required")
-        .matches(
-            /^([0-1]\d|2[0-3]):([0-5]\d):([0-5]\d)$/,
-            "Format must be HH:mm:ss",
-        ),
 });
 
 const { handleSubmit, setValues, defineField, errors } = useForm({
     validationSchema: schema,
     initialValues: {
         day_number: 1,
-        duration: "00:00:00",
     },
 });
 
 const [dayNumber] = defineField("day_number");
-const [duration] = defineField("duration");
 
 const {
     createLessonDay,
@@ -82,7 +73,6 @@ watch(
         if (val?.data) {
             setValues({
                 day_number: val.data.day_number,
-                duration: val.data.duration,
             });
         }
     },
@@ -97,7 +87,6 @@ watch(
         if (val) {
             setValues({
                 day_number: val.day_number,
-                duration: val.duration,
             });
         }
     },
@@ -108,7 +97,6 @@ const submitForm = handleSubmit(async (values) => {
     const payload = {
         course_level_id: courseLevelId.value,
         day_number: Number(values.day_number),
-        duration: values.duration,
     };
 
     const response = isUpdateMode.value
@@ -142,18 +130,6 @@ const submitForm = handleSubmit(async (values) => {
                 />
                 <span v-if="errors.day_number" class="text-red-500 text-xs">
                     {{ errors.day_number }}
-                </span>
-            </div>
-
-            <div class="flex flex-col gap-1">
-                <FormInput
-                    id="duration"
-                    v-model="duration"
-                    label="Duration (HH:mm:ss)"
-                    :disabled="isReadMode"
-                />
-                <span v-if="errors.duration" class="text-red-500 text-xs">
-                    {{ errors.duration }}
                 </span>
             </div>
         </div>
