@@ -64,6 +64,10 @@ class CourseService
 
     public function delete($id)
     {
+        $course = $this->repo->find($id);
+        if($course->image_path){
+            DeleteFileFromServer($course->image_path);
+        }
         return $this->repo->delete($id);
     }
 

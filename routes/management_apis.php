@@ -17,6 +17,7 @@ use App\Http\Controllers\API\v1\Management\LessonDayController;
 use App\Http\Controllers\API\v1\Management\LessonDayVideoController;
 use App\Http\Controllers\API\v1\Management\WalkinController;
 use App\Http\Controllers\API\v1\Management\RestVideoController;
+use App\Http\Controllers\API\v1\Management\FeaturedImageController;
 
 Route::prefix('/v1/management')->group(function () {
     Route::post('/login', [LoginController::class, 'login']);
@@ -32,6 +33,16 @@ Route::prefix('/v1/management')->group(function () {
                     Route::post('/', 'store');
                     Route::post('/{id}', 'update');
                     Route::post('/{id}/toggle', 'toggle');
+                    Route::delete('/{id}', 'destroy');
+                });
+            });
+
+            Route::prefix('/featured-images')->group(function () {
+                Route::controller(FeaturedImageController::class)->group(function () {
+                    Route::get('/', 'index');
+                    Route::get('/{id}', 'show');
+                    Route::post('/', 'store');
+                    Route::post('/{id}', 'update');
                     Route::delete('/{id}', 'destroy');
                 });
             });
