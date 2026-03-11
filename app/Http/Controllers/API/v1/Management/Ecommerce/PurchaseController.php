@@ -1,9 +1,8 @@
 <?php
 
-namespace App\Http\Controllers\API\v1\Management;
+namespace App\Http\Controllers\API\v1\Management\Ecommerce;
 
 use Illuminate\Http\Request;
-use Illuminate\Http\JsonResponse;
 
 use App\Http\Controllers\Controller;
 

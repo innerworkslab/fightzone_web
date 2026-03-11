@@ -3,21 +3,25 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
-use App\Http\Controllers\API\v1\Management\LoginController;
-use App\Http\Controllers\API\v1\Management\AdminController;
-use App\Http\Controllers\API\v1\Management\UserController;
-use App\Http\Controllers\API\v1\Management\PaymentMethodController;
-use App\Http\Controllers\API\v1\Management\PackageController;
-use App\Http\Controllers\API\v1\Management\DepositController;
-use App\Http\Controllers\API\v1\Management\PurchaseController;
-use App\Http\Controllers\API\v1\Management\CourseCategoryController;
-use App\Http\Controllers\API\v1\Management\CourseController;
-use App\Http\Controllers\API\v1\Management\CourseLevelController;
-use App\Http\Controllers\API\v1\Management\LessonDayController;
-use App\Http\Controllers\API\v1\Management\LessonDayVideoController;
-use App\Http\Controllers\API\v1\Management\WalkinController;
-use App\Http\Controllers\API\v1\Management\RestVideoController;
-use App\Http\Controllers\API\v1\Management\FeaturedImageController;
+use App\Http\Controllers\API\v1\Management\Auth\LoginController;
+
+use App\Http\Controllers\API\v1\Management\Courses\CourseController;
+use App\Http\Controllers\API\v1\Management\Courses\CourseCategoryController;
+use App\Http\Controllers\API\v1\Management\Courses\CourseLevelController;
+use App\Http\Controllers\API\v1\Management\Courses\LessonDayController;
+use App\Http\Controllers\API\v1\Management\Courses\LessonDayVideoController;
+use App\Http\Controllers\API\v1\Management\Courses\RestVideoController;
+
+use App\Http\Controllers\API\v1\Management\Ecommerce\DepositController;
+use App\Http\Controllers\API\v1\Management\Ecommerce\PurchaseController;
+use App\Http\Controllers\API\v1\Management\Ecommerce\UserController;
+use App\Http\Controllers\API\v1\Management\Ecommerce\WalkinController;
+
+use App\Http\Controllers\API\v1\Management\Packages\PackageController;
+
+use App\Http\Controllers\API\v1\Management\SystemConfig\AdminController;
+use App\Http\Controllers\API\v1\Management\SystemConfig\FeaturedImageController;
+use App\Http\Controllers\API\v1\Management\SystemConfig\PaymentMethodController;
 
 Route::prefix('/v1/management')->group(function () {
     Route::post('/login', [LoginController::class, 'login']);

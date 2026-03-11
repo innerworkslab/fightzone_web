@@ -1,19 +1,16 @@
 <?php
 
-namespace App\Http\Controllers\API\v1\Management;
+namespace App\Http\Controllers\API\v1\Management\Packages;
 
 use Illuminate\Http\Request;
 
 use App\Http\Controllers\Controller;
 
-use App\Services\CourseCategoryService;
+use App\Services\PackageService;
 
-class CourseCategoryController extends Controller
+class PackageController extends Controller
 {
-    public function __construct(protected CourseCategoryService $service)
-    {
-
-    }
+    public function __construct(protected PackageService $service){}
 
     public function index(Request $request)
     {
@@ -23,7 +20,7 @@ class CourseCategoryController extends Controller
         }
 
         $data = $this->service->all(
-            false, // include inactive
+            false,
             $filters,
             $request->page,
             $request->limit
@@ -36,12 +33,11 @@ class CourseCategoryController extends Controller
     {
         $validated = $request->validate([
             'name' => 'required|string|max:255',
-            'description' => 'nullable|string',
-            'is_active' => 'boolean',
-            'image' => 'sometimes|file'
+            'price' => 'required|numeric',
+            'days' => 'required|integer'
         ]);
 
-        $item = $this->service->create($validated, $request->hasFile('image')?$request->file('image'):null );
+        $item = $this->service->create($validated);
 
         ResponseData($item, 201);
     }
@@ -49,7 +45,7 @@ class CourseCategoryController extends Controller
     public function show($id)
     {
         $item = $this->service->find($id);
-        if (!$item) ResponseMessage('Course category not found', 404);
+        if (! $item) ResponseMessage('Package not found', 404);
         ResponseData($item);
     }
 
@@ -57,33 +53,32 @@ class CourseCategoryController extends Controller
     {
         $validated = $request->validate([
             'name' => 'sometimes|string|max:255',
-            'description' => 'nullable|string',
-            'is_active' => 'boolean',
-            'image' => 'sometimes|file'
+            'price' => 'sometimes|numeric',
+            'days' => 'sometimes|integer'
         ]);
 
         $item = $this->service->find($id);
-        if (!$item) ResponseMessage('Course category not found', 404);
+        if (! $item) ResponseMessage('Package not found', 404);
 
-        $updated = $this->service->update($id, $validated, $request->hasFile('image')?$request->file('image'):null);
-        if (!$updated) ResponseMessage('Course category not found', 404);
+        $updated = $this->service->update($id, $validated);
+        if (! $updated) ResponseMessage('Package not found', 404);
         ResponseData($updated);
     }
 
     public function destroy($id)
     {
         $item = $this->service->find($id);
-        if (!$item) ResponseMessage('Course category not found', 404);
+        if (! $item) ResponseMessage('Package not found', 404);
 
         $deleted = $this->service->delete($id);
-        if (!$deleted) ResponseMessage('Course category not found', 404);
-        ResponseMessage('Course category deleted');
+        if (! $deleted) ResponseMessage('Package not found', 404);
+        ResponseMessage('Package deleted');
     }
 
     public function toggle($id)
     {
         $item = $this->service->toggleActive($id);
-        if (!$item) ResponseMessage('Course category not found', 404);
+        if (! $item) ResponseMessage('Package not found', 404);
         ResponseData($item);
     }
 }

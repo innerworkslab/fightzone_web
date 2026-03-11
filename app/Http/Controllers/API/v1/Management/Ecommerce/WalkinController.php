@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\API\v1\Management;
+namespace App\Http\Controllers\API\v1\Management\Ecommerce;
 
 use Illuminate\Http\Request;
 
@@ -49,7 +49,7 @@ class WalkinController extends Controller
 
     public function index(Request $request)
     {
-        $data = $this->walkinService->getDailyWalkins(            
+        $data = $this->walkinService->getDailyWalkins(
             $request->page,
             $request->limit
         );

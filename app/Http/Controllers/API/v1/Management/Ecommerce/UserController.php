@@ -1,9 +1,11 @@
 <?php
 
-namespace App\Http\Controllers\API\v1\Management;
+namespace App\Http\Controllers\API\v1\Management\Ecommerce;
 
 use Illuminate\Http\Request;
+
 use App\Http\Controllers\Controller;
+
 use App\Services\UserService;
 
 class UserController extends Controller
