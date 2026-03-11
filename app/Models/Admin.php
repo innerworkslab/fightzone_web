@@ -46,4 +46,14 @@ class Admin extends Authenticatable
             $query->where('name', $permissionName);
         })->exists();
     }
+
+    public function personTokens()
+    {
+        return $this->morphMany(PersonFcmToken::class,'personable');
+    }
+
+    public function routeNotificationForFcm()
+    {
+        return $this->personTokens()->pluck('fcm_token')->toArray();
+    }
 }

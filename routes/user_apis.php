@@ -10,6 +10,7 @@ use App\Http\Controllers\API\v1\User\Consumption\LessonDayController;
 use App\Http\Controllers\API\v1\User\Consumption\WalkinController;
 
 use App\Http\Controllers\API\v1\User\Profile\ProfileController;
+use App\Http\Controllers\API\v1\User\Profile\NotificationController;
 
 use App\Http\Controllers\API\v1\User\Purchase\DepositController;
 use App\Http\Controllers\API\v1\User\Purchase\PaymentMethodController;
@@ -73,6 +74,12 @@ Route::prefix('/v1')->group(function () {
 
             Route::prefix('/walk-ins')->group(function () {
                 Route::get('/qr-payload', [WalkinController::class, 'qrPayload']);
+            });
+
+            Route::controller(NotificationController::class)->group(function(){
+                Route::get('/notifications', 'index');
+                Route::get('/notifications/unread_count', 'getUnreadCount');
+                Route::post('/notifications/{id}', 'markAsRead');
             });
         });
     });

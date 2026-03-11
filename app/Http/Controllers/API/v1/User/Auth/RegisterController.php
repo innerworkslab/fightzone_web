@@ -7,7 +7,7 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 
 use App\Services\Auth\RegistrationService;
-use App\Services\Auth\SanctumTokenService;
+use App\Services\ThirdParty\Firebase\StoreFcmTokenService;
 
 class RegisterController extends Controller
 {
@@ -40,6 +40,7 @@ class RegisterController extends Controller
         $success = $this->service->verifyPhoneNumber($request->phone_number, $request->otp, null, $data);
         if($success){
             $tokenData = $this->service->generateSanctumTokenFromPhoneNumber($request->phone_number);
+            (new StoreFcmTokenService())->run($request->fcm_token, $tokenData['user']['id'], 'user');
             ResponseData($tokenData);
         }
     }

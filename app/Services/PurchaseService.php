@@ -17,6 +17,8 @@ use App\Models\Purchase;
 
 use App\Repositories\Purchase\PurchaseRepositoryInterface;
 
+use App\Services\ThirdParty\Firebase\FirebaseNotificationService;
+
 class PurchaseService
 {
 
@@ -79,22 +81,36 @@ class PurchaseService
 
         // Prevent buying the same Course Level while the user has a same course level purchased and it's in validity period
         if ($purchasable instanceof CourseLevel) {
-            $hasValid = CourseLevelPurchase::where('user_id', $userId)
+            $hasValidQuery = CourseLevelPurchase::where('user_id', $userId)
                 ->where('course_level_id', $purchasable->id)
-                ->valid()
-                ->exists();
+                ->valid();
+                // ->exists();
+            $hasValid = $hasValidQuery->exists();
             if ($hasValid) {
+                $existingCourseLevelPurchase = $hasValidQuery->first();
+                (new FirebaseNotificationService($existingCourseLevelPurchase, $existingCourseLevelPurchase->user, $existingCourseLevelPurchase->user_id, 'user'))
+                ->send([
+                    'title' => 'Course level already bought',
+                    'preview' => "You already bought the ({$existingCourseLevelPurchase->courseLevel->course->name}) class"
+                ]);
                 throw new \RuntimeException('You already have an active course level with remaining lesson days. Use it up or wait until it is completed before buying the same course level again.');
             }
         }
 
         // Prevent buying the same Package while the user has a valid, un-completed package purchase
         if ($purchasable instanceof Package) {
-            $hasValid = PackagePurchase::where('user_id', $userId)
+            $hasValidQuery = PackagePurchase::where('user_id', $userId)
                 ->where('package_id', $purchasable->id)
-                ->valid()
-                ->exists();
+                ->valid();
+                // ->exists();
+            $hasValid = $hasValidQuery->exists();
             if ($hasValid) {
+                $existingPackagePurchase = $hasValidQuery->first();
+                (new FirebaseNotificationService($existingPackagePurchase, $existingPackagePurchase->user, $existingPackagePurchase->user_id, 'user'))
+                ->send([
+                    'title' => 'Package already bought',
+                    'preview' => "You already bought the ({$existingPackagePurchase->package->name}) package"
+                ]);
                 throw new \RuntimeException('You already have an active package with remaining walk-in days. Use it up or wait until it is completed before buying the same package again.');
             }
         }

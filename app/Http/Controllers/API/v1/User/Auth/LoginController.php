@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 
 use App\Services\Auth\LoginService;
+use App\Services\ThirdParty\Firebase\StoreFcmTokenService;
 
 class LoginController extends Controller
 {
@@ -22,6 +23,10 @@ class LoginController extends Controller
             'phone_number' => $request->phone_number,
             'password'=>$request->password
         ], 'user');
+
+        if($request->fcm_token){
+            (new StoreFcmTokenService())->run($request->fcm_token, $data['user']['id'], 'user');
+        }
 
         ResponseData($data);
     }

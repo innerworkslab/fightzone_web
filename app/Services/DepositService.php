@@ -14,6 +14,8 @@ use App\Models\Admin;
 use App\Models\User;
 use App\Models\Deposit;
 
+use App\Services\ThirdParty\Firebase\FirebaseNotificationService;
+
 use App\Repositories\Deposit\DepositRepositoryInterface;
 
 class DepositService
@@ -110,6 +112,12 @@ class DepositService
                     'deposit',
                     "Deposit confirmed: {$deposit->transaction_id}"
                 );
+
+                (new FirebaseNotificationService($deposit, $deposit->user, $deposit->user_id, 'user'))
+                ->send([
+                    'title' => 'Topup success',
+                    'preview' => "Your Topup balance is updated. You now have {$deposit->user->pointBalance->points} total points"
+                ]);
             }
 
             return $deposit;
