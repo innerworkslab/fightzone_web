@@ -20,6 +20,8 @@ use App\Http\Controllers\API\v1\User\Shop\CourseController;
 use App\Http\Controllers\API\v1\User\Shop\CourseCategoryController;
 use App\Http\Controllers\API\v1\User\Shop\PackageController;
 
+use App\Http\Controllers\API\v1\User\Misc\FeaturedImageController;
+
 Route::prefix('/v1')->group(function () {
     Route::controller(RegisterController::class)->group(function () {
         Route::post('/register',  'register');
@@ -42,6 +44,8 @@ Route::prefix('/v1')->group(function () {
 
             Route::get('/payment-methods', [PaymentMethodController::class, 'index']);
             Route::get('/packages', [PackageController::class, 'index']);
+
+            Route::get('/featured-images', [FeaturedImageController::class, 'index']);
 
             Route::prefix('/course-categories')->group(function () {
                 Route::get('/', [CourseCategoryController::class, 'index']);
