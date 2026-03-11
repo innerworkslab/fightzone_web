@@ -30,6 +30,8 @@ use App\Repositories\RestVideo\RestVideoRepositoryInterface;
 use App\Repositories\RestVideo\RestVideoRepository;
 use App\Repositories\Notification\NotificationRepositoryInterface;
 use App\Repositories\Notification\NotificationRepository;
+use App\Repositories\FeaturedImage\FeaturedImageRepositoryInterface;
+use App\Repositories\FeaturedImage\FeaturedImageRepository;
 
 class RepositoryServiceProvider extends ServiceProvider
 {
@@ -52,6 +54,7 @@ class RepositoryServiceProvider extends ServiceProvider
         $this->app->bind(LessonDayRepositoryInterface::class, LessonDayRepository::class);
         $this->app->bind(RestVideoRepositoryInterface::class, RestVideoRepository::class);
         $this->app->bind(NotificationRepositoryInterface::class, NotificationRepository::class);
+        $this->app->bind(FeaturedImageRepositoryInterface::class, FeaturedImageRepository::class);
     }
 
     /**
