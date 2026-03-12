@@ -26,6 +26,7 @@ export const API_URLS = {
     LESSON_DAY_VIDEO: "lesson-day-videos",
     REST_DAY_VIDEO: "rest-videos",
     WALK_IN: "walkins",
+    FEATURED_IMAGES: "featured-images",
 };
 
 export const COOKIES = {
