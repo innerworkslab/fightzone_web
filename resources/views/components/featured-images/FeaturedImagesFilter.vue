@@ -3,12 +3,10 @@ import { ref, watch } from "vue";
 import { useDataStore } from "@/store/data";
 import BaseFilter from "../common/filter/BaseFilter.vue";
 import { StatusOption } from "@/constant/options.constant";
-import { RouteNames } from "@/config/route.config";
-import { useRouter } from "vue-router";
-
-const router = useRouter();
+import { useModalStore } from "@/store/modal";
 
 const dataStore = useDataStore();
+const modalStore = useModalStore();
 
 const search = ref("");
 const isActive = ref("all");
@@ -31,29 +29,25 @@ function handleReset() {
 }
 
 function handleAdd() {
-    router.push({ name: RouteNames.AddFeaturedImage });
+    modalStore.openModal({
+        formIndex: "featuredImage",
+        refreshCallback: () => {
+            dataStore.triggerRefresh();
+        },
+    });
 }
 </script>
 
 <template>
-    <BaseFilter @reset="handleReset" @add="handleAdd">
+    <BaseFilter @reset="handleReset" @add="handleAdd" add-label="Upload Image">
         <div class="flex items-center gap-x-3 w-full">
             <div>
-                <FormInput
-                    id="search"
-                    v-model="search"
-                    placeholder="Search by name"
-                />
+                <FormInput id="search" v-model="search" placeholder="Search by name" />
             </div>
 
             <div class="w-44">
-                <FormSelect
-                    id="status"
-                    v-model="isActive"
-                    :options="StatusOption"
-                    placeholder="Select status"
-                    class="h-10 bg-secondary/30 border-border/50 w-full"
-                />
+                <FormSelect id="status" v-model="isActive" :options="StatusOption" placeholder="Select status"
+                    class="h-10 bg-secondary/30 border-border/50 w-full" />
             </div>
         </div>
     </BaseFilter>

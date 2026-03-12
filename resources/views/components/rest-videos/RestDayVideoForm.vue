@@ -4,27 +4,44 @@ import * as yup from "yup";
 import { useForm, useField, ErrorMessage } from "vee-validate";
 import { toast } from "vue3-toastify";
 import { Button } from "@/components/ui/button";
+import FormInput from "../common/formControl/FormInput.vue";
+import { useModalStore } from "@/store/modal";
 import { RestDayVideosServices } from "@/api/RestDayVideos.service";
-import { useRoute, useRouter } from "vue-router";
-import { RouteNames } from "@/config/route.config";
 
-const router = useRouter();
-const route = useRoute();
+const modalStore = useModalStore();
 
-const isUpdateMode = computed(() => !!route.params.id);
-const isReadMode = computed(() => route.name === RouteNames.ViewRestDayVideo);
+const isUpdateMode = computed(() => !!modalStore.initialValues?.name);
+const isReadMode = computed(() => modalStore.isReadMode);
 
-const schema = yup.object({
-    url: yup.string().required("Video link is required"),
+const id = computed(() =>
+    Number(modalStore.initialValues?.id),
+);
+
+const videoId = computed(() => modalStore.initialValues?.id);
+
+const createSchema = yup.object({
+    url: yup.string().required("Youtube URL is required").url(),
 });
 
-const { handleSubmit, resetForm, setValues } = useForm({
-    validationSchema: schema,
+const updateSchema = yup.object({
+    name: yup.string().required("Name is required"),
+    description: yup.string().required("Description is required"),
+    url: yup.string().required("Youtube URL is required").url(),
+});
+
+const { handleSubmit, setValues } = useForm({
+    validationSchema: computed(() =>
+        isUpdateMode.value ? updateSchema : createSchema,
+    ),
     initialValues: {
+        name: "",
+        description: "",
         url: "",
     },
 });
 
+const { value: name } = useField<string>("name");
+const { value: description } = useField<string>("description");
 const { value: url } = useField<string>("url");
 
 const {
@@ -33,53 +50,66 @@ const {
     loading: isSubmitting,
 } = RestDayVideosServices.useRestDayVideoActions();
 
-const { data: RestDayVideoDetail, loading: isFetching } = isUpdateMode.value
-    ? RestDayVideosServices.useRestDayVideoDetail(route.params.id as string)
-    : { data: null, loading: false };
-
 watch(
-    () => RestDayVideoDetail?.value,
+    () => modalStore.initialValues,
     (val: any) => {
-        if (val?.data) {
-            setValues({
-                url: val.data.url,
-            });
-        }
+        if (!val) return;
+
+        setValues({
+            name: val.name ?? "",
+            description: val.description ?? "",
+            url: val.url ?? "",
+        });
     },
     { immediate: true },
 );
 
-const submitForm = handleSubmit(async (payload) => {
+const submitForm = handleSubmit(async (values: any) => {
     const response = isUpdateMode.value
-        ? await updateRestDayVideo(route.params.id as string, payload)
-        : await createRestDayVideo(payload);
+        ? await updateRestDayVideo(videoId.value, values)
+        : await createRestDayVideo({
+            url: values.url,
+        });
 
     if (response?.success) {
         toast.success(response.message ?? "Success");
-        router.push({ name: RouteNames.RestDayVideosList });
+        modalStore.refreshCallback?.();
+        modalStore.closeModal();
     }
 });
 </script>
 
 <template>
     <form @submit.prevent="submitForm" class="space-y-6">
-        <div class="space-y-4 grid grid-cols-2 gap-3">
-            <div>
-                <FormInput
-                    id="url"
-                    v-model="url"
-                    label="Video Link"
-                    :disabled="isReadMode"
-                />
+        <div class="grid grid-cols-1 gap-4">
+            <div v-if="!isUpdateMode">
+                <FormInput id="url" v-model="url" label="Youtube URL" :disabled="isReadMode" />
                 <ErrorMessage name="url" class="text-red-500 text-sm" />
             </div>
+
+            <template v-else>
+                <div>
+                    <FormInput id="name" v-model="name" label="Video Name" :disabled="isReadMode" />
+                    <ErrorMessage name="name" class="text-red-500 text-sm" />
+                </div>
+
+                <div v-if="!isReadMode">
+                    <FormInput id="url" v-model="url" label="Youtube URL" :disabled="isReadMode" />
+                    <ErrorMessage name="url" class="text-red-500 text-sm" />
+                </div>
+
+                <div>
+                    <FormTextarea id="description" v-model="description" label="Description" :disabled="isReadMode" />
+                    <ErrorMessage name="description" class="text-red-500 text-sm" />
+                </div>
+            </template>
         </div>
 
-        <div class="flex justify-end pt-6">
-            <Button type="submit" :disabled="isSubmitting || isFetching">
+        <div class="flex justify-end pt-6" v-if="!isReadMode">
+            <Button type="submit" :disabled="isSubmitting">
                 <span v-if="isSubmitting">Saving...</span>
                 <span v-else>
-                    {{ isUpdateMode ? "Update Video" : "Create Video" }}
+                    {{ isUpdateMode ? "Update Video" : "Upload Video" }}
                 </span>
             </Button>
         </div>

@@ -22,9 +22,9 @@ export const PaymentColumns: ColumnDef<any>[] = [
         render: (row) => {
             const logoUrl = row.logo_url;
             if (logoUrl) {
-                return `<img src="${logoUrl}" alt="Logo" class="max-w-18 h-10 rounded-sm object-cover mx-auto" />`;
+                return `<img src="${logoUrl}" alt="Logo" class="max-w-18 h-10 rounded-sm object-cover" />`;
             }
-            return `<div class="w-10 h-10 rounded-full bg-gray-200 flex items-center justify-center mx-auto">
+            return `<div class="w-10 h-10 rounded-full bg-gray-200 flex items-center justify-center">
                 <CreditCard class="h-5 w-5 text-gray-500" />
             </div>`;
         },

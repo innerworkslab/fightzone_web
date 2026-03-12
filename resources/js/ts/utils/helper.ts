@@ -34,7 +34,7 @@ export function formatDateAndTime(value?: string | null): string {
 export function formatPriceOrNumber(
     value: number | string,
     currency = "",
-    maxDecimals = 6
+    maxDecimals = 6,
 ): string {
     if (value == null || value === "") return "";
 
@@ -62,6 +62,40 @@ export const cleanPayload = <T extends object>(obj: T): Partial<T> => {
             if (typeof value === "number") return true;
 
             return value !== undefined && value !== null && value !== "";
-        })
+        }),
     ) as Partial<T>;
 };
+
+export function objectToFormData(
+    obj: Record<string, any>,
+    formData: FormData = new FormData(),
+    parentKey?: string,
+): FormData {
+    Object.entries(obj).forEach(([key, value]) => {
+        if (value === null || value === undefined) return;
+
+        const formKey = parentKey ? `${parentKey}[${key}]` : key;
+
+        if (value instanceof File) {
+            formData.append(formKey, value);
+        } else if (Array.isArray(value)) {
+            value.forEach((item, index) => {
+                if (item === null || item === undefined) return;
+
+                if (item instanceof File) {
+                    formData.append(`${formKey}[${index}]`, item);
+                } else if (typeof item === "object") {
+                    objectToFormData(item, formData, `${formKey}[${index}]`);
+                } else {
+                    formData.append(`${formKey}[${index}]`, item);
+                }
+            });
+        } else if (typeof value === "object") {
+            objectToFormData(value, formData, formKey);
+        } else {
+            formData.append(formKey, value);
+        }
+    });
+
+    return formData;
+}

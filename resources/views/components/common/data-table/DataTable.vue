@@ -65,8 +65,7 @@ defineExpose({
 </script>
 
 <template>
-    <div
-        class="relative rounded-xl border border-border bg-card overflow-hidden shadow-2xl transition-colors duration-300">
+    <div class="relative rounded-xl border border-border bg-card overflow-hidden transition-colors duration-300">
         <ScrollArea class="max-h-[calc(100vh-220px)] overflow-auto custom-scrollbar">
             <Table class="w-full border-collapse">
                 <TableHeader class="bg-secondary/80 sticky top-0 z-10 backdrop-blur-md">

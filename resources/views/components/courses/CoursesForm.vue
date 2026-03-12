@@ -1,25 +1,19 @@
 <script setup lang="ts">
-import { computed, onMounted, ref, watch } from "vue";
+import { computed, onMounted, watch } from "vue";
 import * as yup from "yup";
 import { useForm, useField, ErrorMessage } from "vee-validate";
 import { toast } from "vue3-toastify";
 import { Button } from "@/components/ui/button";
-import { CoursesServices } from "@/api/Courses.service";
+import { CoursePayload, CoursesServices } from "@/api/Courses.service";
 import { CourseCategoriesServices } from "@/api/CourseCategories.service";
 import { useRoute, useRouter } from "vue-router";
 import { RouteNames } from "@/config/route.config";
-import { SquareXIcon } from "lucide-vue-next";
-
-const imgBaseUrl = import.meta.env.VITE_IMG_BASE_URL;
 
 const router = useRouter();
 const route = useRoute();
 
 const isUpdateMode = computed(() => !!route.params.id);
 const isReadMode = computed(() => route.name === RouteNames.ViewCourse);
-
-const image = ref(null);
-const imagePreview = ref("");
 
 const schema = yup.object({
     name: yup
@@ -28,20 +22,23 @@ const schema = yup.object({
         .min(3, "Course name must be at least 3 characters"),
     course_category_id: yup.number().required("Course category is required"),
     description: yup.string().nullable(),
+    image: yup.array().of(yup.mixed<File | string>()).max(1, "Only one image allowed").nullable(),
 });
 
-const { handleSubmit, resetForm, setValues } = useForm({
+const { handleSubmit, setValues } = useForm<CoursePayload>({
     validationSchema: schema,
     initialValues: {
         name: "",
         course_category_id: undefined as unknown as number,
         description: "",
+        image: [],
     },
 });
 
 const { value: name } = useField<string>("name");
 const { value: course_category_id } = useField<number>("course_category_id");
 const { value: description } = useField<string>("description");
+const { value: image } = useField<(File | string)[]>("image");
 
 const {
     createCourse,
@@ -62,7 +59,10 @@ watch(
                 course_category_id: val.data.course_category_id,
                 description: val.data.description,
             });
-            imagePreview.value = imgBaseUrl + val.data.image_url;
+
+            if (val.data.image_url) {
+                image.value = [val.data.image_url];
+            }
         }
     },
     { immediate: true },
@@ -89,33 +89,27 @@ const categoryOptions = computed(() => {
     }));
 });
 
-const onImageChange = (e: any) => {
-    const file = e.target.files[0];
-    if (!file) return;
+const submitForm = handleSubmit(async (values) => {
+    const payload: {
+        name: string;
+        description?: string;
+        course_category_id: number;
+        image?: File;
+    } = {
+        name: values.name,
+        description: values.description,
+        course_category_id: values.course_category_id,
+    };
 
-    image.value = file;
-    imagePreview.value = URL.createObjectURL(file);
-};
+    const firstImage = values.image?.[0];
 
-const removeImage = () => {
-    image.value = null;
-    imagePreview.value = "";
-};
-
-const submitForm = handleSubmit(async (payload) => {
-    const formData = new FormData();
-
-    Object.entries(payload).forEach(([key, value]) => {
-        formData.append(key, value as string);
-    });
-
-    if (image.value) {
-        formData.append("image", image.value);
+    if (firstImage instanceof File) {
+        payload.image = firstImage;
     }
 
     const response = isUpdateMode.value
-        ? await updateCourse(route.params.id as string, formData)
-        : await createCourse(formData);
+        ? await updateCourse(route.params.id as string, payload as Partial<CoursePayload>)
+        : await createCourse(payload as CoursePayload);
 
     if (response?.success) {
         toast.success(response.message ?? "Success");
@@ -125,75 +119,28 @@ const submitForm = handleSubmit(async (payload) => {
 </script>
 
 <template>
-    <form @submit.prevent="submitForm" class="space-y-6">
+    <form @submit.prevent="submitForm" class="space-y-6 pb-2">
         <div class="space-y-4 grid grid-cols-2 gap-3">
             <div>
-                <FormInput
-                    id="name"
-                    v-model="name"
-                    label="Course Name"
-                    :disabled="isReadMode"
-                />
+                <FormInput id="name" v-model="name" label="Course Name" :disabled="isReadMode" />
                 <ErrorMessage name="name" class="text-red-500 text-sm" />
             </div>
 
             <div>
-                <FormSelect
-                    id="course_category_id"
-                    v-model="course_category_id"
-                    label="Category"
-                    :options="categoryOptions"
-                    :loading="categoryLoading"
-                    :disabled="isReadMode"
-                />
-                <ErrorMessage
-                    name="course_category_id"
-                    class="text-red-500 text-sm"
-                />
+                <FormSelect id="course_category_id" v-model="course_category_id" label="Category"
+                    :options="categoryOptions" :loading="categoryLoading" :disabled="isReadMode" />
+                <ErrorMessage name="course_category_id" class="text-red-500 text-sm" />
             </div>
 
             <div class="col-span-2">
-                <FormTextarea
-                    id="description"
-                    v-model="description"
-                    label="Description"
-                    :rows="5"
-                    :disabled="isReadMode"
-                />
+                <FormTextarea id="description" v-model="description" label="Description" :rows="5"
+                    :disabled="isReadMode" />
                 <ErrorMessage name="description" class="text-red-500 text-sm" />
             </div>
 
-            <div class="space-y-2 max-w-lg">
-                <label class="text-sm font-medium"> Image</label>
-                <input type="file" class="hidden" @change="onImageChange" />
-
-                <div class="flex items-center gap-3 mt-2">
-                    <div v-if="imagePreview" class="relative inline-block">
-                        <img
-                            :src="imagePreview"
-                            class="h-30 w-30 object-cover rounded border"
-                        />
-                        <button
-                            @click="removeImage"
-                            type="button"
-                            class="absolute -top-2 -right-2 bg-red-500 text-white rounded-sm h-6 w-6 flex items-center justify-center"
-                        >
-                            <SquareXIcon />
-                        </button>
-                    </div>
-
-                    <label
-                        v-else
-                        class="h-30 w-30 border rounded flex items-center justify-center cursor-pointer bg-gray-50 hover:bg-gray-100 mt-2"
-                    >
-                        <span class="text-2xl">＋</span>
-                        <input
-                            type="file"
-                            class="hidden"
-                            @change="onImageChange"
-                        />
-                    </label>
-                </div>
+            <div class="col-span-2">
+                <FormImage id="image" label="Image" v-model="image" :disabled="isReadMode" />
+                <ErrorMessage name="image" class="block text-start text-red-500 text-sm mt-1" />
             </div>
         </div>
 

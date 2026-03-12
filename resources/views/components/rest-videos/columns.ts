@@ -22,52 +22,23 @@ export const RestDayVideosColumns: ColumnDef<any>[] = [
         render: (row) => row.name,
     },
     {
-        label: "Status",
-        key: "is_active",
+        label: "Description",
+        key: "description",
+        render: (row) =>
+            `${row.description?.substring(0, 50) ?? ""}${row.description && row.description.length > 50 ? "..." : ""}`,
+    },
+    {
+        label: "Thumbnail",
+        key: "thumbnail_url",
+        className: "text-center w-[80px]",
         render: (row) => {
-            let theme = {
-                color: "text-emerald-500",
-                bg: "bg-emerald-500/10",
-                border: "border-emerald-500/20",
-                label: "Active",
-            };
-
-            if (!row.is_active) {
-                theme = {
-                    color: "text-red-500",
-                    bg: "bg-red-500/10",
-                    border: "border-red-500/20",
-                    label: "Inactive",
-                };
+            const logoUrl = row.thumbnail_url;
+            if (logoUrl) {
+                return `<img src="${logoUrl}" alt="Thumbnail" class="max-w-28 h-15 rounded-sm object-cover mx-auto" />`;
             }
-
-            return `
-                <div class="inline-flex items-center px-2 py-0.5 rounded border ${theme.bg} ${theme.border}">
-                    <span class="text-[9px] font-black uppercase tracking-[0.1em] ${theme.color}">
-                        ${theme.label}
-                    </span>
-                </div>
-                `;
-        },
-        onClick: (row, extraArgs) => {
-            extraArgs.modalStore.openConfirmModal({
-                message: row.is_active
-                    ? "Are you sure you want to inactivate?"
-                    : "Are you sure you want to activate?",
-                onApprove: async () => {
-                    const response = await toggleStatus(row.id);
-                    if (response?.success) {
-                        toast.success(
-                            response.message ??
-                                (row.is_active
-                                    ? SUCCESS_MESSAGE.INACTIVATED
-                                    : SUCCESS_MESSAGE.ACTIVATED),
-                        );
-                        extraArgs.refresh();
-                    }
-                },
-                approveBtnText: "Verify",
-            });
+            return `<div class="w-10 h-10 rounded-full bg-gray-200 flex items-center justify-center mx-auto">
+                <CreditCard class="h-5 w-5 text-gray-500" />
+            </div>`;
         },
     },
     {
@@ -82,9 +53,10 @@ export const RestDayVideosActions: ActionDef<any>[] = [
         icon: Folder,
         tooltip: "View Details",
         onClick: (row, extraArgs) => {
-            extraArgs.router.push({
-                name: RouteNames.ViewRestDayVideo,
-                params: { id: row.id },
+            extraArgs.modalStore.openModal({
+                formIndex: "restDayVideo",
+                initialValues: row,
+                isReadMode: true,
             });
         },
     },
@@ -92,9 +64,11 @@ export const RestDayVideosActions: ActionDef<any>[] = [
         icon: Edit2,
         tooltip: "Edit",
         onClick: (row, extraArgs) => {
-            extraArgs.router.push({
-                name: RouteNames.EditRestDayVideo,
-                params: { id: row.id },
+            extraArgs.modalStore.openModal({
+                formIndex: "restDayVideo",
+                initialValues: row,
+                isReadMode: false,
+                refreshCallback: extraArgs.refresh,
             });
         },
     },

@@ -5,10 +5,12 @@ import BaseFilter from "../common/filter/BaseFilter.vue";
 import { StatusOption } from "@/constant/options.constant";
 import { RouteNames } from "@/config/route.config";
 import { useRouter } from "vue-router";
+import { useModalStore } from "@/store/modal";
 
 const router = useRouter();
 
 const dataStore = useDataStore();
+const modalStore = useModalStore();
 
 const search = ref("");
 const isActive = ref("all");
@@ -31,7 +33,12 @@ function handleReset() {
 }
 
 function handleAdd() {
-    router.push({ name: RouteNames.AddRestDayVideo });
+    modalStore.openModal({
+        formIndex: "restDayVideo",
+        refreshCallback: () => {
+            dataStore.triggerRefresh();
+        },
+    });
 }
 </script>
 
@@ -39,21 +46,12 @@ function handleAdd() {
     <BaseFilter @reset="handleReset" @add="handleAdd">
         <div class="flex items-center gap-x-3 w-full">
             <div>
-                <FormInput
-                    id="search"
-                    v-model="search"
-                    placeholder="Search by name"
-                />
+                <FormInput id="search" v-model="search" placeholder="Search by name" />
             </div>
 
             <div class="w-44">
-                <FormSelect
-                    id="status"
-                    v-model="isActive"
-                    :options="StatusOption"
-                    placeholder="Select status"
-                    class="h-10 bg-secondary/30 border-border/50 w-full"
-                />
+                <FormSelect id="status" v-model="isActive" :options="StatusOption" placeholder="Select status"
+                    class="h-10 bg-secondary/30 border-border/50 w-full" />
             </div>
         </div>
     </BaseFilter>
