@@ -45,10 +45,10 @@ export const RouteNames = {
     ViewRestDayVideo: "view-rest-video",
     EditRestDayVideo: "edit-rest-video",
     WalkInsList: "walk-ins-list",
-    FeaturedImagesList: "user-list",
-    AddFeaturedImage: "add-user",
-    ViewFeaturedImage: "view-user",
-    EditFeaturedImage: "edit-user",
+    FeaturedImagesList: "featured-image-list",
+    AddFeaturedImage: "add-featured-image",
+    ViewFeaturedImage: "view-featured-image",
+    EditFeaturedImage: "edit-featured-image",
     Unauthorized: "unauthorized",
 };
 
