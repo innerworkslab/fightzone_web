@@ -207,24 +207,6 @@ const routes = [
                 component: RestDayVideoList,
             },
             {
-                path: "rest-videos/add",
-                name: RouteNames.AddRestDayVideo,
-                component: RestDayVideoForm,
-                meta: { permissions: ["all"] },
-            },
-            {
-                path: "rest-videos/edit/:id",
-                name: RouteNames.EditRestDayVideo,
-                component: RestDayVideoForm,
-                meta: { permissions: ["all"] },
-            },
-            {
-                path: "rest-videos/view/:id",
-                name: RouteNames.ViewRestDayVideo,
-                component: RestDayVideoForm,
-                meta: { permissions: ["all"] },
-            },
-            {
                 path: "featured-images",
                 name: RouteNames.FeaturedImagesList,
                 component: FeaturedImagesList,

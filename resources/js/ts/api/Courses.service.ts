@@ -1,6 +1,7 @@
 import { APIResult, useFetch, useMutation } from "@/composable/useAPI";
 import { API_URLS, METHODS } from "@/constant/global.constant";
 import type { Filters } from "@/type.global";
+import { objectToFormData } from "@/utils/helper";
 
 export type CoursesFilter = Filters & {
     search?: string;
@@ -42,7 +43,7 @@ export interface CourseDayPayload {
 export interface CoursePayload {
     name: string;
     description?: string;
-    image?: File;
+    image?: File[];
     course_category_id: number;
 }
 
@@ -59,15 +60,22 @@ const useCourseDetail = (id: string | string) => {
 const useCourseActions = () => {
     const { mutate, loading, error, data } = useMutation();
 
-    const createCourse = (data: CoursePayload | FormData) => {
-        return mutate(METHODS.POST, baseURL, data);
+    const createCourse = (data: CoursePayload) => {
+        const formData = objectToFormData(data);
+        return mutate(METHODS.POST, baseURL, formData, {
+            headers: {
+                "Content-Type": "multipart/form-data",
+            },
+        });
     };
 
-    const updateCourse = (
-        id: string,
-        data: Partial<CoursePayload> | FormData,
-    ) => {
-        return mutate(METHODS.POST, `/${baseURL}/${id}`, data);
+    const updateCourse = (id: string, data: Partial<CoursePayload>) => {
+        const formData = objectToFormData(data);
+        return mutate(METHODS.POST, `/${baseURL}/${id}`, formData, {
+            headers: {
+                "Content-Type": "multipart/form-data",
+            },
+        });
     };
 
     const deleteCourse = (id: string) =>

@@ -12,7 +12,7 @@ export interface FeaturedImagesData {
 }
 
 export interface FeaturedImagesPayload {
-    image: File | null;
+    image: File[] | null;
 }
 
 const baseURL = `${API_URLS.VERSION}/${API_URLS.MANAGEMENT}/${API_URLS.FEATURED_IMAGES}`;
@@ -28,15 +28,39 @@ const useFeaturedImageDetail = (id: number | string) => {
 const useFeaturedImageActions = () => {
     const { mutate, loading, error, data } = useMutation();
 
-    const createFeaturedImage = (data: FeaturedImagesPayload | FormData) => {
-        return mutate(METHODS.POST, baseURL, data);
+    const createFeaturedImage = (data: FeaturedImagesPayload) => {
+        const formData = new FormData();
+
+        if (data.image && data.image.length > 0) {
+            const imageFile = data.image[0];
+            if (imageFile instanceof File) {
+                formData.append("image", imageFile);
+            }
+        }
+        return mutate(METHODS.POST, baseURL, formData, {
+            headers: {
+                "Content-Type": "multipart/form-data",
+            },
+        });
     };
 
     const updateFeaturedImage = (
         id: number,
-        data: Partial<FeaturedImagesPayload> | FormData,
+        data: Partial<FeaturedImagesPayload>,
     ) => {
-        return mutate(METHODS.POST, `/${baseURL}/${id}`, data);
+        const formData = new FormData();
+
+        if (data.image && data.image.length > 0) {
+            const imageFile = data.image[0];
+            if (imageFile instanceof File) {
+                formData.append("image", imageFile);
+            }
+        }
+        return mutate(METHODS.POST, `/${baseURL}/${id}`, formData, {
+            headers: {
+                "Content-Type": "multipart/form-data",
+            },
+        });
     };
 
     return {

@@ -26,7 +26,12 @@ export interface RestDayVideoData {
 }
 
 export interface RestDayVideoPayload {
-    url: string | null;
+    id?: number;
+    name?: string;
+    description?: string;
+    duration?: string;
+    url?: string;
+    type?: string;
 }
 
 const baseURL = `${API_URLS.VERSION}/${API_URLS.MANAGEMENT}/${API_URLS.REST_DAY_VIDEO}`;

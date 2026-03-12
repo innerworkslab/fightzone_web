@@ -1,6 +1,7 @@
 import { APIResult, useFetch, useMutation } from "@/composable/useAPI";
 import { API_URLS, METHODS } from "@/constant/global.constant";
 import type { Filters } from "@/type.global";
+import { objectToFormData } from "@/utils/helper";
 
 export type CourseCategoriessFilter = Filters & {
     search?: string;
@@ -18,7 +19,7 @@ export interface CourseCategoriesData {
 
 export interface CourseCategoriesPayload {
     name: string;
-    image?: File;
+    image?: File[];
     description: string;
 }
 
@@ -31,17 +32,25 @@ const useCourseCategoriess = (filter: CourseCategoriessFilter = {}) => {
 const useCourseCategoriesActions = () => {
     const { mutate, loading, error, data } = useMutation();
 
-    const createCourseCategories = (
-        data: CourseCategoriesPayload | FormData,
-    ) => {
-        return mutate(METHODS.POST, baseURL, data);
+    const createCourseCategories = (data: CourseCategoriesPayload) => {
+        const formData = objectToFormData(data);
+        return mutate(METHODS.POST, baseURL, formData, {
+            headers: {
+                "Content-Type": "multipart/form-data",
+            },
+        });
     };
 
     const updateCourseCategories = (
         id: number,
-        data: Partial<CourseCategoriesPayload> | FormData,
+        data: Partial<CourseCategoriesPayload>,
     ) => {
-        return mutate(METHODS.POST, `/${baseURL}/${id}`, data);
+        const formData = objectToFormData(data);
+        return mutate(METHODS.POST, `/${baseURL}/${id}`, formData, {
+            headers: {
+                "Content-Type": "multipart/form-data",
+            },
+        });
     };
 
     const deleteCourseCategories = (id: number) =>

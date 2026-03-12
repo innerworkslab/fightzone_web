@@ -1,6 +1,5 @@
 import { ActionDef, ColumnDef } from "../common/data-table/type";
 import { Edit2, Image } from "lucide-vue-next";
-import { RouteNames } from "../../../js/ts/config/route.config";
 
 export const FeaturedImageColumns: ColumnDef<any>[] = [
     {
@@ -17,9 +16,9 @@ export const FeaturedImageColumns: ColumnDef<any>[] = [
         render: (row) => {
             const imageUrl = row.image_url;
             if (imageUrl) {
-                return `<img src="${imageUrl}" alt="Logo" class="max-w-18 h-10 rounded-sm object-cover mx-auto" />`;
+                return `<img src="${imageUrl}" alt="Logo" class="max-w-18 h-10 rounded-sm object-cover" />`;
             }
-            return `<div class="w-10 h-10 rounded-full bg-gray-200 flex items-center justify-center mx-auto">
+            return `<div class="w-10 h-10 rounded-full bg-gray-200 flex items-center justify-center">
                 <Image class="h-5 w-5 text-gray-500" />
             </div>`;
         },
@@ -29,11 +28,13 @@ export const FeaturedImageColumns: ColumnDef<any>[] = [
 export const FeaturedImageActions: ActionDef<any>[] = [
     {
         icon: Edit2,
-        tooltip: "Addition",
+        tooltip: "Edit",
         onClick: (row, extraArgs) => {
-            extraArgs.router.push({
-                name: RouteNames.EditFeaturedImage,
-                params: { id: row.id },
+            extraArgs.modalStore.openModal({
+                formIndex: "featuredImage",
+                initialValues: row,
+                isReadMode: false,
+                refreshCallback: extraArgs.refresh,
             });
         },
     },

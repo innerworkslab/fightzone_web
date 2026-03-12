@@ -7,6 +7,7 @@ import CourseCategoriesForm from "../../../views/components/course-categories/Co
 import LessonDayVideoForm from "../../../views/components/lesson-day-videos/lessonDayVideoForm.vue";
 import WalkInForm from "../../../views/components/walk-ins/WalkInForm.vue";
 import RestDayVideoForm from "../../../views/components/rest-videos/RestDayVideoForm.vue";
+import FeaturedImagesForm from "../../../views/components/featured-images/FeaturedImagesForm.vue";
 
 export const getFormConfig = (initialValues: any, isReadMode: boolean) => ({
     // #A
@@ -30,6 +31,22 @@ export const getFormConfig = (initialValues: any, isReadMode: boolean) => ({
         message: isReadMode
             ? "View deposit details and receipt"
             : "Provide a reason for rejecting this deposit",
+    },
+    // #F
+    featuredImage: {
+        form: FeaturedImagesForm,
+        header: `${
+            initialValues?.id
+                ? isReadMode
+                    ? "(Read Only) "
+                    : "Update"
+                : "Upload"
+        } Featured Image`,
+        message: initialValues?.id
+            ? isReadMode
+                ? "View image for this featured image"
+                : "Update image for this featured image"
+            : "Upload an image for this featured image",
     },
     // #P
     package: {
