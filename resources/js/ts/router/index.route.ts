@@ -23,6 +23,8 @@ import LessonDayForm from "../../../views/components/lesson-days/LessonDayForm.v
 import WalkInsList from "../../../views/components/walk-ins/WalkInsList.vue";
 import RestDayVideoList from "../../../views/components/rest-videos/RestDayVideoList.vue";
 import RestDayVideoForm from "../../../views/components/rest-videos/RestDayVideoForm.vue";
+import FeaturedImagesForm from "../../../views/components/featured-images/FeaturedImagesForm.vue";
+import FeaturedImagesList from "../../../views/components/featured-images/FeaturedImagesList.vue";
 
 const routes = [
     {
@@ -220,6 +222,29 @@ const routes = [
                 path: "rest-videos/view/:id",
                 name: RouteNames.ViewRestDayVideo,
                 component: RestDayVideoForm,
+                meta: { permissions: ["all"] },
+            },
+            {
+                path: "featured-images",
+                name: RouteNames.FeaturedImagesList,
+                component: FeaturedImagesList,
+            },
+            {
+                path: "featured-images/add",
+                name: RouteNames.AddFeaturedImage,
+                component: FeaturedImagesForm,
+                meta: { permissions: ["all"] },
+            },
+            {
+                path: "featured-images/edit/:id",
+                name: RouteNames.EditFeaturedImage,
+                component: FeaturedImagesForm,
+                meta: { permissions: ["all"] },
+            },
+            {
+                path: "featured-images/view/:id",
+                name: RouteNames.ViewFeaturedImage,
+                component: FeaturedImagesForm,
                 meta: { permissions: ["all"] },
             },
             {

@@ -98,7 +98,7 @@ export const PaymentColumns: ColumnDef<any>[] = [
                             response.message ??
                                 (row.is_active
                                     ? SUCCESS_MESSAGE.INACTIVATED
-                                    : SUCCESS_MESSAGE.ACTIVATED)
+                                    : SUCCESS_MESSAGE.ACTIVATED),
                         );
                         extraArgs.refresh();
                     }

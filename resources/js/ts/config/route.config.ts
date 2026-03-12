@@ -7,6 +7,7 @@ import {
     Banknote,
     BookAudio,
     Video,
+    Image,
 } from "lucide-vue-next";
 
 export const RouteNames = {
@@ -44,6 +45,10 @@ export const RouteNames = {
     ViewRestDayVideo: "view-rest-video",
     EditRestDayVideo: "edit-rest-video",
     WalkInsList: "walk-ins-list",
+    FeaturedImagesList: "user-list",
+    AddFeaturedImage: "add-user",
+    ViewFeaturedImage: "view-user",
+    EditFeaturedImage: "edit-user",
     Unauthorized: "unauthorized",
 };
 
@@ -288,6 +293,38 @@ export const routes = [
                 label: "",
                 name: RouteNames.ViewRestDayVideo,
                 header: "View Rest Video",
+                route: "",
+            },
+        ],
+    },
+    {
+        label: "Featured Images",
+        name: "featured_image_group",
+        icon: Image,
+        route: "/auth/featured-images",
+        children: [
+            {
+                label: "Featured Image List",
+                name: RouteNames.FeaturedImagesList,
+                header: "Featured Image Management",
+                route: "/auth/featured-images",
+            },
+            {
+                label: "",
+                name: RouteNames.AddFeaturedImage,
+                header: "Add Featured Image",
+                route: "/auth/featured-images/add",
+            },
+            {
+                label: "",
+                name: RouteNames.EditFeaturedImage,
+                header: "Edit Featured Image",
+                route: "",
+            },
+            {
+                label: "",
+                name: RouteNames.ViewFeaturedImage,
+                header: "View Featured Image",
                 route: "",
             },
         ],
