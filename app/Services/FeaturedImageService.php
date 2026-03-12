@@ -26,7 +26,7 @@ class FeaturedImageService
 
     public function create(UploadedFile $file)
     {
-        $path = $file->store("/featured_images");
+        $path = $file->store("/featured_images",'public');
         $data = [
             'image_path' => $path
         ];
@@ -40,7 +40,7 @@ class FeaturedImageService
             return null;
         }
         DeleteFileFromServer($existing->image_path);
-        $path = $file->store("/featured_images");
+        $path = $file->store("/featured_images",'public');
         $data = [
             'image_path' => $path
         ];
