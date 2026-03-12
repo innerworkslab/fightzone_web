@@ -29,7 +29,6 @@ const useFeaturedImageActions = () => {
     const { mutate, loading, error, data } = useMutation();
 
     const createFeaturedImage = (data: FeaturedImagesPayload | FormData) => {
-        data = cleanPayload(data) as FeaturedImagesPayload;
         return mutate(METHODS.POST, baseURL, data);
     };
 
