@@ -44,4 +44,21 @@ class LessonDayController extends Controller
             ResponseMessage($e->getMessage(), 500);
         }
     }
+
+    /**
+     * Get previous and next videos relative to the currently playing lesson day video.
+     */
+    public function prevNextVideo(Request $request, $lessonDayVideoId)
+    {
+        $userId = ApiUser()->id;
+
+        try {
+            $result = $this->service->getPrevNextVideoForUser((int) $userId, (int) $lessonDayVideoId);
+            ResponseData($result, 200);
+        } catch (\RuntimeException $e) {
+            ResponseMessage($e->getMessage(), 404);
+        } catch (\Exception $e) {
+            ResponseMessage($e->getMessage(), 500);
+        }
+    }
 }

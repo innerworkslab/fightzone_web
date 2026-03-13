@@ -386,6 +386,83 @@ class LessonDayService
         }
     }
 
+    /**
+     * Get previous/next lesson-day video for the user, based on the currently playing
+     * lesson day video id. Ordering is by lesson day (day_number asc) then video id asc.
+     *
+     * Returns null prev/next at boundaries.
+     */
+    public function getPrevNextVideoForUser(int $userId, int $lessonDayVideoId): array
+    {
+        $current = LessonDayVideo::with('lessonDay.courseLevel')->find($lessonDayVideoId);
+
+        if (! $current) {
+            throw new \RuntimeException('Lesson video not found');
+        }
+
+        $lessonDay = $current->lessonDay;
+        if (! $lessonDay) {
+            throw new \RuntimeException('Lesson day not found');
+        }
+
+        $courseLevel = $lessonDay->courseLevel;
+        if (! $courseLevel) {
+            throw new \RuntimeException('Course level not found');
+        }
+
+        $clp = $this->getCourseLevelPurchase((int) $courseLevel->id, (int) $userId);
+        if (! $clp) {
+            throw new \RuntimeException('Course level purchase not found. Please purchase this course level first.');
+        }
+
+        $now = now();
+        if ($clp->valid_from && $clp->valid_until) {
+            if (! $now->between($clp->valid_from, $clp->valid_until)) {
+                throw new \RuntimeException('Your course access has expired. Please renew your purchase.');
+            }
+        }
+
+        $currentDayNumber = (int) $lessonDay->day_number;
+
+        // Previous: latest video before current in (day_number, video_id) ordering
+        $prev = LessonDayVideo::query()
+            ->select('lesson_day_videos.*')
+            ->join('lesson_days', 'lesson_days.id', '=', 'lesson_day_videos.lesson_day_id')
+            ->where('lesson_days.course_level_id', (int) $courseLevel->id)
+            ->where(function ($q) use ($currentDayNumber, $lessonDayVideoId) {
+                $q->where('lesson_days.day_number', '<', $currentDayNumber)
+                    ->orWhere(function ($q2) use ($currentDayNumber, $lessonDayVideoId) {
+                        $q2->where('lesson_days.day_number', '=', $currentDayNumber)
+                            ->where('lesson_day_videos.id', '<', (int) $lessonDayVideoId);
+                    });
+            })
+            ->orderByDesc('lesson_days.day_number')
+            ->orderByDesc('lesson_day_videos.id')
+            ->first();
+
+        // Next: earliest video after current in (day_number, video_id) ordering
+        $next = LessonDayVideo::query()
+            ->select('lesson_day_videos.*')
+            ->join('lesson_days', 'lesson_days.id', '=', 'lesson_day_videos.lesson_day_id')
+            ->where('lesson_days.course_level_id', (int) $courseLevel->id)
+            ->where(function ($q) use ($currentDayNumber, $lessonDayVideoId) {
+                $q->where('lesson_days.day_number', '>', $currentDayNumber)
+                    ->orWhere(function ($q2) use ($currentDayNumber, $lessonDayVideoId) {
+                        $q2->where('lesson_days.day_number', '=', $currentDayNumber)
+                            ->where('lesson_day_videos.id', '>', (int) $lessonDayVideoId);
+                    });
+            })
+            ->orderBy('lesson_days.day_number')
+            ->orderBy('lesson_day_videos.id')
+            ->first();
+
+        return [
+            'current' => $current,
+            'previous' => $prev,
+            'next' => $next,
+        ];
+    }
+
     public function getCourseLevelPurchase(int $courseLevelId, int $userId)
     {
         // Find the course level purchase for this user and course level

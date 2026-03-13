@@ -63,6 +63,7 @@ Route::prefix('/v1')->group(function () {
 
             Route::prefix('/lesson_day_videos')->group(function () {
                 Route::post('/{lessonDayVideoId}/complete', [LessonDayController::class, 'markVideoCompletion']);
+                Route::get('/{lessonDayVideoId}/prev-next', [LessonDayController::class, 'prevNextVideo']);
             });
 
             Route::prefix('/deposits')->group(function () {

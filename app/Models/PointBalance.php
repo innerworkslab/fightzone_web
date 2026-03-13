@@ -50,7 +50,7 @@ class PointBalance extends Model
 
             // Validate sufficient balance for deductions
             if ($points < 0 && $newBalance < 0) {
-                throw new \RuntimeException("User doesn't have sufficient point balance for this transaction");
+                throw new \RuntimeException("User doesn't have sufficient point balance for this transaction", 402);
             }
 
             $balance->points = $newBalance;

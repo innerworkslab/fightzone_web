@@ -139,7 +139,8 @@ class PurchaseService
             return $purchase;
         }catch(\Exception $e){
             DB::rollBack();
-            throw new \RuntimeException('Some error occourred, please try again', 500);
+
+            throw new \RuntimeException($e->getMessage(), 402);
         }
     }
 
