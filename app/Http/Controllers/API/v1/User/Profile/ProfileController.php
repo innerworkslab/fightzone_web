@@ -79,4 +79,69 @@ class ProfileController extends Controller
 
         ResponseData($data);
     }
+
+    public function changePassword(Request $request)
+    {
+        $request->validate([
+            'current_password' => 'required',
+            'new_password' => 'required|confirmed|min:6'
+        ]);
+
+        $userId = ApiUser()->id;
+        $success = $this->service->updatePassword(
+            $userId,
+            $request->current_password,
+            $request->new_password
+        );
+        ($success)? ResponseMessage("Password successfully updated"): ResponseMessage("Failed to update password. Please provide current password correctly", 403);
+    }
+
+    public function changeNameOrPhone(Request $request)
+    {
+        $request->validate([
+            'password' => 'required',
+            'name' => 'sometimes',
+            'phone_number' => 'sometimes'
+        ]);
+
+        $nameUpdated = false;
+        $phoneUpdated = false;
+
+        $userId = ApiUser()->id;
+
+        if($request->name){
+            $nameUpdated = $this->service->updateProfileName(
+                $userId,
+                $request->password,
+                $request->name
+            );
+            if(!$nameUpdated){
+                ResponseMessage("Please provide current password correctly", 403);
+            }
+        }
+
+        if($request->phone_number){
+            if($this->service->isPhoneNumberTaken($userId, $request->phone_number))
+                ResponseMessage("The phone number already taken by another user", 422);
+            $phoneUpdated = $this->service->updatePhoneNumber(
+                $userId,
+                $request->password,
+                $request->phone_number
+            );
+            if(!$phoneUpdated){
+                ResponseMessage("Please provide current password correctly", 403);
+            }
+        }
+
+        $msg = '';
+        if($nameUpdated){
+            $msg .= "Profile name ";
+        }
+        if($phoneUpdated){
+            $msg .= "Phone number ";
+        }
+        $msg .= "updated.";
+
+        ResponseMessage($msg);
+    }
 }

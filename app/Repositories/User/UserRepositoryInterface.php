@@ -15,4 +15,6 @@ interface UserRepositoryInterface
     public function delete($id);
 
     public function toggleActive($id);
+
+    public function checkSamePhoneNumberExistence(int $userId, string $phoneNumber);
 }

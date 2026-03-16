@@ -2,11 +2,17 @@
 
 namespace App\Services;
 
+use Illuminate\Support\Facades\Hash;
+
 use App\Repositories\Profile\ProfileRepositoryInterface;
+use App\Repositories\User\UserRepositoryInterface;
 
 class ProfileService
 {
-    public function __construct(protected ProfileRepositoryInterface $repo)
+    public function __construct(
+        protected ProfileRepositoryInterface $user,
+        protected UserRepositoryInterface $users
+    )
     {
 
     }
@@ -16,7 +22,7 @@ class ProfileService
      */
     public function getProfile(int $userId)
     {
-        $user = $this->repo->getUserProfile($userId);
+        $user = $this->user->getUserProfile($userId);
 
         if (!$user) {
             throw new \RuntimeException('User not found');
@@ -31,15 +37,15 @@ class ProfileService
     public function getProfileDetails(int $userId)
     {
 
-        $user = $this->repo->getUserProfile($userId);
+        $user = $this->user->getUserProfile($userId);
 
         if (!$user) {
             throw new \RuntimeException('User not found');
         }
 
-        $pointBalance = $this->repo->getUserPointBalance($userId);
-        $deposits = $this->repo->getUserDeposits($userId, 10)->get();
-        $purchases = $this->repo->getUserPurchases($userId, 10)->get();
+        $pointBalance = $this->user->getUserPointBalance($userId);
+        $deposits = $this->user->getUserDeposits($userId, 10)->get();
+        $purchases = $this->user->getUserPurchases($userId, 10)->get();
 
         return [
             'user' => $user,
@@ -54,7 +60,7 @@ class ProfileService
      */
     public function getPointBalance(int $userId)
     {
-        $balance = $this->repo->getUserPointBalance($userId);
+        $balance = $this->user->getUserPointBalance($userId);
 
         return [
             'points' => $balance ? $balance->points : 0,
@@ -66,7 +72,7 @@ class ProfileService
      */
     public function getDepositHistory(int $userId, ?int $page = null, ?int $limit = null)
     {
-        $query = $this->repo->getUserDeposits($userId, $limit);
+        $query = $this->user->getUserDeposits($userId, $limit);
 
         return $page
             ? $query->paginate($limit ?? config('common.list_count'))
@@ -78,10 +84,48 @@ class ProfileService
      */
     public function getPurchaseHistory(int $userId, ?int $page = null, ?int $limit = null)
     {
-        $query = $this->repo->getUserPurchases($userId, $limit);
+        $query = $this->user->getUserPurchases($userId, $limit);
 
         return $page
             ? $query->paginate($limit ?? config('common.list_count'))
             : $query->get();
+    }
+
+    public function updatePassword(int $userId, $oldPassword, $newPassword)
+    {
+        $user = $this->user->getUserProfile($userId);
+        if(Hash::check($oldPassword, $user->getAuthPassword())){
+            $user->password = $newPassword;
+            $user->save();
+            return true;
+        }
+        return false;
+    }
+
+    public function updatePhoneNumber(int $userId, string $password, string $newPhoneNumber)
+    {
+        $user = $this->user->getUserProfile($userId);
+        if(Hash::check($password, $user->getAuthPassword())){
+            $user->phone_number = $newPhoneNumber;
+            $user->save();
+            return true;
+        }
+        return false;
+    }
+
+    public function updateProfileName(int $userId, string $password, string $newName)
+    {
+        $user = $this->user->getUserProfile($userId);
+        if(Hash::check($password, $user->getAuthPassword())){
+            $user->name = $newName;
+            $user->save();
+            return true;
+        }
+        return false;
+    }
+
+    public function isPhoneNumberTaken(int $userId, string $phoneNumber)
+    {
+        return $this->users->checkSamePhoneNumberExistence($userId, $phoneNumber);
     }
 }

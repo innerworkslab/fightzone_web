@@ -40,6 +40,8 @@ Route::prefix('/v1')->group(function () {
                 Route::get('/balance', [ProfileController::class, 'balance']);
                 Route::get('/deposits', [ProfileController::class, 'deposits']);
                 Route::get('/purchases', [ProfileController::class, 'purchases']);
+                Route::post('/update_password', [ProfileController::class, 'changePassword']);
+                Route::post('/update_name_phone', [ProfileController::class, 'changeNameOrPhone']);
             });
 
             Route::get('/payment-methods', [PaymentMethodController::class, 'index']);

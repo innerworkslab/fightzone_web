@@ -73,4 +73,11 @@ class UserRepository implements UserRepositoryInterface
         $item->save();
         return $item;
     }
+
+    public function checkSamePhoneNumberExistence(int $userId, string $phoneNumber)
+    {
+        return User::where('id', '!=', $userId)
+        ->where('phone_number', $phoneNumber)
+        ->exists();
+    }
 }
