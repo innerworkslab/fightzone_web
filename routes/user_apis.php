@@ -42,6 +42,8 @@ Route::prefix('/v1')->group(function () {
                 Route::get('/purchases', [ProfileController::class, 'purchases']);
                 Route::post('/update_password', [ProfileController::class, 'changePassword']);
                 Route::post('/update_name_phone', [ProfileController::class, 'changeNameOrPhone']);
+
+                Route::get('/classes', [ProfileController::class, 'getPurchasedClasses']);
             });
 
             Route::get('/payment-methods', [PaymentMethodController::class, 'index']);

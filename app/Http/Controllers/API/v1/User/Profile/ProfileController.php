@@ -144,4 +144,13 @@ class ProfileController extends Controller
 
         ResponseMessage($msg);
     }
+
+    public function getPurchasedClasses(Request $request)
+    {
+        return $this->service->fetchUserPurchasedCourseLevels(
+            ApiUser()->id,
+            $request->page,
+            $request->limit
+        );
+    }
 }

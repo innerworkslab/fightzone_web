@@ -7,6 +7,8 @@ use Illuminate\Support\Facades\Hash;
 use App\Repositories\Profile\ProfileRepositoryInterface;
 use App\Repositories\User\UserRepositoryInterface;
 
+use App\Models\CourseLevelPurchase;
+
 class ProfileService
 {
     public function __construct(
@@ -127,5 +129,18 @@ class ProfileService
     public function isPhoneNumberTaken(int $userId, string $phoneNumber)
     {
         return $this->users->checkSamePhoneNumberExistence($userId, $phoneNumber);
+    }
+
+    public function fetchUserPurchasedCourseLevels(int $userId, ?int $page = null, ?int $limit = null)
+    {
+        $query = CourseLevelPurchase::with([
+            'courseLevel',            
+        ])
+        ->where('user_id', $userId)
+        ->orderByDesc('id');
+
+        return $page
+            ? $query->paginate($limit ?? config('common.list_count'))
+            : $query->get();
     }
 }
