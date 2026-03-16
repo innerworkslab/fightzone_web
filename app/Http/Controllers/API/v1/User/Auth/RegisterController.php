@@ -17,14 +17,22 @@ class RegisterController extends Controller
     public function register(Request $request)
     {
         $request->validate([
+            'name' => 'required|string',
             'phone_number' => 'required|unique:users,phone_number',
+            'password' => 'required|min:6'
         ]);
 
-        $data = $request->all();
-        $data['password'] = 'default-password';
+        $data = $request->all();        
 
         $user = $this->service->registerLocalUser($data);
-        ResponseData($user);
+        $success = $this->service->verifyPhoneNumber($request->phone_number, '000000', null, $data);
+
+        $tokenData = $this->service->generateSanctumTokenFromPhoneNumber($request->phone_number);
+        if($request->fcm_token){
+            (new StoreFcmTokenService())->run($request->fcm_token, $tokenData['user']['id'], 'user');    
+        }
+        
+        ResponseData($tokenData);
     }
 
     public function verifyRegistration(Request $request)
