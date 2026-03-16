@@ -43,7 +43,29 @@ class NotificationController extends Controller
 
     public function markAsRead(Request $request, $id)
     {
-        $this->service->markAsRead($id);
+        $this->service->markAsRead(
+            $id, 
+            ApiUser()->id,
+            'user'
+        );
+
+        ResponseMessage("OK");
+    }
+
+    public function markAllAsRead(Request $request)
+    {
+        $request->validate([
+            'ids' => 'required'
+        ]);
+        $ids = json_decode($request->ids);        
+        foreach ($ids as $key => $id) {
+            // code...            
+            $this->service->markAsRead(
+                $id,
+                ApiUser()->id,
+                'user'
+            );
+        }        
         ResponseMessage("OK");
     }
 }

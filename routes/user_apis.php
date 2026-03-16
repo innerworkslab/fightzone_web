@@ -84,8 +84,10 @@ Route::prefix('/v1')->group(function () {
             Route::controller(NotificationController::class)->group(function(){
                 Route::get('/notifications', 'index');
                 Route::get('/notifications/unread_count', 'getUnreadCount');
-                Route::post('/notifications/{id}', 'markAsRead');
+                Route::post('/notifications/{id}/mark_read', 'markAsRead');
+                Route::post('/notifications/mark_all_read', [NotificationController::class, 'markAllAsRead']);
             });
         });
+        
     });
 });

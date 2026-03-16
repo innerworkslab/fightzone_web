@@ -2,6 +2,9 @@
 
 namespace App\Services;
 
+use App\Models\NotificationPerson;
+use App\Models\Notification;
+
 use App\Repositories\Notification\NotificationRepositoryInterface;
 
 class NotificationService
@@ -37,8 +40,16 @@ class NotificationService
         return $query->count();
     }
 
-    public function markAsRead(int $id)
+    public function markAsRead(int $id, int $personId, ?string $personType=null)
     {
-        return $this->repo->markNotificationAsRead($id);
+        $notificationPerson = NotificationPerson::where('notification_id', $id)
+        ->where('personable_id', $personId)
+        ->where('personable_type', ($personType)? $personType: 'user')
+        ->first();
+
+        if($notificationPerson){
+            return $this->repo->markNotificationAsRead($notificationPerson->id);
+        }
+        return true;        
     }
 }
