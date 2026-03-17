@@ -134,7 +134,7 @@ class ProfileService
     public function fetchUserPurchasedCourseLevels(int $userId, ?int $page = null, ?int $limit = null)
     {
         $query = CourseLevelPurchase::with([
-            'courseLevel',            
+            'courseLevel.course.category',            
         ])
         ->where('user_id', $userId)
         ->orderByDesc('id');
