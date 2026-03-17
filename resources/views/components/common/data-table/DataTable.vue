@@ -13,6 +13,10 @@ const expandedRow = ref<number | null>(null);
 const loadingRow = ref<number | null>(null);
 const subData = reactive<Record<number, any[]>>({});
 
+function resolve(val: any, row: any, extraArgs?: any) {
+    return typeof val === "function" ? val(row, extraArgs) : val;
+}
+
 function goToRoute(col: any, row: any) {
     router.push({
         name: col.routeName,
@@ -103,7 +107,6 @@ defineExpose({
                                             :is="col.render(row, rowIndex, props.extraArgs)" />
                                         <div v-else v-html="col.render(row, rowIndex, props.extraArgs)"></div>
                                     </template>
-
                                     <template v-else>
                                         <span
                                             class="block truncate max-w-[180px] group-hover:text-foreground transition-colors">
@@ -115,12 +118,13 @@ defineExpose({
                                 <TableCell v-if="props.actions || props.fetchSubData" class="px-4 py-4">
                                     <div class="flex items-center justify-center gap-3">
                                         <template v-for="(action, actionIdx) in props.actions" :key="actionIdx">
-                                            <button v-if="!action.show || action.show(row)"
-                                                :disabled="action.disabled ? action.disabled(row) : false"
+                                            <button v-if="!action.show || resolve(action.show, row, props.extraArgs)"
+                                                :disabled="resolve(action.disabled, row, props.extraArgs)"
                                                 class="p-2 rounded-lg bg-secondary text-muted-foreground transition-all hover:bg-primary hover:text-primary-foreground disabled:opacity-20 disabled:cursor-not-allowed shadow-sm border border-border"
                                                 @click.stop="action.onClick ? action.onClick(row, props.extraArgs) : null"
-                                                :title="action.tooltip">
-                                                <component :is="action.icon" class="w-4 h-4" />
+                                                :title="resolve(action.tooltip, row, props.extraArgs)">
+                                                <component :is="resolve(action.icon, row, props.extraArgs)"
+                                                    class="w-4 h-4" />
                                             </button>
                                         </template>
 
@@ -172,7 +176,6 @@ defineExpose({
                                                                 v-html="col.render(subRow, subIndex, props.extraArgs)">
                                                             </div>
                                                         </template>
-
                                                         <template v-else>
                                                             <span>
                                                                 {{
@@ -187,11 +190,14 @@ defineExpose({
                                                     <TableCell v-if="props.subActions" class="px-4 py-3 text-center">
                                                         <div class="flex items-center justify-center gap-3">
                                                             <template v-for="(action, i) in props.subActions" :key="i">
-                                                                <button v-if="!action.show || action.show(subRow)"
+                                                                <button
+                                                                    v-if="!action.show || resolve(action.show, subRow, props.extraArgs)"
                                                                     class="p-2 rounded-lg bg-secondary text-muted-foreground transition-all hover:bg-primary hover:text-primary-foreground shadow-sm border border-border"
                                                                     @click.stop="action.onClick?.(subRow, props.extraArgs)"
-                                                                    :title="action.tooltip">
-                                                                    <component :is="action.icon" class="w-4 h-4" />
+                                                                    :title="resolve(action.tooltip, subRow, props.extraArgs)">
+                                                                    <component
+                                                                        :is="resolve(action.icon, subRow, props.extraArgs)"
+                                                                        class="w-4 h-4" />
                                                                 </button>
                                                             </template>
                                                         </div>
