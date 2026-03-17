@@ -13,8 +13,8 @@ export interface ColumnDef<T> {
 }
 
 export interface ActionDef<T> {
-    icon: Component;
-    tooltip?: string;
+    icon: any | ((row: T) => Component);
+    tooltip?: string | ((row: T) => string);
     onClick?: (row: T, ...args: any[]) => void;
     show?: (row: T) => boolean;
     disabled?: (row: T) => boolean;

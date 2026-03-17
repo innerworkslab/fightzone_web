@@ -1,7 +1,15 @@
 import { ActionDef, ColumnDef } from "../common/data-table/type";
-import { Edit2, Folder, Lock, Minus, Plus } from "lucide-vue-next";
+import {
+    Edit2,
+    Folder,
+    Lock,
+    Minus,
+    Plus,
+    ToggleLeft,
+    ToggleRight,
+} from "lucide-vue-next";
 import { RouteNames } from "../../../js/ts/config/route.config";
-import { UsersServices } from "@/api/Users.service";
+import { UsersData, UsersServices } from "@/api/Users.service";
 import { SUCCESS_MESSAGE } from "@/constant/global.constant";
 import { toast } from "vue3-toastify";
 
@@ -153,5 +161,30 @@ export const UserActions: ActionDef<any>[] = [
                 isReadMode: false,
                 refreshCallback: extraArgs.refresh,
             }),
+    },
+    {
+        icon: (row: UsersData) => (row.is_active ? ToggleRight : ToggleLeft),
+        tooltip: (row) =>
+            row.is_active ? "Deactivate Level" : "Activate Level",
+        onClick: (row, extraArgs) => {
+            extraArgs.modalStore.openConfirmModal({
+                message: row.is_active
+                    ? "Are you sure you want to inactivate?"
+                    : "Are you sure you want to activate?",
+                onApprove: async () => {
+                    const response = await toggleStatus(row.id);
+                    if (response?.success) {
+                        toast.success(
+                            response.message ??
+                                (row.is_active
+                                    ? SUCCESS_MESSAGE.INACTIVATED
+                                    : SUCCESS_MESSAGE.ACTIVATED),
+                        );
+                        extraArgs.refresh();
+                    }
+                },
+                approveBtnText: "Verify",
+            });
+        },
     },
 ];

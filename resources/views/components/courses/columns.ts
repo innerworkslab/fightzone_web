@@ -6,8 +6,10 @@ import {
     X,
     CopyPlus,
     CalendarDays,
+    ToggleRight,
+    ToggleLeft,
 } from "lucide-vue-next";
-import { CoursesServices } from "@/api/Courses.service";
+import { CourseData, CoursesServices } from "@/api/Courses.service";
 import { toast } from "vue3-toastify";
 import { RouteNames } from "@/config/route.config";
 import { SUCCESS_MESSAGE } from "@/constant/global.constant";
@@ -201,6 +203,31 @@ export const CoursesActions: ActionDef<any>[] = [
             });
         },
     },
+    {
+        icon: (row: CourseData) => (row.is_active ? ToggleRight : ToggleLeft),
+        tooltip: (row) =>
+            row.is_active ? "Deactivate Level" : "Activate Level",
+        onClick: (row, extraArgs) => {
+            extraArgs.modalStore.openConfirmModal({
+                message: row.is_active
+                    ? "Are you sure you want to inactivate?"
+                    : "Are you sure you want to activate?",
+                onApprove: async () => {
+                    const response = await toggleStatus(row.id);
+                    if (response?.success) {
+                        toast.success(
+                            response.message ??
+                                (row.is_active
+                                    ? SUCCESS_MESSAGE.INACTIVATED
+                                    : SUCCESS_MESSAGE.ACTIVATED),
+                        );
+                        extraArgs.refresh();
+                    }
+                },
+                approveBtnText: "Verify",
+            });
+        },
+    },
 ];
 
 export const CoursesSubActions: ActionDef<any>[] = [
@@ -221,6 +248,31 @@ export const CoursesSubActions: ActionDef<any>[] = [
             extraArgs.router.push({
                 name: RouteNames.EditCourseLevel,
                 params: { courseId: row.course_id, id: row.id },
+            });
+        },
+    },
+    {
+        icon: (row: CourseData) => (row.is_active ? ToggleRight : ToggleLeft),
+        tooltip: (row) =>
+            row.is_active ? "Deactivate Level" : "Activate Level",
+        onClick: (row, extraArgs) => {
+            extraArgs.modalStore.openConfirmModal({
+                message: row.is_active
+                    ? "Are you sure you want to inactivate?"
+                    : "Are you sure you want to activate?",
+                onApprove: async () => {
+                    const response = await toggleCourseLevelStatus(row.id);
+                    if (response?.success) {
+                        toast.success(
+                            response.message ??
+                                (row.is_active
+                                    ? SUCCESS_MESSAGE.INACTIVATED
+                                    : SUCCESS_MESSAGE.ACTIVATED),
+                        );
+                        extraArgs.reloadSubTable(row.__parentRow);
+                    }
+                },
+                approveBtnText: "Verify",
             });
         },
     },
