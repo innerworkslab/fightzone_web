@@ -147,10 +147,12 @@ class ProfileController extends Controller
 
     public function getPurchasedClasses(Request $request)
     {
-        return $this->service->fetchUserPurchasedCourseLevels(
+        $data = $this->service->fetchUserPurchasedCourseLevels(
             ApiUser()->id,
             $request->page,
             $request->limit
         );
+
+        ResponseData($data);
     }
 }
