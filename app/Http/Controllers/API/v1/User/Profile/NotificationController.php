@@ -57,15 +57,16 @@ class NotificationController extends Controller
         $request->validate([
             'ids' => 'required'
         ]);
-        $ids = json_decode($request->ids);        
+
+        $ids = (gettype($request->ids) == 'array')? $request->ids: json_decode($request->ids);
         foreach ($ids as $key => $id) {
-            // code...            
+            // code...
             $this->service->markAsRead(
                 $id,
                 ApiUser()->id,
                 'user'
             );
-        }        
+        }
         ResponseMessage("OK");
     }
 }
