@@ -8,7 +8,16 @@ class CourseCategoryRepository implements CourseCategoryRepositoryInterface
 {
     public function all(bool $onlyActive = true, ?array $filters = [], ?int $limit = null)
     {
-        $query = CourseCategory::query()->orderBy('name');
+        $query = CourseCategory::query()
+            ->select('course_categories.*')
+            ->selectSub(function ($q) {
+                $q->from('lesson_days')
+                    ->join('course_levels', 'lesson_days.course_level_id', '=', 'course_levels.id')
+                    ->join('courses', 'course_levels.course_id', '=', 'courses.id')
+                    ->whereColumn('courses.course_category_id', 'course_categories.id')
+                    ->selectRaw('COUNT(lesson_days.id)');
+            }, 'total_lessons')
+            ->orderBy('name');
 
         if ($onlyActive) {
             $query->where('is_active', true);
