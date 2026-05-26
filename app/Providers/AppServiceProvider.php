@@ -26,7 +26,9 @@ class AppServiceProvider extends ServiceProvider
             'package' => 'App\Models\Package',
             'course' => 'App\Models\Course',
             'course_level' => 'App\Models\CourseLevel',
-            'purchase' => 'App\Models\Purchase'
+            'purchase' => 'App\Models\Purchase',
+            'package_purchase' => 'App\Models\PackagePurchase',
+            'course_level_purchase' => 'App\Models\CourseLevelPurchase',
         ]);
     }
 }
