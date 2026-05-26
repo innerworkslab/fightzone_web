@@ -45,10 +45,14 @@ class DepositController extends Controller
             $request->amount,
         );
 
-        $uploaded = UploadFileToServer($request, "screenshot", "users/{$userId}/deposit_screenshots");
-        $data['screenshot_path'] = $uploaded['file_path'];
-        $deposit = $this->service->updateDeposit($deposit->id, $data);
+        if($deposit){
+            $uploaded = UploadFileToServer($request, "screenshot", "users/{$userId}/deposit_screenshots");
+            $data['screenshot_path'] = $uploaded['file_path'];
+            $deposit = $this->service->updateDeposit($deposit->id, $data);
 
-        ResponseData($deposit);
+            ResponseData($deposit);
+        }else{
+            ResponseMessage("Error occurred when depositing, please try again", 500, false);
+        }
     }
 }

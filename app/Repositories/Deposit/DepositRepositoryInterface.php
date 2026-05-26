@@ -10,7 +10,7 @@ interface DepositRepositoryInterface
 
     public function listForUser(int $userId, ?int $limit = null);
 
-    public function create(array $data): Deposit;
+    public function create(array $data): ?Deposit;
 
     public function findForUpdate(int $id): ?Deposit;
 

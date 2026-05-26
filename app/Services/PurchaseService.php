@@ -135,6 +135,13 @@ class PurchaseService
 
             $this->confirmPurchase(Admin::first(), $purchase->id);
 
+            $type = ucfirst(($purchase->type));
+            (new FirebaseNotificationService($purchase, \App\Models\Admin::all(), $purchase->user_id, 'user'))
+            ->send([
+                'title' => "{$type} purchase by user",
+                'preview' => "{$purchase->user->name} has purchased {$type}: {$purchase->purchasable->name}"
+            ]);
+
             DB::commit();
             return $purchase;
         }catch(\Exception $e){

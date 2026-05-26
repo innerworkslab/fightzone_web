@@ -53,12 +53,30 @@ class DepositService
     public function createDeposit(int $userId, int $paymentMethodId, float $amount)
     {
         $trId = Str::random(8);
-        return $this->repo->create([
+        $deposit = $this->repo->create([
             'user_id' => $userId,
             'payment_method_id' => $paymentMethodId,
             'transaction_id' => $trId,
             'amount' => $amount,
         ]);
+
+        $time = now()->format('Y-m-d H:i');
+        if($deposit){
+            (new FirebaseNotificationService($deposit, \App\Models\Admin::all(), $deposit->user_id, 'user'))
+            ->send([
+                'title' => 'New user deposit',
+                'preview' => "User {$deposit->user->name} deposited {$deposit->amount} on {$time}."
+            ]);
+            return $deposit;
+        }else{
+            $user = \App\Models\User::find($userId);
+            (new FirebaseNotificationService(null, \App\Models\Admin::all(), $userId, 'user'))
+            ->send([
+                'title' => 'New user deposit failed',
+                'preview' => "User {$user->name} deposit of amount {$amount} failed on {$time}."
+            ]);
+            return null;
+        }
     }
 
     public function updateDeposit(int $id, array $data)
@@ -117,6 +135,12 @@ class DepositService
                 ->send([
                     'title' => 'Topup success',
                     'preview' => "Your Topup balance is updated. You now have {$deposit->user->pointBalance->points} total points"
+                ]);
+
+                (new FirebaseNotificationService($deposit, \App\Models\Admin::all(), $admin->id, 'admin'))
+                ->send([
+                    'title' => 'User topup confirmed',
+                    'preview' => "Topup balance of user {$deposit->user->name} is confirmed by {$admin->name}. Amount confirmed is: {$deposit->amount}"
                 ]);
             }
 

@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Mail;
 use App\Models\User;
 
 use App\Services\Auth\SanctumTokenService;
+use App\Services\ThirdParty\Firebase\FirebaseNotificationService;
 
 class RegistrationService
 {
@@ -28,6 +29,12 @@ class RegistrationService
 
         // 5. Send OTP via sms
         // here is the implmentation for SMS sending
+
+        (new FirebaseNotificationService($user, \App\Models\Admin::all(), $user->id, 'user'))
+        ->send([
+            'title' => 'New user registration',
+            'preview' => "User {$user->name} registered into our system"
+        ]);
 
         return $user;
     }

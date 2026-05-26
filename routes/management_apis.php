@@ -4,6 +4,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
 use App\Http\Controllers\API\v1\Management\Auth\LoginController;
+use App\Http\Controllers\API\v1\Management\Auth\NotificationController;
 
 use App\Http\Controllers\API\v1\Management\Courses\CourseController;
 use App\Http\Controllers\API\v1\Management\Courses\CourseCategoryController;
@@ -30,6 +31,13 @@ Route::prefix('/v1/management')->group(function () {
         Route::post('/logout', [LoginController::class, 'logout']);
 
         Route::middleware(['is.active'])->group(function () {
+            Route::controller(NotificationController::class)->group(function(){
+                Route::get('/notifications', 'index');
+                Route::get('/notifications/unread_count', 'getUnreadCount');
+                Route::post('/notifications/{id}/mark_read', 'markAsRead');
+                Route::post('/notifications/mark_all_read', [NotificationController::class, 'markAllAsRead']);
+            });
+
             Route::prefix('/admins')->group(function () {
                 Route::controller(AdminController::class)->group(function () {
                     Route::get('/', 'index');

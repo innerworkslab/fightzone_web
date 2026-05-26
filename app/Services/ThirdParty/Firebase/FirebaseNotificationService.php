@@ -27,7 +27,10 @@ class FirebaseNotificationService
 
     private function getMorphName($model)
     {
-        return array_search(get_class($model), Relation::morphMap());
+        if($model)
+            return array_search(get_class($model), Relation::morphMap());
+        else
+            return null;
     }
 
     public function __construct($model, $people, int $creatorId, string $creatorType)
@@ -57,7 +60,7 @@ class FirebaseNotificationService
             'type' => isset($data['type'])? $data['type'] : 'general',
             'date_time' => $data['date_time'],
             'meta_data' => $data['meta_data'],
-            'notificationable_id' => $this->model->id,
+            'notificationable_id' => ($this->model)? $this->model->id: null,
             'notificationable_type' => $this->modelType,
             'createdable_id' => $this->creatorId,
             'createdable_type' => $this->creatorType,

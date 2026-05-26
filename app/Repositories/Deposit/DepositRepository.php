@@ -48,9 +48,13 @@ class DepositRepository implements DepositRepositoryInterface
         return $query;
     }
 
-    public function create(array $data): Deposit
+    public function create(array $data): ?Deposit
     {
-        return Deposit::create($data);
+        try{
+            return Deposit::create($data);
+        }catch(\Exception $e){
+            return null;
+        }
     }
 
     public function findForUpdate(int $id): ?Deposit
