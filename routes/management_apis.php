@@ -32,6 +32,7 @@ Route::prefix('/v1/management')->group(function () {
 
         Route::middleware(['is.active'])->group(function () {
             Route::controller(NotificationController::class)->group(function(){
+                Route::get('/notification_test', 'testNoti');
                 Route::get('/notifications', 'index');
                 Route::get('/notifications/unread_count', 'getUnreadCount');
                 Route::post('/notifications/{id}/mark_read', 'markAsRead');

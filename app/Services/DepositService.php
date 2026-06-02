@@ -70,7 +70,7 @@ class DepositService
             return $deposit;
         }else{
             $user = \App\Models\User::find($userId);
-            (new FirebaseNotificationService(null, \App\Models\Admin::all(), $userId, 'user'))
+            (new FirebaseNotificationService($deposit, \App\Models\Admin::all(), $userId, 'user'))
             ->send([
                 'title' => 'New user deposit failed',
                 'preview' => "User {$user->name} deposit of amount {$amount} failed on {$time}."

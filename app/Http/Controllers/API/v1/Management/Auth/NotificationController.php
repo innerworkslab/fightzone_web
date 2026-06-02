@@ -8,6 +8,8 @@ use App\Http\Controllers\Controller;
 
 use App\Services\NotificationService;
 
+use App\Services\ThirdParty\Firebase\FirebaseNotificationService;
+
 class NotificationController extends Controller
 {
     //
@@ -27,6 +29,17 @@ class NotificationController extends Controller
         );
 
         ResponseData($notifications);
+    }
+
+    public function testNoti(Request $request)
+    {
+	(new FirebaseNotificationService(\App\Models\Admin::first(), \App\Models\Admin::all(), ApiUser()->id, 'admin'))
+            ->send([
+                'title' => "Test noti",
+                'preview' => "This is test noti"
+            ]);
+
+         ResponseMessage("Test noti broadcasted");
     }
 
     public function getUnreadCount()
