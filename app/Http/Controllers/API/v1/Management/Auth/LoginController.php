@@ -25,7 +25,7 @@ class LoginController extends Controller
         ], 'admin');
 
         if($request->fcm_token){
-            (new StoreFcmTokenService())->run($request->fcm_token, $data['user']['id'], 'user');
+            (new StoreFcmTokenService())->run($request->fcm_token, $data['user']['id'], 'admin');
         }
 
         ResponseData($data);
