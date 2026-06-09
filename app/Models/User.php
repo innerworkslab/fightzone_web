@@ -190,4 +190,9 @@ class User extends Authenticatable implements MustVerifyEmail
     {
         return $this->personTokens()->pluck('fcm_token')->toArray();
     }
+
+    public function physicalProfile()
+    {
+        return $this->hasOne(UserPhysicalProfile::class);
+    }
 }

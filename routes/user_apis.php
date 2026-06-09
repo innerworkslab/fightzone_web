@@ -1,6 +1,5 @@
 <?php
 
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
 use App\Http\Controllers\API\v1\User\Auth\LoginController;
@@ -11,6 +10,7 @@ use App\Http\Controllers\API\v1\User\Consumption\WalkinController;
 
 use App\Http\Controllers\API\v1\User\Profile\ProfileController;
 use App\Http\Controllers\API\v1\User\Profile\NotificationController;
+use App\Http\Controllers\API\v1\User\Profile\PhysicalProfileController;
 
 use App\Http\Controllers\API\v1\User\Purchase\DepositController;
 use App\Http\Controllers\API\v1\User\Purchase\PaymentMethodController;
@@ -44,6 +44,8 @@ Route::prefix('/v1')->group(function () {
                 Route::post('/update_name_phone', [ProfileController::class, 'changeNameOrPhone']);
 
                 Route::get('/classes', [ProfileController::class, 'getPurchasedClasses']);
+                Route::get('/physical', [PhysicalProfileController::class, 'show']);
+                Route::post('/physical', [PhysicalProfileController::class, 'store']);
             });
 
             Route::get('/payment-methods', [PaymentMethodController::class, 'index']);
