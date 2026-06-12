@@ -42,6 +42,7 @@ class PaymentMethodController extends Controller
             'holder' => 'required|string|max:255',
             'account_number' => 'required|string|max:255',
             'logo' => 'sometimes|image|max:2048',
+            'qr' => 'sometimes|image|max:2048',
             'is_active' => 'sometimes|boolean'
         ]);
 
@@ -51,6 +52,12 @@ class PaymentMethodController extends Controller
             $uploaded = UploadFileToServer($request, 'logo', "payment-method-logos/{$item->id}");
             $path = $uploaded['file_path'];
             $item = $this->service->update($item->id, ['logo_path' => $path]);
+        }
+
+        if ($request->hasFile('qr')) {
+            $uploaded = UploadFileToServer($request, 'qr', "payment-method-qr/{$item->id}");
+            $path = $uploaded['file_path'];
+            $item = $this->service->update($item->id, ['qr_path' => $path]);
         }
 
         ResponseData($item, 201);
@@ -70,6 +77,7 @@ class PaymentMethodController extends Controller
             'holder' => 'sometimes|string|max:255',
             'account_number' => 'sometimes|string|max:255',
             'logo' => 'sometimes|image|max:2048',
+            'qr' => 'sometimes|image|max:2048',
             'is_active' => 'sometimes|boolean'
         ]);
 
@@ -86,6 +94,16 @@ class PaymentMethodController extends Controller
             $validated['logo_path'] = $path;
         }
 
+        if ($request->hasFile('qr')) {
+            // delete old qr if exists
+            if ($item->getQrPath()) {
+                DeleteFileFromServer($item->getQrPath());
+            }
+            $uploaded = UploadFileToServer($request, 'qr', "payment-method-qr/{$id}");
+            $path = $uploaded['file_path'];
+            $validated['qr_path'] = $path;
+        }
+
         $updated = $this->service->update($id, $validated);
         if (! $updated) ResponseMessage('Payment method not found', 404);
         ResponseData($updated);
@@ -99,6 +117,11 @@ class PaymentMethodController extends Controller
         // delete logo file if exists
         if ($item->logo_path) {
             DeleteFileFromServer($item->logo_path);
+        }
+
+        // delete qr file if exists
+        if ($item->qr_path) {
+            DeleteFileFromServer($item->qr_path);
         }
 
         $deleted = $this->service->delete($id);

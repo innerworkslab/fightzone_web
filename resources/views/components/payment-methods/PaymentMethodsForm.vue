@@ -28,6 +28,7 @@ const schema = yup.object({
     holder: yup.string().required("Holder name is required").min(2, "Holder name must be at least 2 characters"),
     account_number: yup.string().required("Account number is required").min(4, "Account number must be at least 4 characters"),
     logo: yup.array().nullable().max(1, "Please choose one image only."),
+    qr: yup.array().nullable().max(1, "Please choose one image only."),
 });
 
 const { handleSubmit, setValues } = useForm<PaymentMethodsPayload>({
@@ -36,7 +37,8 @@ const { handleSubmit, setValues } = useForm<PaymentMethodsPayload>({
         name: "",
         holder: "",
         account_number: "",
-        logo: []
+        logo: [],
+        qr: []
     }
 });
 
@@ -44,6 +46,7 @@ const { value: name } = useField<string>("name");
 const { value: holder } = useField<string>("holder");
 const { value: account_number } = useField<string>("account_number");
 const { value: logo } = useField<(File | string)[]>("logo");
+const { value: qr } = useField<(File | string)[]>("qr");
 
 watch(fetchedPaymentMethod, (newVal) => {
 
@@ -53,6 +56,7 @@ watch(fetchedPaymentMethod, (newVal) => {
             holder: newVal.data.holder,
             account_number: newVal.data.account_number,
             logo: newVal.data.logo_url ? [newVal.data.logo_url] : [],
+            qr: newVal.data.qr_url ? [newVal.data.qr_url] : [],
         });
     }
 }, { immediate: true, deep: true });
@@ -109,6 +113,13 @@ const submitForm = handleSubmit(async (values) => {
                     help-text="Upload a logo image for the payment method" :disabled="isReadMode"
                     preview-class="w-full h-32 object-cover" />
                 <ErrorMessage name="logo" class="block text-start text-red-500 text-sm mt-1" />
+            </div>
+
+            <div class="col-span-2">
+                <FormImage id="qr" label="QR Code" v-model="qr" accept="image/*"
+                    help-text="Upload a QR code image for the payment method" :disabled="isReadMode"
+                    preview-class="w-32 h-32 object-cover" />
+                <ErrorMessage name="qr" class="block text-start text-red-500 text-sm mt-1" />
             </div>
         </div>
 

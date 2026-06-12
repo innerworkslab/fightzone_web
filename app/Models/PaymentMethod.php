@@ -12,15 +12,18 @@ class PaymentMethod extends Model
         'holder',
         'account_number',
         'logo_path',
+        'qr_path',
         'is_active'
     ];
 
     protected $hidden = [
-        'logo_path'
+        'logo_path',
+        'qr_path'
     ];
 
     protected $appends = [
-        'logo_url'
+        'logo_url',
+        'qr_url'
     ];
 
     protected $casts = [
@@ -32,10 +35,23 @@ class PaymentMethod extends Model
         return $this->logo_path;
     }
 
+    public function getQrPath()
+    {
+        return $this->qr_path;
+    }
+
     public function getLogoUrlAttribute()
     {
         if($this->logo_path){
             return Storage::url($this->logo_path);
+        }
+        return null;
+    }
+
+    public function getQrUrlAttribute()
+    {
+        if ($this->qr_path) {
+            return Storage::url($this->qr_path);
         }
         return null;
     }

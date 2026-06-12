@@ -15,6 +15,8 @@ export interface PaymentMethodsData {
     account_number?: string;
     logo?: string;
     logo_url?: string;
+    qr?: string;
+    qr_url?: string;
     is_active?: boolean;
     created_at?: string;
     updated_at?: string;
@@ -26,6 +28,7 @@ export interface PaymentMethodsPayload {
     account_number: string;
     logo?: (File | string)[];
     is_active?: boolean;
+    qr?: (File | string)[];
 }
 
 const baseURL = `${API_URLS.VERSION}/${API_URLS.MANAGEMENT}/${API_URLS.PAYMENT}`;
@@ -52,6 +55,12 @@ const usePaymentMethodActions = () => {
                 formData.append("logo", logoFile);
             }
         }
+        if (data.qr && data.qr.length > 0) {
+            const qrFile = data.qr[0];
+            if (qrFile instanceof File) {
+                formData.append("qr", qrFile);
+            }
+        }
 
         return mutate(METHODS.POST, baseURL, formData, {
             headers: {
@@ -73,6 +82,13 @@ const usePaymentMethodActions = () => {
             const logoFile = data.logo[0];
             if (logoFile instanceof File) {
                 formData.append("logo", logoFile);
+            }
+        }
+
+        if (data.qr && data.qr.length > 0) {
+            const qrFile = data.qr[0];
+            if (qrFile instanceof File) {
+                formData.append("qr", qrFile);
             }
         }
 
