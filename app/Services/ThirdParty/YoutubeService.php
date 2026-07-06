@@ -47,13 +47,39 @@ class YoutubeService
 
     private function extractVideoId(string $url): ?string
     {
-        preg_match(
-            '/(?:youtube\.com\/watch\?v=|youtu\.be\/)([A-Za-z0-9_-]{11})/',
-            $url,
-            $matches
-        );
+        $path = parse_url($url, PHP_URL_PATH);
+        $host = strtolower((string) parse_url($url, PHP_URL_HOST));
 
-        return $matches[1] ?? null;
+        if (in_array($host, ['youtu.be', 'www.youtu.be'], true)) {
+            $videoId = trim((string) $path, '/');
+
+            return $this->isValidVideoId($videoId) ? $videoId : null;
+        }
+
+        parse_str((string) parse_url($url, PHP_URL_QUERY), $query);
+
+        if (
+            in_array($host, ['youtube.com', 'www.youtube.com', 'm.youtube.com'], true)
+            && isset($query['v'])
+            && $this->isValidVideoId($query['v'])
+        ) {
+            return $query['v'];
+        }
+
+        if (
+            in_array($host, ['youtube.com', 'www.youtube.com', 'm.youtube.com'], true)
+            && is_string($path)
+            && preg_match('#^/(embed|shorts)/([A-Za-z0-9_-]{11})$#', $path, $matches)
+        ) {
+            return $matches[2];
+        }
+
+        return null;
+    }
+
+    private function isValidVideoId(string $videoId): bool
+    {
+        return preg_match('/^[A-Za-z0-9_-]{11}$/', $videoId) === 1;
     }
 
     private function iso8601ToSeconds(string $duration): int
