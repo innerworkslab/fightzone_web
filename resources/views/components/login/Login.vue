@@ -11,6 +11,7 @@ import { COOKIES, LOCALSTORAGE } from "@/constant/global.constant";
 import { Button } from "@/components/ui/button";
 import { Swords, ArrowRight } from "lucide-vue-next";
 import { RouteNames } from "@/config/route.config";
+import { getAdminFcmToken } from "@/lib/firebase.messaging";
 
 const router = useRouter();
 
@@ -33,7 +34,11 @@ const { value: password } = useField<string>("password");
 const { login, loading } = AuthServices.useAuthActions();
 
 const submitLogin = handleSubmit(async (values) => {
-    const response = await login(values);
+    const fcmToken = await getAdminFcmToken();
+    const response = await login({
+        ...values,
+        fcm_token: fcmToken,
+    });
     const data = response?.data;
 
     if (response?.success) {

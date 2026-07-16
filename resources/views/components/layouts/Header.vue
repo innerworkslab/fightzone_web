@@ -4,6 +4,7 @@ import { useRoute } from "vue-router";
 import { Label } from "reka-ui";
 import { routes } from "../../../js/ts/config/route.config";
 import { SidebarChild, SidebarItem } from "@/router/type";
+import NotificationBell from "../notifications/NotificationBell.vue";
 
 const route = useRoute();
 
@@ -36,7 +37,8 @@ const currentHeader = computed(() => {
 </script>
 
 <template>
-    <header v-if="currentHeader" class="border-b pb-3">
+    <header v-if="currentHeader" class="flex items-center justify-between border-b pb-3">
         <Label class="text-xl font-bold text-primary">{{ currentHeader }}</Label>
+        <NotificationBell />
     </header>
 </template>

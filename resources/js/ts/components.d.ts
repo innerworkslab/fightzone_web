@@ -41,6 +41,7 @@ declare module 'vue' {
     LessonDaysList: typeof import('./../../views/components/lesson-days/LessonDaysList.vue')['default']
     LessonDayVideoForm: typeof import('./../../views/components/lesson-day-videos/lessonDayVideoForm.vue')['default']
     Login: typeof import('./../../views/components/login/Login.vue')['default']
+    NotificationBell: typeof import('./../../views/components/notifications/NotificationBell.vue')['default']
     PackagesFilter: typeof import('./../../views/components/packages/PackagesFilter.vue')['default']
     PackagesForm: typeof import('./../../views/components/packages/PackagesForm.vue')['default']
     PackagesList: typeof import('./../../views/components/packages/PackagesList.vue')['default']
