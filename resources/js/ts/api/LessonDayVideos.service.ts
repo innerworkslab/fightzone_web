@@ -58,12 +58,17 @@ const useLessonDayVideosActions = () => {
         return mutate(METHODS.POST, `/${baseURL}/${id}`, data);
     };
 
+    const deleteLessonDayVideo = (id: number) => {
+        return mutate(METHODS.DELETE, `/${baseURL}/${id}`);
+    };
+
     return {
         loading,
         error,
         data,
         createLessonDayVideo,
         updateLessonDayVideo,
+        deleteLessonDayVideo,
     };
 };
 

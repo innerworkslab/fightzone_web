@@ -80,6 +80,19 @@ class LessonDayRepository implements LessonDayRepositoryInterface
 
     public function updateLessonDayVideo(int $id, array $data)
     {
-        return $this->findLessonDayVideo($id)->update($data);
+        $lessonDayVideo = $this->findLessonDayVideo($id);
+        if (!$lessonDayVideo) {
+            throw new \RuntimeException('Lesson day video not found');
+        }
+        return $lessonDayVideo->update($data);
+    }
+
+    public function deleteLessonDayVideo(int $id)
+    {
+        $lessonDayVideo = $this->findLessonDayVideo($id);
+        if (!$lessonDayVideo) {
+            throw new \RuntimeException('Lesson day video not found');
+        }
+        return $lessonDayVideo->delete();
     }
 }

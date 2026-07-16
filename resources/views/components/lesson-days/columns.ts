@@ -1,6 +1,10 @@
 import { RouteNames } from "@/config/route.config";
 import { ActionDef, ColumnDef } from "../common/data-table/type";
-import { Edit2, Folder, Upload } from "lucide-vue-next";
+import { Edit2, Trash2, Upload } from "lucide-vue-next";
+import { toast } from "vue3-toastify";
+import { LessonDayVideosServices } from "@/api/LessonDayVideos.service";
+
+const { deleteLessonDayVideo } = LessonDayVideosServices.useLessonDayVideosActions();
 
 export const LessonDaysColumns: ColumnDef<any>[] = [
     {
@@ -88,8 +92,6 @@ export const LessonDaySubActions: ActionDef<any>[] = [
         icon: Edit2,
         tooltip: "Edit Video",
         onClick: (row, extraArgs) => {
-            console.log("row", row);
-
             extraArgs.modalStore.openModal({
                 formIndex: "lessonDayVideo",
                 initialValues: row,
@@ -98,6 +100,26 @@ export const LessonDaySubActions: ActionDef<any>[] = [
                     extraArgs.reloadSubTable({
                         id: row.lesson_day_id,
                     }),
+            });
+        },
+    },
+    {
+        icon: Trash2,
+        tooltip: "Delete Video",
+        onClick: (row, extraArgs) => {
+            extraArgs.modalStore.openConfirmModal({
+                message: `Delete "${row.name ?? "this video"}" from this lesson day?`,
+                onApprove: async () => {
+                    const response = await deleteLessonDayVideo(row.id);
+                    if (response?.success) {
+                        toast.success(response.message ?? "Lesson day video deleted");
+                        extraArgs.reloadSubTable({
+                            id: row.lesson_day_id,
+                        });
+                        extraArgs.refresh();
+                    }
+                },
+                approveBtnText: "Delete",
             });
         },
     },

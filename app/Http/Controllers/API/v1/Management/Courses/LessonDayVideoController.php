@@ -48,4 +48,10 @@ class LessonDayVideoController extends Controller
         $this->service->update($id, $request->all());
         ResponseMessage("Lesson day video updated", 200);
     }
+
+    public function destroy($id)
+    {
+        $this->service->delete((int) $id);
+        ResponseMessage("Lesson day video deleted", 200);
+    }
 }

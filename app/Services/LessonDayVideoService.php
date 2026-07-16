@@ -34,6 +34,9 @@ class LessonDayVideoService
     public function update(int $id, array $data)
     {
         $lessonDayVideo = $this->repo->findLessonDayVideo($id);
+        if (!$lessonDayVideo) {
+            throw new \RuntimeException('Lesson day video not found');
+        }
         if($lessonDayVideo->url == $data['url']){
             return $this->repo->updateLessonDayVideo($id, $data);
         }else{
@@ -50,5 +53,10 @@ class LessonDayVideoService
             return $this->repo->updateLessonDayVideo($id, $videoData);
         }
 
+    }
+
+    public function delete(int $id)
+    {
+        return $this->repo->deleteLessonDayVideo($id);
     }
 }

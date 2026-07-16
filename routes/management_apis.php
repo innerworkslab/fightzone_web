@@ -168,6 +168,7 @@ Route::prefix('/v1/management')->group(function () {
                 Route::controller(LessonDayVideoController::class)->group(function () {
                     Route::post('/', 'store');
                     Route::post('/{id}', 'update');
+                    Route::delete('/{id}', 'destroy');
                 });
             });
 

@@ -21,4 +21,6 @@ interface LessonDayRepositoryInterface
     public function findLessonDayVideo(int $id);
 
     public function updateLessonDayVideo(int $id, array $data);
+
+    public function deleteLessonDayVideo(int $id);
 }
