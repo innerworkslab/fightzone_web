@@ -40,7 +40,7 @@ class LessonDay extends Model
 
     public function videos()
     {
-        return $this->hasMany(LessonDayVideo::class);
+        return $this->hasMany(LessonDayVideo::class)->orderBy('id');
     }
 
     /**

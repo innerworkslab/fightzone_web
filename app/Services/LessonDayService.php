@@ -93,6 +93,9 @@ class LessonDayService
     {
         $lessonDays = LessonDay::with('videos')
             ->where('course_level_id', $levelId)
+            ->whereHas('courseLevel', function ($query) use ($courseId) {
+                $query->where('course_id', $courseId);
+            })
             ->orderBy('day_number')
             ->get();
 
@@ -129,20 +132,7 @@ class LessonDayService
 
         // Determine how many lesson days should be accessible based on
         // how many days have passed since the subscription effectively started.
-        $accessibleCount = 0;
-        if ($clp->valid_from) {
-            // Use calendar-day difference, but subtract one so that:
-            // - On the first subscription day, only the first lesson day is accessible
-            // - Each subsequent day unlocks exactly one more lesson day
-            $daysSinceStart = $clp->valid_from->startOfDay()->diffInDays($now->startOfDay()) ; // - 1 is removed after diffInDays()
-            if ($daysSinceStart < 0) {
-                $daysSinceStart = 0;
-            }
-
-            // On the first subscription day, only the first lesson day is accessible.
-            // Each subsequent day unlocks the next lesson day, until all are accessible.
-            $accessibleCount = min($daysSinceStart + 1, $lessonDays->count());
-        }
+        $accessibleCount = $this->getAccessibleLessonDayCount($clp, $lessonDays->count(), $now);
 
         $dayIds = $lessonDays->pluck('id')->all();
 
@@ -174,18 +164,19 @@ class LessonDayService
             $day->accessible = ($index < $accessibleCount);
 
             $dc = $dayCompletions->get($day->id);
-            if ($dc) {
-                $day->is_completed = true;
-                $day->completed_at = $dc->completed_at;
-            }
-
+            $completedVideosCount = 0;
             foreach ($day->videos as $video) {
-                $vc = $videoCompletions[$video->id] ?? null;
+                $vc = $videoCompletions->get($video->id);
                 if ($vc) {
                     $video->is_completed = true;
                     $video->completed_at = $vc->completed_at;
+                    $completedVideosCount++;
                 }
             }
+
+            $day->is_completed = $day->videos->count() > 0
+                && $completedVideosCount === $day->videos->count();
+            $day->completed_at = $day->is_completed ? $dc?->completed_at : null;
         }
 
         return $lessonDays;
@@ -199,6 +190,9 @@ class LessonDayService
         $lessonDay = LessonDay::with('videos')
             ->where('id', $lessonDayId)
             ->where('course_level_id', $levelId)
+            ->whereHas('courseLevel', function ($query) use ($courseId) {
+                $query->where('course_id', $courseId);
+            })
             ->first();
 
         if (! $lessonDay) {
@@ -235,15 +229,7 @@ class LessonDayService
             ->orderBy('day_number')
             ->get(['id']);
 
-        $accessibleCount = 0;
-        if ($clp->valid_from) {
-            $daysSinceStart = $clp->valid_from->startOfDay()->diffInDays($now->startOfDay()) - 1;
-            if ($daysSinceStart < 0) {
-                $daysSinceStart = 0;
-            }
-
-            $accessibleCount = min($daysSinceStart + 1, $allDays->count());
-        }
+        $accessibleCount = $this->getAccessibleLessonDayCount($clp, $allDays->count(), $now);
 
         $position = $allDays->search(function ($d) use ($lessonDay) {
             return $d->id === $lessonDay->id;
@@ -258,12 +244,8 @@ class LessonDayService
             ->where('lesson_day_id', $lessonDay->id)
             ->first();
 
-        if ($dayCompletion) {
-            $lessonDay->is_completed = true;
-            $lessonDay->completed_at = $dayCompletion->completed_at;
-        }
-
         // Videos completion in one query
+        $completedVideosCount = 0;
         $videoIds = $lessonDay->videos->pluck('id')->all();
         if (! empty($videoIds)) {
             $videoCompletions = LessonDayVideoCompletion::where('course_level_purchase_id', $clp->id)
@@ -276,9 +258,14 @@ class LessonDayService
                 if ($vc) {
                     $video->is_completed = true;
                     $video->completed_at = $vc->completed_at;
+                    $completedVideosCount++;
                 }
             }
         }
+
+        $lessonDay->is_completed = $lessonDay->videos->count() > 0
+            && $completedVideosCount === $lessonDay->videos->count();
+        $lessonDay->completed_at = $lessonDay->is_completed ? $dayCompletion?->completed_at : null;
 
         // Per-lesson summary: tasks are lesson videos for this day
         $totalTasks = $lessonDay->videos->count();
@@ -372,6 +359,10 @@ class LessonDayService
                         'completed_at' => $now,
                     ]
                 );
+            } else {
+                LessonDayCompletion::where('course_level_purchase_id', $clp->id)
+                    ->where('lesson_day_id', $lessonDay->id)
+                    ->delete();
             }
 
             DB::commit();
@@ -422,13 +413,26 @@ class LessonDayService
             }
         }
 
+        $lessonDays = LessonDay::where('course_level_id', (int) $courseLevel->id)
+            ->orderBy('day_number')
+            ->get(['id']);
+
+        $accessibleCount = $this->getAccessibleLessonDayCount($clp, $lessonDays->count(), $now);
+        $accessibleLessonDayIds = $lessonDays->take($accessibleCount)->pluck('id')->all();
+
+        if (! in_array((int) $lessonDay->id, $accessibleLessonDayIds, true)) {
+            throw new \RuntimeException('This lesson day is not accessible yet.');
+        }
+
         $currentDayNumber = (int) $lessonDay->day_number;
 
         // Previous: latest video before current in (day_number, video_id) ordering
         $prev = LessonDayVideo::query()
+            ->with('lessonDay')
             ->select('lesson_day_videos.*')
             ->join('lesson_days', 'lesson_days.id', '=', 'lesson_day_videos.lesson_day_id')
             ->where('lesson_days.course_level_id', (int) $courseLevel->id)
+            ->whereIn('lesson_days.id', $accessibleLessonDayIds)
             ->where(function ($q) use ($currentDayNumber, $lessonDayVideoId) {
                 $q->where('lesson_days.day_number', '<', $currentDayNumber)
                     ->orWhere(function ($q2) use ($currentDayNumber, $lessonDayVideoId) {
@@ -442,9 +446,11 @@ class LessonDayService
 
         // Next: earliest video after current in (day_number, video_id) ordering
         $next = LessonDayVideo::query()
+            ->with('lessonDay')
             ->select('lesson_day_videos.*')
             ->join('lesson_days', 'lesson_days.id', '=', 'lesson_day_videos.lesson_day_id')
             ->where('lesson_days.course_level_id', (int) $courseLevel->id)
+            ->whereIn('lesson_days.id', $accessibleLessonDayIds)
             ->where(function ($q) use ($currentDayNumber, $lessonDayVideoId) {
                 $q->where('lesson_days.day_number', '>', $currentDayNumber)
                     ->orWhere(function ($q2) use ($currentDayNumber, $lessonDayVideoId) {
@@ -455,6 +461,8 @@ class LessonDayService
             ->orderBy('lesson_days.day_number')
             ->orderBy('lesson_day_videos.id')
             ->first();
+
+        $this->applyCompletionFlagsToVideos(collect([$current, $prev, $next])->filter(), $clp);
 
         return [
             'current' => $current,
@@ -470,5 +478,43 @@ class LessonDayService
             ->where('course_level_id', $courseLevelId)
             ->orderByDesc('valid_until')
             ->first();
+    }
+
+    private function getAccessibleLessonDayCount(CourseLevelPurchase $purchase, int $totalLessonDays, $now): int
+    {
+        if (! $purchase->valid_from || $totalLessonDays < 1) {
+            return 0;
+        }
+
+        $daysSinceStart = $purchase->valid_from
+            ->copy()
+            ->startOfDay()
+            ->diffInDays($now->copy()->startOfDay());
+
+        if ($daysSinceStart < 0) {
+            $daysSinceStart = 0;
+        }
+
+        return min($daysSinceStart + 1, $totalLessonDays);
+    }
+
+    private function applyCompletionFlagsToVideos($videos, CourseLevelPurchase $purchase): void
+    {
+        $videoIds = $videos->pluck('id')->all();
+        if (empty($videoIds)) {
+            return;
+        }
+
+        $completions = LessonDayVideoCompletion::where('course_level_purchase_id', $purchase->id)
+            ->whereIn('lesson_day_video_id', $videoIds)
+            ->get()
+            ->keyBy('lesson_day_video_id');
+
+        foreach ($videos as $video) {
+            $completion = $completions->get($video->id);
+            $video->is_completed = (bool) $completion;
+            $video->completed_at = $completion?->completed_at;
+            $video->accessible = true;
+        }
     }
 }
