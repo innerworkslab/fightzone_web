@@ -9,12 +9,22 @@ self.addEventListener("push", (event) => {
     }
 
     event.waitUntil(
-        self.registration.showNotification(title, {
-            body: notification.body || data.preview || data.body,
-            icon: notification.icon || "/favicon.ico",
-            image: notification.image,
-            data,
-        }),
+        Promise.all([
+            self.registration.showNotification(title, {
+                body: notification.body || data.preview || data.body,
+                icon: notification.icon || "/favicon.ico",
+                image: notification.image,
+                data,
+            }),
+            clients.matchAll({ type: "window", includeUncontrolled: true }).then((clientList) => {
+                clientList.forEach((client) => {
+                    client.postMessage({
+                        type: "fcm-notification",
+                        payload,
+                    });
+                });
+            }),
+        ]),
     );
 });
 

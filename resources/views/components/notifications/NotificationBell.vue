@@ -6,13 +6,17 @@ import {
     NotificationsServices,
     type AdminNotification,
 } from "@/api/Notifications.service";
-import { listenForForegroundMessages } from "@/lib/firebase.messaging";
+import {
+    listenForForegroundMessages,
+    listenForServiceWorkerMessages,
+} from "@/lib/firebase.messaging";
 
 const isOpen = ref(false);
 const loading = ref(false);
 const unreadCount = ref(0);
 const notifications = ref<AdminNotification[]>([]);
 let unsubscribeMessages: (() => void) | null = null;
+let unsubscribeServiceWorkerMessages: (() => void) | null = null;
 
 const unreadIds = computed(() =>
     notifications.value
@@ -51,16 +55,30 @@ const markAllRead = async () => {
     await refreshNotifications();
 };
 
+const handleVisibilityChange = () => {
+    if (document.visibilityState === "visible") {
+        refreshNotifications();
+    }
+};
+
 onMounted(async () => {
     await refreshNotifications();
     unsubscribeMessages = await listenForForegroundMessages(async (payload) => {
         toast.info(payload.notification?.title || "New notification");
         await refreshNotifications();
     });
+    unsubscribeServiceWorkerMessages = await listenForServiceWorkerMessages(async () => {
+        await refreshNotifications();
+    });
+    window.addEventListener("focus", refreshNotifications);
+    document.addEventListener("visibilitychange", handleVisibilityChange);
 });
 
 onUnmounted(() => {
     unsubscribeMessages?.();
+    unsubscribeServiceWorkerMessages?.();
+    window.removeEventListener("focus", refreshNotifications);
+    document.removeEventListener("visibilitychange", handleVisibilityChange);
 });
 </script>
 
