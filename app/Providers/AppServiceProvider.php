@@ -5,12 +5,24 @@ namespace App\Providers;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Support\ServiceProvider;
 
+use App\Services\ThirdParty\Video\Providers\VimeoVideoProvider;
+use App\Services\ThirdParty\Video\Providers\YoutubeVideoProvider;
+use App\Services\ThirdParty\Video\VideoMetadataService;
+
 class AppServiceProvider extends ServiceProvider
 {
     /**
      * Register any application services.
      */
-    public function register(): void {}
+    public function register(): void
+    {
+        $this->app->singleton(VideoMetadataService::class, function () {
+            return new VideoMetadataService([
+                new YoutubeVideoProvider(),
+                new VimeoVideoProvider(),
+            ]);
+        });
+    }
 
     /**
      * Bootstrap any application services.

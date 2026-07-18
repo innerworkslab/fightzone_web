@@ -22,14 +22,14 @@ const videoId = computed(() => Number(modalStore.initialValues?.id));
 
 const createSchema = yup.object({
     lesson_day_id: yup.number().required(),
-    url: yup.string().required("Youtube URL is required").url(),
+    url: yup.string().required("Video URL is required").url(),
     type: yup.string().required("Type is required"),
 });
 
 const updateSchema = yup.object({
     name: yup.string().required("Name is required"),
     description: yup.string().required("Description is required"),
-    url: yup.string().required("Youtube URL is required").url(),
+    url: yup.string().required("Video URL is required").url(),
     type: yup.string().required("Type is required"),
 });
 
@@ -147,7 +147,7 @@ const submitForm = handleSubmit(async (values: any) => {
                 <FormInput
                     id="url"
                     v-model="url"
-                    label="Youtube URL"
+                    label="Video URL"
                     :disabled="isReadMode || type === 'Rest'"
                 />
                 <ErrorMessage name="url" class="text-red-500 text-sm" />
@@ -194,7 +194,7 @@ const submitForm = handleSubmit(async (values: any) => {
                     <FormInput
                         id="url"
                         v-model="url"
-                        label="Youtube URL"
+                        label="Video URL"
                         :disabled="isReadMode || type === 'Rest'"
                     />
                     <ErrorMessage name="url" class="text-red-500 text-sm" />

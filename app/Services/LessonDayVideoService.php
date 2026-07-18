@@ -10,16 +10,19 @@ use App\Models\LessonDayVideo;
 use App\Models\LessonDayVideoCompletion;
 use App\Repositories\LessonDay\LessonDayRepositoryInterface;
 
-use App\Services\ThirdParty\YoutubeService;
+use App\Services\ThirdParty\Video\VideoMetadataService;
 
 class LessonDayVideoService
 {
-    public function __construct(protected LessonDayRepositoryInterface $repo, protected YoutubeService $youtubeService){}
+    public function __construct(
+        protected LessonDayRepositoryInterface $repo,
+        protected VideoMetadataService $videoMetadataService
+    ){}
 
     public function attachVideoToLesson(int $lessonDayId, array $data)
     {
         foreach($data as $videoData){
-            $videoMeta = $this->youtubeService->extractMeta($videoData['url']);
+            $videoMeta = $this->videoMetadataService->extractMeta($videoData['url']);
 
             $videoData['thumbnail_url'] = $videoMeta['thumbnail'];
             $videoData['duration'] = (isset($videoData['duration']))? $videoData['duration']: $this->secondsToTime($videoMeta['duration']);
@@ -44,7 +47,7 @@ class LessonDayVideoService
         if($lessonDayVideo->url == $data['url']){
             return $this->repo->updateLessonDayVideo($id, $data);
         }else{
-            $videoMeta = $this->youtubeService->extractMeta($data['url']);
+            $videoMeta = $this->videoMetadataService->extractMeta($data['url']);
             $videoData = [
                 'type' => $data['type'],
                 'url' => $data['url']

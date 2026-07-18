@@ -4,11 +4,14 @@ namespace App\Services;
 
 use App\Repositories\RestVideo\RestVideoRepositoryInterface;
 
-use App\Services\ThirdParty\YoutubeService;
+use App\Services\ThirdParty\Video\VideoMetadataService;
 
 class RestVideoService
 {
-    public function __construct(protected RestVideoRepositoryInterface $repo, protected YoutubeService $youtubeService)
+    public function __construct(
+        protected RestVideoRepositoryInterface $repo,
+        protected VideoMetadataService $videoMetadataService
+    )
     {
 
     }
@@ -29,7 +32,7 @@ class RestVideoService
 
     public function create(array $data)
     {
-        $videoMeta = $this->youtubeService->extractMeta($data['url']);
+        $videoMeta = $this->videoMetadataService->extractMeta($data['url']);
         $data['thumbnail_url'] = $videoMeta['thumbnail'];
         $data['duration'] = (isset($data['duration']))? $data['duration']: $this->secondsToTime($videoMeta['duration']);
 
@@ -44,7 +47,7 @@ class RestVideoService
         if($restVideo->url == $data['url']){
             return $this->repo->update($id, $data);
         }else{
-            $videoMeta = $this->youtubeService->extractMeta($data['url']);
+            $videoMeta = $this->videoMetadataService->extractMeta($data['url']);
             $data['thumbnail_url'] = $videoMeta['thumbnail'];
             $data['duration'] = (isset($data['duration']))? $data['duration']: $this->secondsToTime($videoMeta['duration']);
 
@@ -52,12 +55,6 @@ class RestVideoService
             $data['description'] = (isset($data['description']))? $data['description']: $videoMeta['description'];
             return $this->repo->update($id, $data);
         }
-        $videoMeta = $this->youtubeService->extractMeta($data['url']);
-        $data['thumbnail_url'] = $videoMeta['thumbnail'];
-        $data['duration'] = (isset($data['duration']))? $data['duration']: $this->secondsToTime($videoMeta['duration']);
-
-        $data['name'] = (isset($data['name']))? $data['name']: $videoMeta['name'];
-        $data['description'] = (isset($data['description']))? $data['description']: $videoMeta['description'];
     }
 
     public function delete($id)

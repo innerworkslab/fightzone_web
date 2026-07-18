@@ -20,13 +20,13 @@ const id = computed(() =>
 const videoId = computed(() => modalStore.initialValues?.id);
 
 const createSchema = yup.object({
-    url: yup.string().required("Youtube URL is required").url(),
+    url: yup.string().required("Video URL is required").url(),
 });
 
 const updateSchema = yup.object({
     name: yup.string().required("Name is required"),
     description: yup.string().required("Description is required"),
-    url: yup.string().required("Youtube URL is required").url(),
+    url: yup.string().required("Video URL is required").url(),
 });
 
 const { handleSubmit, setValues } = useForm({
@@ -83,7 +83,7 @@ const submitForm = handleSubmit(async (values: any) => {
     <form @submit.prevent="submitForm" class="space-y-6">
         <div class="grid grid-cols-1 gap-4">
             <div v-if="!isUpdateMode">
-                <FormInput id="url" v-model="url" label="Youtube URL" :disabled="isReadMode" />
+                <FormInput id="url" v-model="url" label="Video URL" :disabled="isReadMode" />
                 <ErrorMessage name="url" class="text-red-500 text-sm" />
             </div>
 
@@ -94,7 +94,7 @@ const submitForm = handleSubmit(async (values: any) => {
                 </div>
 
                 <div v-if="!isReadMode">
-                    <FormInput id="url" v-model="url" label="Youtube URL" :disabled="isReadMode" />
+                    <FormInput id="url" v-model="url" label="Video URL" :disabled="isReadMode" />
                     <ErrorMessage name="url" class="text-red-500 text-sm" />
                 </div>
 
