@@ -5,6 +5,7 @@ export interface Filters {
     page: number;
     month?: string;
     is_active?: string;
+    technique_category_id?: string;
 }
 
 export interface State {
@@ -23,6 +24,7 @@ export const useDataStore = defineStore("data", {
             page: 1,
             month: "",
             is_active: "all",
+            technique_category_id: "",
         },
         temp: [],
         totalItems: 0,
@@ -46,6 +48,7 @@ export const useDataStore = defineStore("data", {
                 page: 1,
                 month: "",
                 is_active: "all",
+                technique_category_id: "",
             };
             this.totalItems = 0;
         },

@@ -34,6 +34,10 @@ use App\Repositories\FeaturedImage\FeaturedImageRepositoryInterface;
 use App\Repositories\FeaturedImage\FeaturedImageRepository;
 use App\Repositories\UserPhysicalProfile\UserPhysicalProfileRepositoryInterface;
 use App\Repositories\UserPhysicalProfile\UserPhysicalProfileRepository;
+use App\Repositories\TechniqueCategory\TechniqueCategoryRepositoryInterface;
+use App\Repositories\TechniqueCategory\TechniqueCategoryRepository;
+use App\Repositories\Technique\TechniqueRepositoryInterface;
+use App\Repositories\Technique\TechniqueRepository;
 
 class RepositoryServiceProvider extends ServiceProvider
 {
@@ -58,6 +62,8 @@ class RepositoryServiceProvider extends ServiceProvider
         $this->app->bind(NotificationRepositoryInterface::class, NotificationRepository::class);
         $this->app->bind(FeaturedImageRepositoryInterface::class, FeaturedImageRepository::class);
         $this->app->bind(UserPhysicalProfileRepositoryInterface::class, UserPhysicalProfileRepository::class);
+        $this->app->bind(TechniqueCategoryRepositoryInterface::class, TechniqueCategoryRepository::class);
+        $this->app->bind(TechniqueRepositoryInterface::class, TechniqueRepository::class);
     }
 
     /**

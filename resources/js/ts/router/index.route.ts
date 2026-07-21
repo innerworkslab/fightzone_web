@@ -25,6 +25,8 @@ import RestDayVideoList from "../../../views/components/rest-videos/RestDayVideo
 import RestDayVideoForm from "../../../views/components/rest-videos/RestDayVideoForm.vue";
 import FeaturedImagesForm from "../../../views/components/featured-images/FeaturedImagesForm.vue";
 import FeaturedImagesList from "../../../views/components/featured-images/FeaturedImagesList.vue";
+import TechniqueCategoriesList from "../../../views/components/technique-categories/TechniqueCategoriesList.vue";
+import TechniquesList from "../../../views/components/techniques/TechniquesList.vue";
 
 const routes = [
     {
@@ -227,6 +229,18 @@ const routes = [
                 path: "featured-images/view/:id",
                 name: RouteNames.ViewFeaturedImage,
                 component: FeaturedImagesForm,
+                meta: { permissions: ["all"] },
+            },
+            {
+                path: "technique-categories",
+                name: RouteNames.TechniqueCategoriesList,
+                component: TechniqueCategoriesList,
+                meta: { permissions: ["all"] },
+            },
+            {
+                path: "techniques",
+                name: RouteNames.TechniquesList,
+                component: TechniquesList,
                 meta: { permissions: ["all"] },
             },
             {

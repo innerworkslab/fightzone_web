@@ -8,6 +8,8 @@ import LessonDayVideoForm from "../../../views/components/lesson-day-videos/less
 import WalkInForm from "../../../views/components/walk-ins/WalkInForm.vue";
 import RestDayVideoForm from "../../../views/components/rest-videos/RestDayVideoForm.vue";
 import FeaturedImagesForm from "../../../views/components/featured-images/FeaturedImagesForm.vue";
+import TechniqueCategoriesForm from "../../../views/components/technique-categories/TechniqueCategoriesForm.vue";
+import TechniquesForm from "../../../views/components/techniques/TechniquesForm.vue";
 
 export const getFormConfig = (initialValues: any, isReadMode: boolean) => ({
     // #A
@@ -94,6 +96,28 @@ export const getFormConfig = (initialValues: any, isReadMode: boolean) => ({
                 ? "View video for this rest day"
                 : "Update video for this rest day"
             : "Upload a video for this rest day",
+    },
+    techniqueCategory: {
+        form: TechniqueCategoriesForm,
+        header: `${
+            initialValues ? (isReadMode ? "(Read Only) " : "Update") : "Create"
+        } Technique Category`,
+        message: "",
+    },
+    technique: {
+        form: TechniquesForm,
+        header: `${
+            initialValues?.id
+                ? isReadMode
+                    ? "(Read Only) "
+                    : "Update"
+                : "Create"
+        } Technique`,
+        message: initialValues?.id
+            ? isReadMode
+                ? "View technique video"
+                : "Update technique video"
+            : "Add a technique video link",
     },
     // #U
     usersChangePassword: {

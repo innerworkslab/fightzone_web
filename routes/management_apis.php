@@ -23,6 +23,8 @@ use App\Http\Controllers\API\v1\Management\Packages\PackageController;
 use App\Http\Controllers\API\v1\Management\SystemConfig\AdminController;
 use App\Http\Controllers\API\v1\Management\SystemConfig\FeaturedImageController;
 use App\Http\Controllers\API\v1\Management\SystemConfig\PaymentMethodController;
+use App\Http\Controllers\API\v1\Management\Techniques\TechniqueCategoryController;
+use App\Http\Controllers\API\v1\Management\Techniques\TechniqueController;
 
 Route::prefix('/v1/management')->group(function () {
     Route::post('/login', [LoginController::class, 'login']);
@@ -174,6 +176,28 @@ Route::prefix('/v1/management')->group(function () {
 
             Route::prefix('/rest-videos')->group(function () {
                 Route::controller(RestVideoController::class)->group(function () {
+                    Route::get('/', 'index');
+                    Route::get('/{id}', 'show');
+                    Route::post('/', 'store');
+                    Route::post('/{id}', 'update');
+                    Route::post('/{id}/toggle', 'toggle');
+                    Route::delete('/{id}', 'destroy');
+                });
+            });
+
+            Route::prefix('/technique-categories')->group(function () {
+                Route::controller(TechniqueCategoryController::class)->group(function () {
+                    Route::get('/', 'index');
+                    Route::get('/{id}', 'show');
+                    Route::post('/', 'store');
+                    Route::post('/{id}', 'update');
+                    Route::post('/{id}/toggle', 'toggle');
+                    Route::delete('/{id}', 'destroy');
+                });
+            });
+
+            Route::prefix('/techniques')->group(function () {
+                Route::controller(TechniqueController::class)->group(function () {
                     Route::get('/', 'index');
                     Route::get('/{id}', 'show');
                     Route::post('/', 'store');

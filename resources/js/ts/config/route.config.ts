@@ -8,6 +8,7 @@ import {
     BookAudio,
     Video,
     Image,
+    Dumbbell,
 } from "lucide-vue-next";
 
 export const RouteNames = {
@@ -49,6 +50,8 @@ export const RouteNames = {
     AddFeaturedImage: "add-featured-image",
     ViewFeaturedImage: "view-featured-image",
     EditFeaturedImage: "edit-featured-image",
+    TechniqueCategoriesList: "technique-categories-list",
+    TechniquesList: "techniques-list",
     Unauthorized: "unauthorized",
 };
 
@@ -326,6 +329,26 @@ export const routes = [
                 name: RouteNames.ViewFeaturedImage,
                 header: "View Featured Image",
                 route: "",
+            },
+        ],
+    },
+    {
+        label: "Techniques",
+        name: "technique_group",
+        icon: Dumbbell,
+        route: "/auth/technique-categories",
+        children: [
+            {
+                label: "Category List",
+                name: RouteNames.TechniqueCategoriesList,
+                header: "Technique Category Management",
+                route: "/auth/technique-categories",
+            },
+            {
+                label: "Technique List",
+                name: RouteNames.TechniquesList,
+                header: "Technique Management",
+                route: "/auth/techniques",
             },
         ],
     },
