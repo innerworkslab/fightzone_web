@@ -4,9 +4,27 @@ import { RouteNames } from "../../../js/ts/config/route.config";
 import { PurchasesServices } from "@/api/Purchases.service";
 import { SUCCESS_MESSAGE } from "@/constant/global.constant";
 import { toast } from "vue3-toastify";
+import { formatPriceOrNumber } from "@/utils/helper";
 
 const { confirmPurchase, rejectPurchase } =
     PurchasesServices.usePurchaseActions();
+
+const trimText = (value?: string | null, limit = 40) => {
+    if (!value) return "-";
+
+    const normalized = value.replace(/\s+/g, " ").trim();
+    const trimmed =
+        normalized.length > limit
+            ? `${normalized.substring(0, limit).trimEnd()}...`
+            : normalized;
+
+    return trimmed
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+};
 
 export const PurchaseColumns: ColumnDef<any>[] = [
     {
@@ -48,12 +66,40 @@ export const PurchaseColumns: ColumnDef<any>[] = [
     {
         label: "Unit Price",
         key: "unit_price",
-        render: (row) => `$${row.unit_price}`,
+        render: (row) => formatPriceOrNumber(row.unit_price),
     },
     {
         label: "Total Points",
         key: "total_points",
         render: (row) => `${row.total_points.toLocaleString()} pts`,
+    },
+    {
+        label: "Note",
+        key: "note",
+        render: (row) =>
+            `<span class="block max-w-[220px] truncate" title="${trimText(row.note, 180)}">${trimText(row.note)}</span>`,
+    },
+    {
+        label: "Certificate",
+        key: "certificate_url",
+        className: "cursor-pointer",
+        render: (row) => {
+            if (!row.certificate_url) return "-";
+
+            return `
+                <div class="inline-flex items-center">
+                    <img src="${row.certificate_url}" alt="Certificate" class="h-10 w-14 rounded-sm object-cover border border-border" />
+                </div>
+            `;
+        },
+        onClick: (row, extraArgs) => {
+            extraArgs.modalStore.openModal({
+                formIndex: "purchase",
+                initialValues: row,
+                isReadMode: true,
+                refreshCallback: extraArgs.refresh,
+            });
+        },
     },
     {
         label: "Status",

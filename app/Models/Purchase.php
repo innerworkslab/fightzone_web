@@ -16,6 +16,8 @@ class Purchase extends Model
         'quantity',
         'unit_price',
         'total_points',
+        'certificate_path',
+        'note',
         'status',
         'admin_id',
         'admin_note',
@@ -28,6 +30,15 @@ class Purchase extends Model
         'total_points' => 'integer',
         'quantity' => 'integer',
     ];
+
+    protected $appends = ['certificate_url'];
+
+    public function getCertificateUrlAttribute()
+    {
+        return $this->certificate_path
+            ? \Illuminate\Support\Facades\Storage::url($this->certificate_path)
+            : null;
+    }
 
     public function user()
     {

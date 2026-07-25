@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed } from "vue";
+import { computed, ref } from "vue";
 import * as yup from "yup";
 import { useForm, useField, ErrorMessage } from "vee-validate";
 import { toast } from "vue3-toastify";
@@ -12,10 +12,11 @@ const modalStore = useModalStore();
 
 const isReadMode = computed(() => modalStore.isReadMode);
 const purchaseData = computed(() => modalStore.initialValues);
+const showRejectForm = ref(false);
 
 const schema = yup.object({
     note: yup.string().when([], {
-        is: () => !isReadMode.value,
+        is: () => showRejectForm.value,
         then: (schema) => schema.required("Rejection note is required").min(5, "Note must be at least 5 characters"),
         otherwise: (schema) => schema.optional(),
     }),
@@ -30,16 +31,37 @@ const { handleSubmit, setValues } = useForm<PurchasesPayload>({
 
 const { value: note } = useField<string>("note");
 
-const { rejectPurchase, loading: isSubmitting } = PurchasesServices.usePurchaseActions();
+const {
+    confirmPurchase,
+    rejectPurchase,
+    loading: isSubmitting,
+} = PurchasesServices.usePurchaseActions();
+
+const confirmRequest = () => {
+    if (!purchaseData.value) return;
+
+    modalStore.openConfirmModal({
+        message: `Confirm access for ${purchaseData.value.purchasable?.name || "this item"}? This will deduct ${Number(purchaseData.value.total_points).toLocaleString()} points from the user's balance.`,
+        onApprove: async () => {
+            const response = await confirmPurchase(purchaseData.value.id);
+            if (response?.success) {
+                toast.success(response.message ?? "Access request confirmed successfully");
+                modalStore.triggerRefresh();
+                modalStore.closeModal();
+            }
+        },
+        approveBtnText: "Confirm Access",
+    });
+};
 
 const submitForm = handleSubmit(async (values) => {
-    if (isReadMode.value || !purchaseData.value) return;
+    if (!purchaseData.value) return;
 
     try {
         const response = await rejectPurchase(purchaseData.value.id, values);
 
         if (response?.success) {
-            toast.success(response.message ?? "Purchase rejected successfully");
+            toast.success(response.message ?? "Access request rejected successfully");
             modalStore.triggerRefresh();
             modalStore.closeModal();
         }
@@ -82,7 +104,7 @@ const submitForm = handleSubmit(async (values) => {
 
                     <div>
                         <label class="text-sm font-medium text-muted-foreground">Unit Price</label>
-                        <p class="text-sm">${{ purchaseData.unit_price }}</p>
+                        <p class="text-sm">{{ Number(purchaseData.unit_price).toLocaleString() }}</p>
                     </div>
 
                     <div>
@@ -124,6 +146,21 @@ const submitForm = handleSubmit(async (values) => {
         </div>
 
         <!-- Admin Note Section -->
+        <div v-if="purchaseData.note" class="space-y-2">
+            <label class="text-sm font-medium text-muted-foreground">Request Note</label>
+            <div class="p-3 bg-muted rounded-md">
+                <p class="text-sm whitespace-pre-wrap">{{ purchaseData.note }}</p>
+            </div>
+        </div>
+
+        <div v-if="purchaseData.certificate_url" class="space-y-2">
+            <label class="text-sm font-medium text-muted-foreground">Certificate</label>
+            <a :href="purchaseData.certificate_url" target="_blank" rel="noopener noreferrer"
+                class="block w-fit rounded-md border border-border overflow-hidden">
+                <img :src="purchaseData.certificate_url" alt="Certificate" class="max-h-72 max-w-full object-contain" />
+            </a>
+        </div>
+
         <div v-if="purchaseData.admin_note" class="space-y-2">
             <label class="text-sm font-medium text-muted-foreground">Admin Note</label>
             <div class="p-3 bg-muted rounded-md">
@@ -131,10 +168,19 @@ const submitForm = handleSubmit(async (values) => {
             </div>
         </div>
 
-        <!-- Rejection Form (only show for pending purchases in non-read mode) -->
-        <form v-if="!isReadMode && purchaseData.status === 'pending'" @submit.prevent="submitForm"
+        <div v-if="purchaseData.status === 'pending' && !showRejectForm" class="flex justify-end gap-3 pt-6 border-t">
+            <Button variant="outline" type="button" @click="showRejectForm = true">
+                Reject Request
+            </Button>
+            <Button type="button" :disabled="isSubmitting" @click="confirmRequest">
+                Confirm Access
+            </Button>
+        </div>
+
+        <!-- Rejection Form -->
+        <form v-if="purchaseData.status === 'pending' && showRejectForm" @submit.prevent="submitForm"
             class="space-y-4 border-t pt-6">
-            <h3 class="text-lg font-semibold text-red-600">Reject Purchase</h3>
+            <h3 class="text-lg font-semibold text-red-600">Reject Request</h3>
 
             <div>
                 <label for="note"
@@ -143,11 +189,14 @@ const submitForm = handleSubmit(async (values) => {
                 </label>
                 <textarea id="note" v-model="note" rows="4"
                     class="flex min-h-[80px] w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 mt-2"
-                    placeholder="Please provide a reason for rejecting this purchase..."></textarea>
+                    placeholder="Please provide a reason for rejecting this access request..."></textarea>
                 <ErrorMessage name="note" class="block text-start text-red-500 text-sm mt-1" />
             </div>
 
-            <div class="flex justify-end pt-4">
+            <div class="flex justify-end gap-3 pt-4">
+                <Button variant="outline" type="button" :disabled="isSubmitting" @click="showRejectForm = false">
+                    Cancel
+                </Button>
                 <Button variant="destructive" type="submit" :disabled="isSubmitting" class="min-w-[140px]">
                     <template v-if="isSubmitting">
                         <svg class="animate-spin -ml-1 mr-3 h-4 w-4 text-white" fill="none" viewBox="0 0 24 24">
@@ -160,14 +209,14 @@ const submitForm = handleSubmit(async (values) => {
                         Processing...
                     </template>
                     <template v-else>
-                        Reject Purchase
+                        Reject Request
                     </template>
                 </Button>
             </div>
         </form>
 
         <!-- Close button for read mode -->
-        <div v-if="isReadMode" class="flex justify-end pt-6 border-t">
+        <div v-if="isReadMode && purchaseData.status !== 'pending'" class="flex justify-end pt-6 border-t">
             <Button variant="outline" @click="modalStore.closeModal()">
                 Close
             </Button>

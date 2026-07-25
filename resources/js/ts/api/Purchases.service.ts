@@ -18,6 +18,9 @@ export interface PurchasesData {
     quantity: number;
     unit_price: number;
     total_points: number;
+    certificate_path?: string | null;
+    certificate_url?: string | null;
+    note?: string | null;
     status: "pending" | "confirmed" | "rejected";
     admin_id?: number;
     admin_note?: string;

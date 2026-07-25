@@ -62,7 +62,14 @@ class PurchaseService
      * @return Purchase
      * @throws \RuntimeException If purchasable item not found or invalid
      */
-    public function createPurchase(int $userId, string $purchasableType, int $purchasableId, int $quantity = 1): Purchase
+    public function createPurchase(
+        int $userId,
+        string $purchasableType,
+        int $purchasableId,
+        int $quantity = 1,
+        ?string $certificatePath = null,
+        ?string $note = null
+    ): Purchase
     {
         // Validate purchasable type
         $this->validatePurchasableType($purchasableType);
@@ -77,6 +84,25 @@ class PurchaseService
         // Validate that courses cannot be purchased directly (must purchase course levels)
         if ($purchasable instanceof \App\Models\Course) {
             throw new \RuntimeException('Courses cannot be purchased directly. Please purchase a specific course level.');
+        }
+
+        $storedPurchasableType = $purchasable->getMorphClass();
+        $requiresApproval = $purchasable instanceof CourseLevel;
+
+        if ($requiresApproval && ! $certificatePath) {
+            throw new \RuntimeException('Certificate is required for course level approval requests.');
+        }
+
+        if ($requiresApproval) {
+            $hasPendingRequest = Purchase::where('user_id', $userId)
+                ->where('purchasable_type', $storedPurchasableType)
+                ->where('purchasable_id', $purchasableId)
+                ->where('status', 'pending')
+                ->exists();
+
+            if ($hasPendingRequest) {
+                throw new \RuntimeException('You already have a pending approval request for this item.');
+            }
         }
 
         // Prevent buying the same Course Level while the user has a same course level purchased and it's in validity period
@@ -126,21 +152,30 @@ class PurchaseService
             DB::beginTransaction();
             $purchase = $this->repo->create([
                 'user_id' => $userId,
-                'purchasable_type' => $purchasableType,
+                'purchasable_type' => $storedPurchasableType,
                 'purchasable_id' => $purchasableId,
                 'quantity' => $quantity,
                 'unit_price' => $unitPrice,
                 'total_points' => $totalPoints,
+                'certificate_path' => $certificatePath,
+                'note' => $note,
             ]);
 
-            $this->confirmPurchase(Admin::first(), $purchase->id);
+            if ($requiresApproval) {
+                $type = ucfirst($purchase->purchasable_type);
+                (new FirebaseNotificationService($purchase, \App\Models\Admin::all(), $purchase->user_id, 'user'))
+                ->send([
+                    'title' => "{$type} approval request",
+                    'preview' => "{$purchase->user->name} requested access to {$type}: {$purchase->purchasable->name}"
+                ]);
+            } else {
+                $admin = Admin::first();
+                if (! $admin) {
+                    throw new \RuntimeException('No admin account is available to confirm package purchase.');
+                }
 
-            $type = ucfirst($purchase->purchasable_type);
-            (new FirebaseNotificationService($purchase, \App\Models\Admin::all(), $purchase->user_id, 'user'))
-            ->send([
-                'title' => "{$type} purchase by user",
-                'preview' => "{$purchase->user->name} has purchased {$type}: {$purchase->purchasable->name}"
-            ]);
+                $purchase = $this->confirmPurchase($admin, $purchase->id);
+            }
 
             DB::commit();
             return $purchase;
@@ -272,6 +307,12 @@ class PurchaseService
                 $note
             );
 
+            (new FirebaseNotificationService($purchase, $purchase->user, $purchase->user_id, 'user'))
+            ->send([
+                'title' => 'Access request confirmed',
+                'preview' => "Your request for {$itemName} was confirmed."
+            ]);
+
             return $purchase;
         });
     }
@@ -303,6 +344,13 @@ class PurchaseService
                 'admin_id' => $admin->id,
                 'admin_note' => $note,
                 'confirmed_at' => Carbon::now(),
+            ]);
+
+            $itemName = $purchase->purchasable?->name ?? 'item';
+            (new FirebaseNotificationService($purchase, $purchase->user, $purchase->user_id, 'user'))
+            ->send([
+                'title' => 'Access request rejected',
+                'preview' => "Your request for {$itemName} was rejected."
             ]);
 
             return $purchase;
