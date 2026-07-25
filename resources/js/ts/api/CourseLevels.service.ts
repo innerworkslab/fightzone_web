@@ -11,6 +11,7 @@ export type CourseLevelsFilter = Filters & {
 export interface CourseLevelsData {
     id?: number;
     course_id: number;
+    description?: string | null;
     level: "Beginner" | "Intermediate" | "Expert";
     price: number;
     is_active?: boolean;
@@ -20,6 +21,7 @@ export interface CourseLevelsData {
 
 export interface CourseLevelsPayload {
     course_id: number;
+    description?: string | null;
     level: "Beginner" | "Intermediate" | "Expert";
     price: number;
 }

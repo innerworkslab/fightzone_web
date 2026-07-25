@@ -45,6 +45,7 @@ class CourseLevelController extends Controller
     {
         $validated = $request->validate([
             'course_id' => 'required|exists:courses,id',
+            'description' => 'nullable|string',
             'level' => ['required', Rule::enum(CourseLevels::class)],
             'price' => 'required|numeric|min:0',
             'is_active' => 'boolean',
@@ -67,6 +68,7 @@ class CourseLevelController extends Controller
     {
         $validated = $request->validate([
             'course_id' => 'sometimes|exists:courses,id',
+            'description' => 'nullable|string',
             'level' => ['sometimes', Rule::enum(CourseLevels::class)],
             'price' => 'sometimes|numeric|min:0',
             'is_active' => 'boolean',

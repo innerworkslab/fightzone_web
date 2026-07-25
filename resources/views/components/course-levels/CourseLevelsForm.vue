@@ -22,6 +22,7 @@ const schema = yup.object({
         .mixed<"Beginner" | "Intermediate" | "Expert">()
         .oneOf(["Beginner", "Intermediate", "Expert"])
         .required(),
+    description: yup.string().nullable(),
     price: yup.number().required().min(1, "Price must be greater than 1"),
 });
 
@@ -30,12 +31,14 @@ const { handleSubmit, setValues } = useForm<CourseLevelsPayload>({
     initialValues: {
         course_id: courseId.value,
         level: "Beginner",
+        description: "",
         price: 0,
     },
 });
 
 const { value: level } =
     useField<"Beginner" | "Intermediate" | "Expert">("level");
+const { value: description } = useField<string | null>("description");
 const { value: price } = useField<number>("price");
 
 const { createCourseLevel, updateCourseLevel, loading: isSubmitting } =
@@ -52,6 +55,7 @@ watch(
             setValues({
                 course_id: val.data.course_id,
                 level: val.data.level,
+                description: val.data.description ?? "",
                 price: val.data.price,
             });
         }
@@ -86,6 +90,11 @@ const submitForm = handleSubmit(async (payload) => {
             <div>
                 <FormInput id="price" type="number" v-model="price" label="Price" :disabled="isReadMode" />
                 <ErrorMessage name="price" class="text-red-500 text-sm" />
+            </div>
+
+            <div class="col-span-2">
+                <FormTextarea id="description" v-model="description" label="Description" :rows="5" :disabled="isReadMode" />
+                <ErrorMessage name="description" class="text-red-500 text-sm" />
             </div>
         </div>
 

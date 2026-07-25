@@ -20,6 +20,23 @@ const { toggleStatus } = CoursesServices.useCourseActions();
 const { toggleStatus: toggleCourseLevelStatus } =
     CourseLevelsServices.useCourseLevelActions();
 
+const renderTrimmedDescription = (description?: string | null, limit = 50) => {
+    if (!description) return "-";
+
+    const normalized = description.replace(/\s+/g, " ").trim();
+    const trimmed =
+        normalized.length > limit
+            ? `${normalized.substring(0, limit).trimEnd()}...`
+            : normalized;
+
+    return trimmed
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+};
+
 export const CoursesColumns: ColumnDef<any>[] = [
     {
         label: "#",
@@ -55,8 +72,7 @@ export const CoursesColumns: ColumnDef<any>[] = [
     {
         label: "Description",
         key: "description",
-        render: (row) =>
-            `${row.description?.substring(0, 50) ?? ""}${row.description && row.description.length > 50 ? "..." : ""}`,
+        render: (row) => renderTrimmedDescription(row.description),
     },
     {
         label: "Status",
@@ -116,6 +132,12 @@ export const CoursesColumns: ColumnDef<any>[] = [
 
 export const CoursesSubColumns: ColumnDef<any>[] = [
     { label: "Level", key: "level" },
+    {
+        label: "Description",
+        key: "description",
+        render: (row) =>
+            `<span class="block max-w-[360px] truncate" title="${renderTrimmedDescription(row.description, 180)}">${renderTrimmedDescription(row.description)}</span>`,
+    },
     {
         label: "Price",
         key: "price",

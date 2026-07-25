@@ -76,23 +76,26 @@ class CourseLevelService
 
     public function update($id, array $data, array $lessonDays=[])
     {
-        $course = Course::find($data['course_id']);
-        if (!$course) {
-            throw new \RuntimeException('Course not found');
-        }
-
-        if($course->courseLevels()->where('id', '<>', $id)->where('level', $data['level'])->exists()) {
-            throw new \RuntimeException('Course level already exists');
-        }
-
         $item = $this->find($id);
         if (!$item) {
             throw new \RuntimeException('Course level not found');
         }
 
+        $courseId = $data['course_id'] ?? $item->course_id;
+        $level = $data['level'] ?? $item->level;
+
+        $course = Course::find($courseId);
+        if (!$course) {
+            throw new \RuntimeException('Course not found');
+        }
+
+        if($course->courseLevels()->where('id', '<>', $id)->where('level', $level)->exists()) {
+            throw new \RuntimeException('Course level already exists');
+        }
+
         try{
             DB::beginTransaction();
-            $data['name'] = "{$course->name} course {$data['level']} level";
+            $data['name'] = "{$course->name} course {$level} level";
             $courseLevel = $this->levelRepo->update($id, $data);
 
             if(count($lessonDays) > 0){
