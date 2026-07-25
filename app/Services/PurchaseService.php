@@ -134,8 +134,8 @@ class PurchaseService
                 $existingPackagePurchase = $hasValidQuery->first();
                 (new FirebaseNotificationService($existingPackagePurchase, $existingPackagePurchase->user, $existingPackagePurchase->user_id, 'user'))
                 ->send([
-                    'title' => 'Package already bought',
-                    'preview' => "You already bought the ({$existingPackagePurchase->package->name}) package"
+                    'title' => 'Walk-in package already booked',
+                    'preview' => "Your walk-in package {$existingPackagePurchase->package->name} is already booked"
                 ]);
                 throw new \RuntimeException('You already have an active package with remaining walk-in days. Use it up or wait until it is completed before buying the same package again.');
             }
@@ -307,11 +307,18 @@ class PurchaseService
                 $note
             );
 
+            $notification = $purchasable instanceof Package
+                ? [
+                    'title' => 'Walk-in package booked',
+                    'preview' => "Your walk-in package {$itemName} is already booked",
+                ]
+                : [
+                    'title' => 'Training confirmed',
+                    'preview' => "Your training ({$itemName}) has been confirmed!",
+                ];
+
             (new FirebaseNotificationService($purchase, $purchase->user, $purchase->user_id, 'user'))
-            ->send([
-                'title' => 'Access request confirmed',
-                'preview' => "Your request for {$itemName} was confirmed."
-            ]);
+            ->send($notification);
 
             return $purchase;
         });
