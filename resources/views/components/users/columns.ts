@@ -12,6 +12,7 @@ import { RouteNames } from "../../../js/ts/config/route.config";
 import { UsersData, UsersServices } from "@/api/Users.service";
 import { SUCCESS_MESSAGE } from "@/constant/global.constant";
 import { toast } from "vue3-toastify";
+import { formatPriceOrNumber } from "@/utils/helper";
 
 const { updateUser, toggleStatus } = UsersServices.useUserActions();
 
@@ -32,6 +33,11 @@ export const UserColumns: ColumnDef<any>[] = [
         label: "Phone Number",
         key: "phone_number",
         render: (row) => row.phone_number,
+    },
+    {
+        label: "Point Balance",
+        key: "point_balance",
+        render: (row) => formatPriceOrNumber(row.point_balance?.points ?? 0),
     },
     {
         label: "Verification",

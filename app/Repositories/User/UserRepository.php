@@ -15,7 +15,7 @@ class UserRepository implements UserRepositoryInterface
 
     public function all(?array $filters = [], ?int $limit = null)
     {
-        $query = $this->model::orderBy('id', 'desc');
+        $query = $this->model::with('pointBalance')->orderBy('id', 'desc');
 
         $normalized = [];
         foreach ($filters ?? [] as $k => $v) {

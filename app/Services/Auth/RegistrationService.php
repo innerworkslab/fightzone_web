@@ -7,11 +7,19 @@ use Illuminate\Support\Facades\Mail;
 
 use App\Models\User;
 
+use App\Services\RegistrationPointBalanceService;
 use App\Services\Auth\SanctumTokenService;
 use App\Services\ThirdParty\Firebase\FirebaseNotificationService;
 
 class RegistrationService
 {
+    public function __construct(
+        protected RegistrationPointBalanceService $registrationPointBalanceService
+    )
+    {
+
+    }
+
     public function registerLocalUser(array $data)
     {
         // 1. Create user
@@ -63,6 +71,9 @@ class RegistrationService
         if(!empty($data)){
             $user->update($data);
         }
+
+        $this->registrationPointBalanceService->award($user->refresh());
+
         return true;
     }
 
@@ -75,6 +86,7 @@ class RegistrationService
         }
         if ($user->email_verification_token === $token){
             if($user->markAccountAsVerified()){
+                $this->registrationPointBalanceService->award($user->refresh());
                 return true;
             }else{
                 return false;

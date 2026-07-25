@@ -7,7 +7,10 @@ use Illuminate\Support\Facades\Hash;
 
 class UserService
 {
-    public function __construct(protected UserRepositoryInterface $repo){}
+    public function __construct(
+        protected UserRepositoryInterface $repo,
+        protected RegistrationPointBalanceService $registrationPointBalanceService
+    ){}
 
     public function all(?array $filters = [], ?int $page = null, ?int $limit = null)
     {
@@ -29,23 +32,43 @@ class UserService
             $data['is_active'] = true;
         }
 
-        if(isset($data['is_verified'])){
-            $data['email_verified_at'] = now();
+        if(array_key_exists('is_verified', $data)){
+            $data['email_verified_at'] = filter_var($data['is_verified'], FILTER_VALIDATE_BOOLEAN) ? now() : null;
         }
 
-        return $this->repo->create($data);
+        $user = $this->repo->create($data);
+
+        if ($user->is_verified) {
+            $this->registrationPointBalanceService->award($user);
+        }
+
+        return $user;
     }
 
     public function update($id, array $data)
     {
+        $item = $this->repo->find($id);
+        if (! $item) {
+            return null;
+        }
+
+        $wasVerified = (bool) $item->is_verified;
+
         if (! isset($data['is_active'])) {
             $data['is_active'] = true;
         }
 
-        if(isset($data['is_verified'])){
-            $data['email_verified_at'] = now();
+        if(array_key_exists('is_verified', $data)){
+            $data['email_verified_at'] = filter_var($data['is_verified'], FILTER_VALIDATE_BOOLEAN) ? now() : null;
         }
-        return $this->repo->update($id, $data);
+
+        $user = $this->repo->update($id, $data);
+
+        if (! $wasVerified && $user?->is_verified) {
+            $this->registrationPointBalanceService->award($user);
+        }
+
+        return $user;
     }
 
     public function delete($id)

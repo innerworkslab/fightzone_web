@@ -11,11 +11,15 @@ export type UsersFilter = Filters & {
 };
 
 export interface UsersData {
+    id?: number;
     phone_number?: string;
     name?: string;
     password?: string;
     is_active?: number;
     is_verified?: number;
+    point_balance?: {
+        points: number | string;
+    } | null;
 }
 
 export interface UsersPayload {
