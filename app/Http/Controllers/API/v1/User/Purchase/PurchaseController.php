@@ -40,7 +40,8 @@ class PurchaseController extends Controller
             'purchasable_type' => ['required', 'string', Rule::in(config('common.purchasable_types'))],
             'purchasable_id' => 'required|integer',
             'quantity' => 'sometimes|integer|min:1|max:100',
-            'certificate' => [Rule::requiredIf(fn () => in_array($request->purchasable_type, $courseLevelTypes, true)), 'image', 'max:5120'],
+            // 'certificate' => [Rule::requiredIf(fn () => in_array($request->purchasable_type, $courseLevelTypes, true)), 'image', 'max:5120'],
+            'certificate' => 'sometimes|image|max:5120',
             'note' => 'sometimes|string',
         ]);
 

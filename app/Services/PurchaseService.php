@@ -310,11 +310,11 @@ class PurchaseService
             $notification = $purchasable instanceof Package
                 ? [
                     'title' => 'Walk-in package booked',
-                    'preview' => "Your walk-in package {$itemName} is already booked",
+                    'preview' => "Your walk-in package {$itemName} is already confirmed",
                 ]
                 : [
                     'title' => 'Training confirmed',
-                    'preview' => "Your training ({$itemName}) has been confirmed!",
+                    'preview' => "Your training {$itemName} has been confirmed!",
                 ];
 
             (new FirebaseNotificationService($purchase, $purchase->user, $purchase->user_id, 'user'))
