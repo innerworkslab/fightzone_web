@@ -3,11 +3,9 @@
 namespace App\Http\Controllers\API\v1\User\Purchase;
 
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\Rule;
 
 use App\Http\Controllers\Controller;
-use App\Models\CourseLevel;
 
 use App\Services\PurchaseService;
 
@@ -34,14 +32,10 @@ class PurchaseController extends Controller
 
     public function store(Request $request)
     {
-        $courseLevelTypes = ['course_level', CourseLevel::class];
-
         $request->validate([
             'purchasable_type' => ['required', 'string', Rule::in(config('common.purchasable_types'))],
             'purchasable_id' => 'required|integer',
             'quantity' => 'sometimes|integer|min:1|max:100',
-            // 'certificate' => [Rule::requiredIf(fn () => in_array($request->purchasable_type, $courseLevelTypes, true)), 'image', 'max:5120'],
-            'certificate' => 'sometimes|image|max:5120',
             'note' => 'sometimes|string',
         ]);
 
@@ -49,25 +43,15 @@ class PurchaseController extends Controller
 
         $data = $request->all();
         $quantity = $request->quantity ?? 1;
-        $certificatePath = $request->hasFile('certificate')
-            ? $request->file('certificate')->store('purchase-certificates', 'public')
-            : null;
 
-        try {
-            $purchase = $this->service->createPurchase(
-                $userId,
-                $data['purchasable_type'],
-                $data['purchasable_id'],
-                $quantity,
-                $certificatePath,
-                $request->note ?? null
-            );
-        } catch (\Throwable $e) {
-            if ($certificatePath) {
-                Storage::disk('public')->delete($certificatePath);
-            }
-            throw $e;
-        }
+        $purchase = $this->service->createPurchase(
+            $userId,
+            $data['purchasable_type'],
+            $data['purchasable_id'],
+            $quantity,
+            null,
+            $request->note ?? null
+        );
 
         ResponseData($purchase);
     }

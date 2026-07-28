@@ -153,14 +153,6 @@ const submitForm = handleSubmit(async (values) => {
             </div>
         </div>
 
-        <div v-if="purchaseData.certificate_url" class="space-y-2">
-            <label class="text-sm font-medium text-muted-foreground">Certificate</label>
-            <a :href="purchaseData.certificate_url" target="_blank" rel="noopener noreferrer"
-                class="block w-fit rounded-md border border-border overflow-hidden">
-                <img :src="purchaseData.certificate_url" alt="Certificate" class="max-h-72 max-w-full object-contain" />
-            </a>
-        </div>
-
         <div v-if="purchaseData.admin_note" class="space-y-2">
             <label class="text-sm font-medium text-muted-foreground">Admin Note</label>
             <div class="p-3 bg-muted rounded-md">

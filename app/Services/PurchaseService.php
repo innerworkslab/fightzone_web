@@ -89,10 +89,6 @@ class PurchaseService
         $storedPurchasableType = $purchasable->getMorphClass();
         $requiresApproval = $purchasable instanceof CourseLevel;
 
-        if ($requiresApproval && ! $certificatePath) {
-            throw new \RuntimeException('Certificate is required for course level approval requests.');
-        }
-
         if ($requiresApproval) {
             $hasPendingRequest = Purchase::where('user_id', $userId)
                 ->where('purchasable_type', $storedPurchasableType)

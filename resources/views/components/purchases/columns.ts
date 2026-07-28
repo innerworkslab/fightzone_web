@@ -80,28 +80,6 @@ export const PurchaseColumns: ColumnDef<any>[] = [
             `<span class="block max-w-[220px] truncate" title="${trimText(row.note, 180)}">${trimText(row.note)}</span>`,
     },
     {
-        label: "Certificate",
-        key: "certificate_url",
-        className: "cursor-pointer",
-        render: (row) => {
-            if (!row.certificate_url) return "-";
-
-            return `
-                <div class="inline-flex items-center">
-                    <img src="${row.certificate_url}" alt="Certificate" class="h-10 w-14 rounded-sm object-cover border border-border" />
-                </div>
-            `;
-        },
-        onClick: (row, extraArgs) => {
-            extraArgs.modalStore.openModal({
-                formIndex: "purchase",
-                initialValues: row,
-                isReadMode: true,
-                refreshCallback: extraArgs.refresh,
-            });
-        },
-    },
-    {
         label: "Status",
         key: "status",
         className: "w-[120px]",
