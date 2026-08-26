@@ -7,6 +7,7 @@ import {
     Plus,
     ToggleLeft,
     ToggleRight,
+    Trash2,
 } from "lucide-vue-next";
 import { RouteNames } from "../../../js/ts/config/route.config";
 import { UsersData, UsersServices } from "@/api/Users.service";
@@ -14,7 +15,7 @@ import { SUCCESS_MESSAGE } from "@/constant/global.constant";
 import { toast } from "vue3-toastify";
 import { formatPriceOrNumber } from "@/utils/helper";
 
-const { updateUser, toggleStatus } = UsersServices.useUserActions();
+const { updateUser, toggleStatus, deleteUser } = UsersServices.useUserActions();
 
 export const UserColumns: ColumnDef<any>[] = [
     {
@@ -190,6 +191,23 @@ export const UserActions: ActionDef<any>[] = [
                     }
                 },
                 approveBtnText: "Verify",
+            });
+        },
+    },
+    {
+        icon: Trash2,
+        tooltip: "Delete User",
+        onClick: (row, extraArgs) => {
+            extraArgs.modalStore.openConfirmModal({
+                message: "Are you sure you want to delete this user?",
+                onApprove: async () => {
+                    const response = await deleteUser(row.id);
+                    if (response?.success) {
+                        toast.success(response.message ?? "User deleted successfully");
+                        extraArgs.refresh();
+                    }
+                },
+                approveBtnText: "Delete",
             });
         },
     },

@@ -56,6 +56,9 @@ const useUserActions = () => {
     const toggleStatus = (id: number) =>
         mutate(METHODS.POST, `/${baseURL}/${id}/${API_URLS.TOGGLE}`);
 
+    const deleteUser = (id: number) =>
+        mutate(METHODS.DELETE, `/${baseURL}/${id}`);
+
     return {
         loading,
         error,
@@ -63,6 +66,7 @@ const useUserActions = () => {
         createUser,
         updateUser,
         toggleStatus,
+        deleteUser,
     };
 };
 
