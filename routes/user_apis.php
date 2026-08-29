@@ -34,6 +34,7 @@ Route::prefix('/v1')->group(function () {
 
     Route::middleware('auth:api')->group(function () {
         Route::post('/logout', [LoginController::class, 'logout']);
+        Route::delete('/profile', [ProfileController::class, 'destroy']);
 
         Route::middleware(['is.verified', 'is.active'])->group(function () {
             Route::prefix('/profile')->group(function () {

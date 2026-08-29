@@ -2,7 +2,9 @@
 
 namespace App\Services;
 
+use App\Models\User;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\DB;
 
 use App\Repositories\Profile\ProfileRepositoryInterface;
 use App\Repositories\User\UserRepositoryInterface;
@@ -124,6 +126,23 @@ class ProfileService
             return true;
         }
         return false;
+    }
+
+    /**
+     * Revoke every device session before soft-deleting the account.
+     */
+    public function deleteAccount(User $user, string $currentPassword): bool
+    {
+        if (! Hash::check($currentPassword, $user->getAuthPassword())) {
+            return false;
+        }
+
+        DB::transaction(function () use ($user) {
+            $user->tokens()->delete();
+            $user->delete();
+        });
+
+        return true;
     }
 
     public function isPhoneNumberTaken(int $userId, string $phoneNumber)

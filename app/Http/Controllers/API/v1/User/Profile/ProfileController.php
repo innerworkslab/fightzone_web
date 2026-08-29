@@ -145,6 +145,27 @@ class ProfileController extends Controller
         ResponseMessage($msg);
     }
 
+    /**
+     * Delete the currently authenticated account after a fresh password check.
+     */
+    public function destroy(Request $request)
+    {
+        $request->validate([
+            'current_password' => ['required', 'string'],
+        ]);
+
+        $deleted = $this->service->deleteAccount(
+            ApiUser(),
+            $request->current_password
+        );
+
+        if (! $deleted) {
+            ResponseMessage('Please provide your current password correctly.', 403);
+        }
+
+        ResponseMessage('Your account has been deleted.');
+    }
+
     public function getPurchasedClasses(Request $request)
     {
         $data = $this->service->fetchUserPurchasedCourseLevels(
