@@ -20,6 +20,12 @@ class WalkinController extends Controller
      */
     public function confirm(Request $request)
     {
+        $request->merge([
+            'qr_payload' => $request->input('qr_payload')
+                ?? $request->input('qr_token')
+                ?? $request->input('token'),
+        ]);
+
         $data = $request->validate([
             'qr_payload' => 'required|string',
         ]);

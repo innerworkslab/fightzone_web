@@ -113,6 +113,7 @@ Route::prefix('/v1/management')->group(function () {
                 Route::get('/', [WalkinController::class, 'index']);
                 Route::post('/confirm', [WalkinController::class, 'confirm']);
             });
+            Route::post('/walk-ins/confirm', [WalkinController::class, 'confirm']);
 
             Route::prefix('/course-categories')->group(function () {
                 Route::controller(CourseCategoryController::class)->group(function () {
