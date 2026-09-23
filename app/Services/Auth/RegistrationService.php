@@ -102,7 +102,7 @@ class RegistrationService
         if (! $user) {
             ResponseMessage("User not found", 404, false);
         }
-        $token = (new SanctumTokenService())->generateSanctumToken($user);
+        $token = (new SanctumTokenService())->generateSanctumToken($user, revokeExistingTokens: true);
         return [
             "user" => $user,
             "token" => $token

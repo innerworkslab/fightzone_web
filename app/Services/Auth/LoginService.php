@@ -20,7 +20,7 @@ class LoginService
         if(!(Hash::check($password, $user->getAuthPassword()))){
             ResponseMessage("Password not match", 403);
         }
-        $token = (new SanctumTokenService())->generateSanctumToken($user);
+        $token = (new SanctumTokenService())->generateSanctumToken($user, revokeExistingTokens: true);
         return [
             "user" => $user,
             "token" => $token
@@ -59,7 +59,7 @@ class LoginService
             ResponseMessage('Password not match', 403);
         }
 
-        $token = (new SanctumTokenService())->generateSanctumToken($model);
+        $token = (new SanctumTokenService())->generateSanctumToken($model, revokeExistingTokens: $model instanceof User);
 
         return [
             'user' => $model,
