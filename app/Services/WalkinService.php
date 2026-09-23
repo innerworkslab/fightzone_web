@@ -45,6 +45,10 @@ class WalkinService
             throw new \RuntimeException('This package has no remaining walk-in days');
         }
 
+        if (! $purchase->valid_from || ! $purchase->valid_until || ! now()->between($purchase->valid_from, $purchase->valid_until)) {
+            throw new \RuntimeException('This walk-in package has expired.');
+        }
+
         if ($purchase->remaining_days < 1) {
             throw new \RuntimeException('No remaining walk-in days');
         }
@@ -168,6 +172,10 @@ class WalkinService
                 throw new \RuntimeException('This package has no remaining walk-in days');
             }
 
+            if (! $purchase->valid_from || ! $purchase->valid_until || ! now()->between($purchase->valid_from, $purchase->valid_until)) {
+                throw new \RuntimeException('This walk-in package has expired.');
+            }
+
             if ($purchase->remaining_days < 1) {
                 throw new \RuntimeException('No remaining walk-in days');
             }
@@ -267,6 +275,27 @@ class WalkinService
         return 'rejected';
     }
 
+
+    public function revokePackagePurchase(int $packagePurchaseId): PackagePurchase
+    {
+        return DB::transaction(function () use ($packagePurchaseId): PackagePurchase {
+            $purchase = PackagePurchase::with(['user', 'package', 'purchase'])
+                ->where('id', $packagePurchaseId)
+                ->lockForUpdate()
+                ->first();
+
+            if (! $purchase) {
+                throw new \RuntimeException('Package purchase not found');
+            }
+
+            $purchase->update([
+                'completed' => true,
+                'valid_until' => now(),
+            ]);
+
+            return $purchase->refresh()->load(['user', 'package', 'purchase']);
+        });
+    }
     public function getDailyWalkins(?int $page, ?int $limit)
     {
         $query = PackagePurchase::query()

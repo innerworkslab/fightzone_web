@@ -19,7 +19,8 @@ class PackageController extends Controller
             array_push($filters, ['name' => $request->name]);
         }
 
-        $data = $this->service->all(
+        $data = $this->service->allForUser(
+            ApiUser()->id,
             true,
             $filters,
             $request->page,

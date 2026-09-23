@@ -53,6 +53,23 @@ class WalkinController extends Controller
         ]);
     }
 
+
+    public function revoke(Request $request, $id)
+    {
+        try {
+            $packagePurchase = $this->walkinService->revokePackagePurchase((int) $id);
+        } catch (\RuntimeException $e) {
+            ResponseData(
+                ['error' => $e->getMessage()],
+                422,
+                false,
+                $e->getMessage(),
+                'data'
+            );
+        }
+
+        ResponseData($packagePurchase, 200, true, 'Walk-in package revoked successfully.');
+    }
     public function index(Request $request)
     {
         $data = $this->walkinService->getDailyWalkins(

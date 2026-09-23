@@ -35,7 +35,7 @@ class ProfileRepository implements ProfileRepositoryInterface
     public function getUserPurchases(int $userId, ?int $limit = null)
     {
         $query = Purchase::where('user_id', $userId)
-            ->with(['purchasable', 'admin'])
+            ->with(['purchasable', 'admin', 'courseLevelPurchase', 'packagePurchase'])
             ->orderBy('id', 'desc');
 
         if ($limit) {

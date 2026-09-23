@@ -9,7 +9,7 @@ class PurchaseRepository implements PurchaseRepositoryInterface
     public function all(?array $filters=[], ?string $status = null, ?int $limit = null)
     {
         $query = Purchase::query()
-            ->with(['user', 'purchasable'])
+            ->with(['user', 'purchasable', 'courseLevelPurchase', 'packagePurchase'])
             ->orderBy('id','desc');
 
         $normalized = [];
@@ -40,7 +40,7 @@ class PurchaseRepository implements PurchaseRepositoryInterface
 
     public function listForUser(int $userId, ?int $limit = null)
     {
-        $query = Purchase::with(['purchasable'])
+        $query = Purchase::with(['purchasable', 'courseLevelPurchase', 'packagePurchase'])
         ->orderBy('id', 'desc')
         ->where('user_id', $userId);
 
@@ -66,6 +66,8 @@ class PurchaseRepository implements PurchaseRepositoryInterface
         return Purchase::with([
             'user',
             'purchasable',
+            'courseLevelPurchase',
+            'packagePurchase',
             'admin'
         ])->find($id);
     }

@@ -248,13 +248,19 @@ class PurchaseService
             ]);
 
             if ($purchasable instanceof Package) {
+                $confirmedAt = $purchase->confirmed_at ?? Carbon::now();
                 $totalDays = (int) $purchasable->days * $purchase->quantity;
+                $validFrom = $confirmedAt;
+                $validUntil = (clone $confirmedAt)->addDays($totalDays);
+
                 PackagePurchase::create([
                     'user_id' => $purchase->user_id,
                     'package_id' => $purchasable->id,
                     'purchase_id' => $purchase->id,
                     'total_days' => $totalDays,
                     'remaining_days' => $totalDays,
+                    'valid_from' => $validFrom,
+                    'valid_until' => $validUntil,
                     'completed' => false,
                 ]);
             }

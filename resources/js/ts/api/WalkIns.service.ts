@@ -11,12 +11,16 @@ export interface CourseCategoriesData {
     id: number;
     user: {
         name: string;
+        phone_number?: string;
     },
     package: {
         name: string;
+        price: number;
     }
     total_days: number,
     remaining_days: number,
+    valid_from: string | null,
+    valid_until: string | null,
     completed: boolean,
     created_at: string;
     updated_at: string;
@@ -39,6 +43,10 @@ const useWalkInsActions = () => {
         return mutate(METHODS.POST, `/${baseURL}/confirm`, data);
     };
 
+
+    const revokeWalkIn = (id: number) => {
+        return mutate(METHODS.POST, `/${baseURL}/${id}/revoke`);
+    };
     // const updateWalkIns = (id: number, data: Partial<WalkInsPayload>) => {
     //     return mutate(METHODS.POST, `/${baseURL}/${id}`, data);
     // };
@@ -54,6 +62,7 @@ const useWalkInsActions = () => {
         error,
         data,
         confirmWalkIns,
+        revokeWalkIn,
         // updateWalkIns,
         // deleteWalkIns,
         // toggleStatus,

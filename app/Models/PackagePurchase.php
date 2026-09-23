@@ -13,11 +13,15 @@ class PackagePurchase extends Model
         'purchase_id',
         'total_days',
         'remaining_days',
+        'valid_from',
+        'valid_until',
         'completed'
     ];
 
     protected $casts = [
         'completed' => 'boolean',
+        'valid_from' => 'datetime',
+        'valid_until' => 'datetime',
     ];
 
     public function user()
@@ -43,6 +47,9 @@ class PackagePurchase extends Model
     /** Scope: has remaining days and not completed */
     public function scopeValid($query)
     {
-        return $query->where('remaining_days', '>', 0)->where('completed', false);
+        return $query->where('remaining_days', '>', 0)
+            ->where('completed', false)
+            ->where('valid_from', '<=', now())
+            ->where('valid_until', '>=', now());
     }
 }

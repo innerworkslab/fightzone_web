@@ -2,7 +2,7 @@
 import { computed, ref, watch } from "vue";
 import { storeToRefs } from "pinia";
 import { useDataStore } from "@/store/data";
-import { WalkInsColumns } from "./columns";
+import { WalkInsActions, WalkInsColumns } from "./columns";
 import { DEFAULT_PAGE_LIMIT } from "@/constant/global.constant";
 import { buildApiFilter } from "@/utils/buildAPIFilter";
 import { useRouter } from "vue-router";
@@ -53,6 +53,7 @@ watch(refreshTrigger, () => {
         ref="dataTableRef"
         :data="data ? data.data.data : []"
         :columns="WalkInsColumns"
+        :actions="WalkInsActions"
         :loading="false"
         :extraArgs="{
             startIndex: startIndex,

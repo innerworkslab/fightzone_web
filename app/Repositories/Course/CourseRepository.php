@@ -71,7 +71,8 @@ class CourseRepository implements CourseRepositoryInterface
         $course = Course::with([
             'category',
             'courseLevels' => function ($q) {
-                $q->withCount('lessonDays');
+                $q->where('is_active', true)
+                    ->withCount('lessonDays');
             }
         ])->find($id);
 

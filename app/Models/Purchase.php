@@ -31,13 +31,50 @@ class Purchase extends Model
         'quantity' => 'integer',
     ];
 
-    protected $appends = ['certificate_url'];
+    protected $appends = ['certificate_url', 'valid_from', 'valid_until', 'is_within_validity'];
 
     public function getCertificateUrlAttribute()
     {
         return $this->certificate_path
             ? \Illuminate\Support\Facades\Storage::url($this->certificate_path)
             : null;
+    }
+
+
+    public function courseLevelPurchase()
+    {
+        return $this->hasOne(CourseLevelPurchase::class);
+    }
+
+    public function packagePurchase()
+    {
+        return $this->hasOne(PackagePurchase::class);
+    }
+
+    public function getValidFromAttribute()
+    {
+        return $this->validityPurchase()?->valid_from;
+    }
+
+    public function getValidUntilAttribute()
+    {
+        return $this->validityPurchase()?->valid_until;
+    }
+
+    public function getIsWithinValidityAttribute(): bool
+    {
+        $purchase = $this->validityPurchase();
+
+        if (! $purchase?->valid_from || ! $purchase?->valid_until) {
+            return false;
+        }
+
+        return now()->between($purchase->valid_from, $purchase->valid_until);
+    }
+
+    private function validityPurchase()
+    {
+        return $this->courseLevelPurchase ?? $this->packagePurchase;
     }
 
     public function user()
