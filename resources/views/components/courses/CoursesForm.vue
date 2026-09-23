@@ -23,6 +23,7 @@ const schema = yup.object({
     course_category_id: yup.number().required("Course category is required"),
     description: yup.string().nullable(),
     image: yup.array().of(yup.mixed<File | string>()).max(1, "Only one image allowed").nullable(),
+    banner_image: yup.array().of(yup.mixed<File | string>()).max(1, "Only one banner image allowed").nullable(),
 });
 
 const { handleSubmit, setValues } = useForm<CoursePayload>({
@@ -32,6 +33,7 @@ const { handleSubmit, setValues } = useForm<CoursePayload>({
         course_category_id: undefined as unknown as number,
         description: "",
         image: [],
+        banner_image: [],
     },
 });
 
@@ -39,6 +41,7 @@ const { value: name } = useField<string>("name");
 const { value: course_category_id } = useField<number>("course_category_id");
 const { value: description } = useField<string>("description");
 const { value: image } = useField<(File | string)[]>("image");
+const { value: banner_image } = useField<(File | string)[]>("banner_image");
 
 const {
     createCourse,
@@ -62,6 +65,9 @@ watch(
 
             if (val.data.image_url) {
                 image.value = [val.data.image_url];
+            }
+            if (val.data.banner_image_url) {
+                banner_image.value = [val.data.banner_image_url];
             }
         }
     },
@@ -95,6 +101,7 @@ const submitForm = handleSubmit(async (values) => {
         description?: string;
         course_category_id: number;
         image?: File;
+        banner_image?: File;
     } = {
         name: values.name,
         description: values.description,
@@ -102,9 +109,13 @@ const submitForm = handleSubmit(async (values) => {
     };
 
     const firstImage = values.image?.[0];
+    const firstBannerImage = values.banner_image?.[0];
 
     if (firstImage instanceof File) {
         payload.image = firstImage;
+    }
+    if (firstBannerImage instanceof File) {
+        payload.banner_image = firstBannerImage;
     }
 
     const response = isUpdateMode.value
@@ -141,6 +152,11 @@ const submitForm = handleSubmit(async (values) => {
             <div class="col-span-2">
                 <FormImage id="image" label="Image" v-model="image" :disabled="isReadMode" />
                 <ErrorMessage name="image" class="block text-start text-red-500 text-sm mt-1" />
+            </div>
+
+            <div class="col-span-2">
+                <FormImage id="banner_image" label="Banner Image" v-model="banner_image" :disabled="isReadMode" />
+                <ErrorMessage name="banner_image" class="block text-start text-red-500 text-sm mt-1" />
             </div>
         </div>
 

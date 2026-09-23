@@ -25,6 +25,8 @@ export interface CourseData {
     level: CourseLevel;
     price: number;
     is_active: boolean;
+    image_url?: string | null;
+    banner_image_url?: string | null;
     created_at: string;
     updated_at: string;
 }
@@ -43,7 +45,8 @@ export interface CourseDayPayload {
 export interface CoursePayload {
     name: string;
     description?: string;
-    image?: File[];
+    image?: File[] | File;
+    banner_image?: File[] | File;
     course_category_id: number;
 }
 

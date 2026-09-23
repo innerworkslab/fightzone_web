@@ -37,7 +37,7 @@ class CourseService
         return $this->repo->findWithDetailsForUser($courseId, $userId);
     }
 
-    public function create(array $data, ?UploadedFile $image=null)
+    public function create(array $data, ?UploadedFile $image=null, ?UploadedFile $bannerImage=null)
     {
         $course = $this->repo->create($data);
         if($image){
@@ -45,10 +45,15 @@ class CourseService
             $course->image_path = $path;
             $course->save();
         }
+        if($bannerImage){
+            $path = $bannerImage->store("courses/{$course->id}/banner", 'public');
+            $course->banner_image_path = $path;
+            $course->save();
+        }
         return $course;
     }
 
-    public function update($id, array $data, ?UploadedFile $image=null)
+    public function update($id, array $data, ?UploadedFile $image=null, ?UploadedFile $bannerImage=null)
     {
         $course = $this->repo->update($id, $data);
         if($image){
@@ -59,6 +64,14 @@ class CourseService
             $course->image_path = $path;
             $course->save();
         }
+        if($bannerImage){
+            if($course->banner_image_path){
+                DeleteFileFromServer($course->banner_image_path);
+            }
+            $path = $bannerImage->store("courses/{$course->id}/banner", 'public');
+            $course->banner_image_path = $path;
+            $course->save();
+        }
         return $course;
     }
 
@@ -67,6 +80,9 @@ class CourseService
         $course = $this->repo->find($id);
         if($course->image_path){
             DeleteFileFromServer($course->image_path);
+        }
+        if($course->banner_image_path){
+            DeleteFileFromServer($course->banner_image_path);
         }
         return $this->repo->delete($id);
     }

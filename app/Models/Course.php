@@ -14,12 +14,14 @@ class Course extends Model
         'name',
         'description',
         'image_path',
+        'banner_image_path',
         'course_category_id',
         'is_active',
     ];
 
     protected $hidden = [
-        'image_path'
+        'image_path',
+        'banner_image_path'
     ];
 
     protected $casts = [
@@ -28,7 +30,8 @@ class Course extends Model
     ];
 
     protected $appends = [
-        'image_url'
+        'image_url',
+        'banner_image_url'
     ];
 
     /**
@@ -91,6 +94,14 @@ class Course extends Model
     {
         if($this->image_path){
             return Storage::url($this->image_path);
+        }
+        return null;
+    }
+
+    public function getBannerImageUrlAttribute()
+    {
+        if($this->banner_image_path){
+            return Storage::url($this->banner_image_path);
         }
         return null;
     }
