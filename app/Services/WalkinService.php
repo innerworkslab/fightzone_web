@@ -92,7 +92,7 @@ class WalkinService
         $nonce = (string) $decoded['nonce'];
         $exp = (int) $decoded['exp'];
 
-        event(new WalkinScanStarted(
+        $this->broadcastSafely(new WalkinScanStarted(
             userId: $userId,
             packagePurchaseId: $packagePurchaseId,
             nonce: $nonce,
@@ -100,7 +100,7 @@ class WalkinService
         ));
 
         if ($exp < time()) {
-            event(new WalkinScanFailed(
+            $this->broadcastSafely(new WalkinScanFailed(
                 userId: $userId,
                 packagePurchaseId: $packagePurchaseId,
                 nonce: $nonce,
@@ -112,7 +112,7 @@ class WalkinService
 
         $usedKey = self::USED_PAYLOAD_PREFIX . $nonce;
         if (! Cache::add($usedKey, true, self::QR_PAYLOAD_TTL)) {
-            event(new WalkinScanFailed(
+            $this->broadcastSafely(new WalkinScanFailed(
                 userId: $userId,
                 packagePurchaseId: $packagePurchaseId,
                 nonce: $nonce,
@@ -125,7 +125,7 @@ class WalkinService
         try {
             return $this->processWalkin($decoded);
         } catch (\RuntimeException $e) {
-            event(new WalkinScanFailed(
+            $this->broadcastSafely(new WalkinScanFailed(
                 userId: $userId,
                 packagePurchaseId: $packagePurchaseId,
                 nonce: $nonce,
@@ -135,7 +135,7 @@ class WalkinService
             Cache::forget($usedKey);
             throw $e;
         } catch (\Throwable $e) {
-            event(new WalkinScanFailed(
+            $this->broadcastSafely(new WalkinScanFailed(
                 userId: $userId,
                 packagePurchaseId: $packagePurchaseId,
                 nonce: $nonce,
@@ -189,7 +189,7 @@ class WalkinService
 
             $purchase->refresh();
 
-            event(new WalkinConfirmed(
+            $this->broadcastSafely(new WalkinConfirmed(
                 userId: (int) $purchase->user_id,
                 packagePurchaseId: $purchase->id,
                 userWalkinId: $userWalkin->id,
@@ -204,6 +204,15 @@ class WalkinService
                 'completed' => $completed,
             ];
         });
+    }
+
+    private function broadcastSafely(object $event): void
+    {
+        try {
+            event($event);
+        } catch (\Throwable $e) {
+            report($e);
+        }
     }
 
     /**
