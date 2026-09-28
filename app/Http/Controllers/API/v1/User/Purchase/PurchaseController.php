@@ -8,6 +8,7 @@ use Illuminate\Validation\Rule;
 use App\Http\Controllers\Controller;
 
 use App\Services\PurchaseService;
+use App\Models\CourseLevel;
 
 class PurchaseController extends Controller
 {
@@ -63,6 +64,13 @@ class PurchaseController extends Controller
         // Ensure user can only view their own purchases
         if ($purchase->user_id !== ApiUser()->id) {
             abort(403, 'Unauthorized');
+        }
+
+        if (
+            in_array($purchase->purchasable_type, ['course_level', CourseLevel::class], true)
+            && ! $purchase->purchasable?->is_active
+        ) {
+            abort(404, 'Purchase not found');
         }
 
         ResponseData($purchase);

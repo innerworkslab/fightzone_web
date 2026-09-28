@@ -6,6 +6,7 @@ use App\Models\User;
 use App\Models\PointBalance;
 use App\Models\Deposit;
 use App\Models\Purchase;
+use App\Models\CourseLevel;
 
 class ProfileRepository implements ProfileRepositoryInterface
 {
@@ -36,6 +37,12 @@ class ProfileRepository implements ProfileRepositoryInterface
     {
         $query = Purchase::where('user_id', $userId)
             ->with(['purchasable', 'admin', 'courseLevelPurchase', 'packagePurchase'])
+            ->where(function ($query) {
+                $query->whereNotIn('purchasable_type', ['course_level', CourseLevel::class])
+                    ->orWhereHasMorph('purchasable', [CourseLevel::class], function ($query) {
+                        $query->where('is_active', true);
+                    });
+            })
             ->orderBy('id', 'desc');
 
         if ($limit) {

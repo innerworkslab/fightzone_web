@@ -2,6 +2,7 @@
 
 namespace App\Repositories\Purchase;
 
+use App\Models\CourseLevel;
 use App\Models\Purchase;
 
 class PurchaseRepository implements PurchaseRepositoryInterface
@@ -42,7 +43,13 @@ class PurchaseRepository implements PurchaseRepositoryInterface
     {
         $query = Purchase::with(['purchasable', 'courseLevelPurchase', 'packagePurchase'])
         ->orderBy('id', 'desc')
-        ->where('user_id', $userId);
+        ->where('user_id', $userId)
+        ->where(function ($query) {
+            $query->whereNotIn('purchasable_type', ['course_level', CourseLevel::class])
+                ->orWhereHasMorph('purchasable', [CourseLevel::class], function ($query) {
+                    $query->where('is_active', true);
+                });
+        });
 
         if ($limit) {
             $query->limit($limit);

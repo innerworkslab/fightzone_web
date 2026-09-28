@@ -155,6 +155,9 @@ class ProfileService
         $query = CourseLevelPurchase::with([
             'courseLevel.course.category',            
         ])
+        ->whereHas('courseLevel', function ($query) {
+            $query->where('is_active', true);
+        })
         ->where('user_id', $userId)
         ->orderByDesc('id');
 
