@@ -21,6 +21,7 @@ use App\Http\Controllers\API\v1\User\Shop\CourseCategoryController;
 use App\Http\Controllers\API\v1\User\Shop\PackageController;
 
 use App\Http\Controllers\API\v1\User\Misc\FeaturedImageController;
+use App\Http\Controllers\API\v1\User\Misc\ContactController;
 use App\Http\Controllers\API\v1\User\Techniques\TechniqueCategoryController;
 use App\Http\Controllers\API\v1\User\Techniques\TechniqueController;
 
@@ -55,6 +56,7 @@ Route::prefix('/v1')->group(function () {
             Route::get('/packages', [PackageController::class, 'index']);
 
             Route::get('/featured-images', [FeaturedImageController::class, 'index']);
+            Route::get('/contacts', [ContactController::class, 'index']);
 
             Route::get('/technique-categories', [TechniqueCategoryController::class, 'index']);
             Route::get('/technique-categories/{id}/techniques', [TechniqueController::class, 'getByCategory']);

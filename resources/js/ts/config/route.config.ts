@@ -9,6 +9,7 @@ import {
     Video,
     Image,
     Dumbbell,
+    Phone,
 } from "lucide-vue-next";
 
 export const RouteNames = {
@@ -47,6 +48,7 @@ export const RouteNames = {
     EditRestDayVideo: "edit-rest-video",
     WalkInsList: "walk-ins-list",
     FeaturedImagesList: "featured-image-list",
+    ContactsList: "contacts-list",
     AddFeaturedImage: "add-featured-image",
     ViewFeaturedImage: "view-featured-image",
     EditFeaturedImage: "edit-featured-image",
@@ -329,6 +331,20 @@ export const routes = [
                 name: RouteNames.ViewFeaturedImage,
                 header: "View Featured Image",
                 route: "",
+            },
+        ],
+    },
+    {
+        label: "Contact Info",
+        name: "contact_group",
+        icon: Phone,
+        route: "/auth/contacts",
+        children: [
+            {
+                label: "Contact List",
+                name: RouteNames.ContactsList,
+                header: "Contact Info Management",
+                route: "/auth/contacts",
             },
         ],
     },

@@ -27,6 +27,7 @@ export const API_URLS = {
     REST_DAY_VIDEO: "rest-videos",
     WALK_IN: "walkins",
     FEATURED_IMAGES: "featured-images",
+    CONTACT: "contacts",
     TECHNIQUE_CATEGORY: "technique-categories",
     TECHNIQUE: "techniques",
 };

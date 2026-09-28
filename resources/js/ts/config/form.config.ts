@@ -8,6 +8,7 @@ import LessonDayVideoForm from "../../../views/components/lesson-day-videos/less
 import WalkInForm from "../../../views/components/walk-ins/WalkInForm.vue";
 import RestDayVideoForm from "../../../views/components/rest-videos/RestDayVideoForm.vue";
 import FeaturedImagesForm from "../../../views/components/featured-images/FeaturedImagesForm.vue";
+import ContactsForm from "../../../views/components/contacts/ContactsForm.vue";
 import TechniqueCategoriesForm from "../../../views/components/technique-categories/TechniqueCategoriesForm.vue";
 import TechniquesForm from "../../../views/components/techniques/TechniquesForm.vue";
 
@@ -24,6 +25,13 @@ export const getFormConfig = (initialValues: any, isReadMode: boolean) => ({
         header: `${
             initialValues ? (isReadMode ? "(Read Only) " : "Update") : "Create"
         } Course Category`,
+        message: "",
+    },
+    contact: {
+        form: ContactsForm,
+        header: `${
+            initialValues ? (isReadMode ? "(Read Only) " : "Update") : "Create"
+        } Contact`,
         message: "",
     },
     // #D

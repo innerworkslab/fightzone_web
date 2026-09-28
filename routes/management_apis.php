@@ -21,6 +21,7 @@ use App\Http\Controllers\API\v1\Management\Ecommerce\WalkinController;
 use App\Http\Controllers\API\v1\Management\Packages\PackageController;
 
 use App\Http\Controllers\API\v1\Management\SystemConfig\AdminController;
+use App\Http\Controllers\API\v1\Management\SystemConfig\ContactController;
 use App\Http\Controllers\API\v1\Management\SystemConfig\FeaturedImageController;
 use App\Http\Controllers\API\v1\Management\SystemConfig\PaymentMethodController;
 use App\Http\Controllers\API\v1\Management\Techniques\TechniqueCategoryController;
@@ -58,6 +59,17 @@ Route::prefix('/v1/management')->group(function () {
                     Route::get('/{id}', 'show');
                     Route::post('/', 'store');
                     Route::post('/{id}', 'update');
+                    Route::delete('/{id}', 'destroy');
+                });
+            });
+
+            Route::prefix('/contacts')->group(function () {
+                Route::controller(ContactController::class)->group(function () {
+                    Route::get('/', 'index');
+                    Route::get('/{id}', 'show');
+                    Route::post('/', 'store');
+                    Route::post('/{id}', 'update');
+                    Route::post('/{id}/toggle', 'toggle');
                     Route::delete('/{id}', 'destroy');
                 });
             });

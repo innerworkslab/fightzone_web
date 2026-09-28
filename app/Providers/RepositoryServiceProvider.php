@@ -32,6 +32,8 @@ use App\Repositories\Notification\NotificationRepositoryInterface;
 use App\Repositories\Notification\NotificationRepository;
 use App\Repositories\FeaturedImage\FeaturedImageRepositoryInterface;
 use App\Repositories\FeaturedImage\FeaturedImageRepository;
+use App\Repositories\Contact\ContactRepositoryInterface;
+use App\Repositories\Contact\ContactRepository;
 use App\Repositories\UserPhysicalProfile\UserPhysicalProfileRepositoryInterface;
 use App\Repositories\UserPhysicalProfile\UserPhysicalProfileRepository;
 use App\Repositories\TechniqueCategory\TechniqueCategoryRepositoryInterface;
@@ -61,6 +63,7 @@ class RepositoryServiceProvider extends ServiceProvider
         $this->app->bind(RestVideoRepositoryInterface::class, RestVideoRepository::class);
         $this->app->bind(NotificationRepositoryInterface::class, NotificationRepository::class);
         $this->app->bind(FeaturedImageRepositoryInterface::class, FeaturedImageRepository::class);
+        $this->app->bind(ContactRepositoryInterface::class, ContactRepository::class);
         $this->app->bind(UserPhysicalProfileRepositoryInterface::class, UserPhysicalProfileRepository::class);
         $this->app->bind(TechniqueCategoryRepositoryInterface::class, TechniqueCategoryRepository::class);
         $this->app->bind(TechniqueRepositoryInterface::class, TechniqueRepository::class);
