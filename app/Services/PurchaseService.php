@@ -87,7 +87,7 @@ class PurchaseService
         }
 
         $storedPurchasableType = $purchasable->getMorphClass();
-        $requiresApproval = $purchasable instanceof CourseLevel;
+        $requiresApproval = $purchasable instanceof CourseLevel || $purchasable instanceof Package;
 
         if ($requiresApproval) {
             $hasPendingRequest = Purchase::where('user_id', $userId)
