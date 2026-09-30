@@ -10,11 +10,13 @@ class Package extends Model
         'name',
         'price',
         'days',
+        'validity_months',
         'is_active'
     ];
 
     protected $casts = [
         'days' => 'integer',
+        'validity_months' => 'integer',
         'price' => 'decimal:2',
         'is_active' => 'boolean'
     ];

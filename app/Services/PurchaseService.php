@@ -251,7 +251,7 @@ class PurchaseService
                 $confirmedAt = $purchase->confirmed_at ?? Carbon::now();
                 $totalDays = (int) $purchasable->days * $purchase->quantity;
                 $validFrom = $confirmedAt;
-                $validUntil = (clone $confirmedAt)->addDays($totalDays);
+                $validUntil = (clone $confirmedAt)->addMonthsNoOverflow((int) $purchasable->validity_months);
 
                 PackagePurchase::create([
                     'user_id' => $purchase->user_id,

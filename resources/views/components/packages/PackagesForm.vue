@@ -23,7 +23,8 @@ const { createPackages, updatePackages, loading: isSubmitting } = PackagesServic
 const schema = yup.object({
     name: yup.string().required("Package name is required"),
     price: yup.number().required("Price is required").min(0, "Price must be positive"),
-    days: yup.number().required("Days is required").min(1, "Days must be at least 1"),
+    days: yup.number().required("Walk-in visits are required").integer().min(1, "At least 1 visit is required"),
+    validity_months: yup.number().required("Validity is required").integer().min(1, "Validity must be at least 1 month"),
 });
 
 const { handleSubmit, setValues } = useForm<PackagesPayload>({
@@ -32,12 +33,14 @@ const { handleSubmit, setValues } = useForm<PackagesPayload>({
         name: "",
         price: 0,
         days: 1,
+        validity_months: 1,
     }
 });
 
 const { value: name } = useField<string>("name");
 const { value: price } = useField<number>("price");
 const { value: days } = useField<number>("days");
+const { value: validityMonths } = useField<number>("validity_months");
 
 watch(fetchedPackage, (newVal) => {
     if (newVal) {
@@ -45,6 +48,7 @@ watch(fetchedPackage, (newVal) => {
             name: newVal.data.name,
             price: newVal.data.price,
             days: newVal.data.days,
+            validity_months: newVal.data.validity_months ?? 1,
         });
     }
 }, { immediate: true, deep: true });
@@ -90,9 +94,14 @@ const submitForm = handleSubmit(async (values) => {
             </div>
 
             <div>
-                <FormInput label="Days" id="days" v-model.number="days" type="number" min="1"
-                    placeholder="Enter number of days" :disabled="isReadMode" />
+                <FormInput label="Walk-in Visits" id="days" v-model.number="days" type="number" min="1"
+                    placeholder="Enter number of visits" :disabled="isReadMode" />
                 <ErrorMessage name="days" class="block text-start text-red-500 text-sm mt-1" />
+            </div>
+            <div>
+                <FormInput label="Validity (Months)" id="validity_months" v-model.number="validityMonths" type="number" min="1"
+                    placeholder="Enter validity in months" :disabled="isReadMode" />
+                <ErrorMessage name="validity_months" class="block text-start text-red-500 text-sm mt-1" />
             </div>
         </div>
 

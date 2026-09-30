@@ -25,9 +25,14 @@ export const PackageColumns: ColumnDef<any>[] = [
         render: (row) => `$${row.price}`,
     },
     {
-        label: "Days",
+        label: "Walk-in Visits",
         key: "days",
-        render: (row) => `${row.days} days`,
+        render: (row) => `${row.days} visits`,
+    },
+    {
+        label: "Validity",
+        key: "validity_months",
+        render: (row) => `${row.validity_months} months`,
     },
     {
         label: "Status",
