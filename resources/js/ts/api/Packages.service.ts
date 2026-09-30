@@ -12,6 +12,7 @@ export interface PackagesData {
     name?: string;
     price: number;
     days: number;
+    validity_months: number;
     is_active?: boolean;
     created_at?: string;
     updated_at?: string;
@@ -21,6 +22,7 @@ export interface PackagesPayload {
     name: string;
     price: number;
     days: number;
+    validity_months: number;
 }
 
 const baseURL = `${API_URLS.VERSION}/${API_URLS.MANAGEMENT}/${API_URLS.PACKAGE}`;
@@ -41,6 +43,7 @@ const usePackagesActions = () => {
             name: data.name,
             price: data.price,
             days: data.days,
+            validity_months: data.validity_months,
         });
     };
 
@@ -49,6 +52,7 @@ const usePackagesActions = () => {
         if (data.name !== undefined) payload.name = data.name;
         if (data.price !== undefined) payload.price = data.price;
         if (data.days !== undefined) payload.days = data.days;
+        if (data.validity_months !== undefined) payload.validity_months = data.validity_months;
 
         return mutate(METHODS.POST, `/${baseURL}/${id}`, payload);
     };

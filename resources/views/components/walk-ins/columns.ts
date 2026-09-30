@@ -29,9 +29,9 @@ export const WalkInsColumns: ColumnDef<any>[] = [
         render: (row) => `${row.package.price.toLocaleString()}`,
     },
     {
-        label: "Days",
+        label: "Visits",
         key: "days",
-        render: (row) => `${row.remaining_days}/${row.total_days} days`,
+        render: (row) => `${row.remaining_days}/${row.total_days} visits`,
     },
     {
         label: "Valid Until",

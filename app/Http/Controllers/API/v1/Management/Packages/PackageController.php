@@ -34,7 +34,8 @@ class PackageController extends Controller
         $validated = $request->validate([
             'name' => 'required|string|max:255',
             'price' => 'required|numeric',
-            'days' => 'required|integer'
+            'days' => 'required|integer|min:1',
+            'validity_months' => 'required|integer|min:1'
         ]);
 
         $item = $this->service->create($validated);
@@ -54,7 +55,8 @@ class PackageController extends Controller
         $validated = $request->validate([
             'name' => 'sometimes|string|max:255',
             'price' => 'sometimes|numeric',
-            'days' => 'sometimes|integer'
+            'days' => 'sometimes|integer|min:1',
+            'validity_months' => 'sometimes|integer|min:1'
         ]);
 
         $item = $this->service->find($id);
