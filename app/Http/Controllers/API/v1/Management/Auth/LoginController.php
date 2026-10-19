@@ -33,7 +33,19 @@ class LoginController extends Controller
 
     public function logout(Request $request)
     {
-        $request->user()->currentAccessToken()->delete();
-        ResponseMessage("User logged out");
+        $validated = $request->validate([
+            'fcm_token' => 'nullable|string',
+        ]);
+
+        $admin = $request->user();
+
+        if (! empty($validated['fcm_token'])) {
+            $admin->personTokens()
+                ->where('fcm_token', $validated['fcm_token'])
+                ->delete();
+        }
+
+        $admin->currentAccessToken()->delete();
+        ResponseMessage("Admin logged out");
     }
 }

@@ -6,7 +6,13 @@ export interface LoginPayload {
     password: string;
     fcm_token?: string | null;
 }
+
+export interface LogoutPayload {
+    fcm_token?: string | null;
+}
+
 const baseURL = `/${API_URLS.VERSION}/${API_URLS.MANAGEMENT}/${API_URLS.LOGIN}`;
+const logoutURL = `/${API_URLS.VERSION}/${API_URLS.MANAGEMENT}/logout`;
 const useAuthActions = () => {
     const { mutate, loading, error, data } = useMutation();
 
@@ -20,11 +26,15 @@ const useAuthActions = () => {
         return mutate(METHODS.POST, baseURL, formData);
     };
 
+    const logout = (payload: LogoutPayload) =>
+        mutate(METHODS.POST, logoutURL, payload);
+
     return {
         loading,
         error,
         data,
         login,
+        logout,
     };
 };
 

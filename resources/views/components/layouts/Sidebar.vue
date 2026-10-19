@@ -6,6 +6,8 @@ import { SidebarItem } from "@/router/type";
 import { deleteCookie } from '@/lib/utils.cookies';
 import { COOKIES, LOCALSTORAGE } from '@/constant/global.constant';
 import { deleteLocalStorage, getDecryptedLocalStorage } from "@/lib/utils.localStorage";
+import { AuthServices } from "@/api/Auth.service";
+import { getCurrentAdminFcmToken } from "@/lib/firebase.messaging";
 import { useDataStore } from "@/store/data";
 import { useModalStore } from "@/store/modal";
 import {
@@ -17,6 +19,7 @@ const route = useRoute();
 const router = useRouter();
 const dataStore = useDataStore();
 const modalStore = useModalStore();
+const { logout } = AuthServices.useAuthActions();
 
 const authUser = ref(getDecryptedLocalStorage(LOCALSTORAGE.AUTH_USER));
 const isDark = ref(true);
@@ -69,9 +72,18 @@ onUnmounted(() => {
 const handleLogout = () => {
     modalStore.openConfirmModal({
         message: "Are you sure you want to logout?",
-        onApprove: () => {
+        onApprove: async () => {
+            const fcmToken = await getCurrentAdminFcmToken();
+
+            try {
+                await logout({ fcm_token: fcmToken });
+            } catch {
+                // Clear this browser session even if the logout request cannot reach the server.
+            }
+
             deleteCookie(COOKIES.ACCESS_TOKEN);
             deleteLocalStorage(LOCALSTORAGE.PERMISSIONS);
+            deleteLocalStorage(LOCALSTORAGE.AUTH_USER);
             router.push('/');
         },
         approveBtnText: "Logout",
