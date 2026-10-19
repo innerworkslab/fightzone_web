@@ -38,6 +38,33 @@ export async function getAdminFcmToken(): Promise<string | null> {
     }
 }
 
+export async function getCurrentAdminFcmToken(): Promise<string | null> {
+    try {
+        if (
+            !firebaseApp ||
+            !firebaseMessagingVapidKey ||
+            !("Notification" in window) ||
+            Notification.permission !== "granted"
+        ) {
+            return null;
+        }
+
+        const supported = await isSupported();
+        if (!supported) {
+            return null;
+        }
+
+        const serviceWorkerRegistration = await registerMessagingServiceWorker();
+
+        return await getToken(getMessaging(firebaseApp), {
+            vapidKey: firebaseMessagingVapidKey,
+            serviceWorkerRegistration,
+        });
+    } catch {
+        return null;
+    }
+}
+
 export async function listenForForegroundMessages(
     callback: (payload: MessagePayload) => void,
 ): Promise<(() => void) | null> {
